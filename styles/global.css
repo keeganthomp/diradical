@@ -13,12 +13,7 @@ body {
 }
 
 a {
-  color: #0070f3;
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 img {

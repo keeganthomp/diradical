@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique @db.VarChar(255)
+  mdk       String   @db.VarChar(255) // used to access wallet
+  username  String?  @unique @db.VarChar(255)
+  singles   Track[]
+  albums    Album[]
+}
+
+model Album {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(100)
+  tracks    Track[]
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model Track {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(30)
+  genre     String?  @db.VarChar(30)
+  source    String   @db.VarChar(255) // S3 URL
+  coverArt  String   @db.VarChar(255) // S3 URL
+  artist    User?    @relation(fields: [userId], references: [id])
+  userId    String
+  album     Album?   @relation(fields: [albumId], references: [id])
+  albumId   String?
+}
