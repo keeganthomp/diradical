@@ -5,7 +5,6 @@ import prisma from 'lib/prisma'
 import { NextPageContext } from 'next'
 import { getWalletFromMdk } from 'lib/encryption'
 import { User, Track, Album } from '@prisma/client'
-import LoginButton from 'components/ui/Buttons/LoginButton'
 import Tabs from 'components/ui/Tabs'
 import { Tab } from 'types'
 import UserTacks from 'components/user/UserTracks'
@@ -28,7 +27,6 @@ const ProfilePage = ({ user }: Props) => {
     return (
       <Container>
         <h1>Please login or create account to view your profile</h1>
-        <LoginButton />
       </Container>
     )
   }
@@ -52,7 +50,6 @@ const ProfilePage = ({ user }: Props) => {
 
   return (
     <Container>
-      <p>{user.wallet}</p>
       <Tabs tabs={ProfileTabs} />
     </Container>
   )

@@ -1,16 +1,14 @@
-import LoginButton from 'components/ui/Buttons/LoginButton'
-import LogoutButton from 'components/ui/Buttons/LogoutButton'
 import styled from 'styled-components'
-import Link from 'next/link'
 import { useUser } from '@auth0/nextjs-auth0'
+import NavLink from './NavLink'
 
-type NavLink = {
+type NavLinkType = {
   name: string
   path: string
   authRequired?: boolean
 }
 
-const NAV_LINKS: NavLink[] = [
+const NAV_LINKS: NavLinkType[] = [
   { name: 'Home', path: '/' },
   { name: 'Profile', path: '/profile', authRequired: true },
 ]
@@ -42,11 +40,15 @@ const Navbar = () => {
   return (
     <NavbarWrapper>
       {validNavLinks.map((link) => (
-        <Link key={link.path} href={link.path}>
+        <NavLink exact key={link.path} href={link.path}>
           {link.name}
-        </Link>
+        </NavLink>
       ))}
-      {user ? <LogoutButton /> : <LoginButton />}
+      {user ? (
+        <NavLink href='/api/auth/logout'>Logout</NavLink>
+      ) : (
+        <NavLink href='/api/auth/login'>Login</NavLink>
+      )}
     </NavbarWrapper>
   )
 }

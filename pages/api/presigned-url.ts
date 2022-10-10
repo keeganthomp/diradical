@@ -10,7 +10,6 @@ export default withApiAuthRequired(
     }
     try {
       const { user: authedUser } = getSession(req, res)
-      console.log('suthed', authedUser)
       const { fileName, folder } = req.query
       const key = S3.createKey({
         fileName: fileName as string,
@@ -20,7 +19,6 @@ export default withApiAuthRequired(
       const url = await S3.generatePresignedUrl({ key })
       res.status(200).json({ url })
     } catch (err) {
-      console.log('err', err)
       res.status(500).json({ message: 'unable to get presigned URL' })
     }
   },

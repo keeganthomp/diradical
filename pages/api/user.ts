@@ -25,7 +25,6 @@ export default withApiAuthRequired(
       })
       res.status(200).json({ sucess: true })
     } catch (err) {
-      console.log('err', err)
       res.status(500).json({ message: 'unable to update user' })
     }
   },

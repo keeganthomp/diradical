@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import React from 'react'
 import prisma from 'lib/prisma'
 import styled from 'styled-components'
@@ -18,14 +17,9 @@ const Container = styled.div`
 
 export default function HomePage({ tracks }: Props) {
   return (
-    <>
-      <Head>
-        <title>Muzic</title>
-      </Head>
-      <Container>
-        <AudioGrid tracks={tracks} />
-      </Container>
-    </>
+    <Container>
+      <AudioGrid tracks={tracks} />
+    </Container>
   )
 }
 
