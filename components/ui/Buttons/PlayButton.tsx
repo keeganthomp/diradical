@@ -11,7 +11,8 @@ type Props = {
 
 const StyledButton = styled(Button)`
   padding: 0;
-  background: ${(p) => p.theme.colors.main};
+  background: white;
+  color: ${(p) => p.theme.colors.main};
   height: 2rem;
   width: 2rem;
   border-radius: 50%;

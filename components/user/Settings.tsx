@@ -14,8 +14,12 @@ const Container = styled.div`
   }
   p {
     margin: 0;
+    color: white;
   }
 `
+
+const UpdateButton = styled(Button)`
+background: ${(p) => p.theme.colors.main};}`
 
 type Props = {
   user: User
@@ -27,13 +31,14 @@ const Wallet = styled.p`
 `
 
 export default function UserSettings({ user, wallet }: Props) {
-  const [isEditing, setEditingField] = useState(null)
+  const [editingField, setEditingField] = useState<'username' | 'email' | null>(
+    null,
+  )
   const [vals, setVals] = useState({
     username: user.username || '',
     email: user.email,
   })
 
-  const onEdit = () => setEditingField(true)
   const handleUsernameChange = (e) =>
     setVals({ ...vals, username: e.target.value })
   const handleEmailChange = (e) => setVals({ ...vals, email: e.target.value })
@@ -41,25 +46,27 @@ export default function UserSettings({ user, wallet }: Props) {
   return (
     <Container>
       <EditableField
+        isEditing={editingField === 'username'}
         value={vals.username}
         onChange={handleUsernameChange}
         onCancel={() => {
           setVals({ ...vals, username: user.username })
-          setEditingField(false)
+          setEditingField(null)
         }}
-        onStartEdit={onEdit}
+        onStartEdit={() => setEditingField('username')}
       />
       <EditableField
+        isEditing={editingField === 'email'}
         value={vals.email}
         onChange={handleEmailChange}
         onCancel={() => {
           setVals({ ...vals, email: user.email })
-          setEditingField(false)
+          setEditingField(null)
         }}
-        onStartEdit={onEdit}
+        onStartEdit={() => setEditingField('email')}
       />
       <Wallet>{wallet}</Wallet>
-      {isEditing && <Button>Update</Button>}
+      {editingField && <UpdateButton>Update</UpdateButton>}
     </Container>
   )
 }

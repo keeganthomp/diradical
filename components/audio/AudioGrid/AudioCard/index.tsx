@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
+import Image from 'next/image'
 import AudioCardMenu from './Menu'
 
 type Props = {
@@ -18,7 +19,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  border: 1px solid lightgray;
   border-radius: 10px;
   overflow: hidden;
   color: white;
@@ -49,7 +49,7 @@ const Meta = styled.div`
 `
 
 const TitleTrackContainer = styled.div`
-  opacity: 0.8;
+  opacity: 0.9;
 `
 
 const Title = styled.p`

@@ -16,6 +16,7 @@ const Container = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  color: white;
 `
 
 type Props = {

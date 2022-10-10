@@ -1,6 +1,5 @@
 import TextInput from './TextInput'
 import styled from 'styled-components'
-import { useState } from 'react'
 import { BiPencil } from 'react-icons/bi'
 import { IoIosCloseCircleOutline } from 'react-icons/io'
 
@@ -9,6 +8,7 @@ type Props = {
   onChange: (e: any) => void
   onCancel: (e?: any) => void
   onStartEdit?: (e?: any) => void
+  isEditing: boolean
 }
 
 const EditIcon = styled(BiPencil)`
@@ -19,7 +19,7 @@ const EditIcon = styled(BiPencil)`
   transition: color 0.1s ease-in-out;
   margin-left: 0.25rem;
   &:hover {
-    color: #000000;
+    color: white;
   }
 `
 
@@ -31,7 +31,7 @@ const CancelEditIcon = styled(IoIosCloseCircleOutline)`
   transition: color 0.1s ease-in-out;
   margin-left: 0.25rem;
   &:hover {
-    color: #000000;
+    color: white;
   }
 `
 
@@ -45,27 +45,24 @@ export default function EditableField({
   onChange,
   onCancel,
   onStartEdit,
+  isEditing,
 }: Props) {
-  const [editing, setEditing] = useState(false)
-
   const handleCancel = () => {
     onCancel()
-    setEditing(false)
   }
 
   const handleEdit = () => {
     onStartEdit()
-    setEditing(true)
   }
 
   return (
     <Field>
-      {editing ? (
+      {isEditing ? (
         <TextInput onChange={onChange} value={value} />
       ) : (
         <p>{value}</p>
       )}
-      {editing ? (
+      {isEditing ? (
         <CancelEditIcon onClick={handleCancel} />
       ) : (
         <EditIcon onClick={handleEdit} />

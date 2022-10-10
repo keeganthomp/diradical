@@ -10,7 +10,8 @@ const TabContainer = styled.div`
 `
 
 const TabTitle = styled.p<TitleProps>`
-  border-bottom: ${(p) => (p.active ? '2px solid #000' : 'none')};
+  color: white;
+  border-bottom: ${(p) => (p.active ? '2px solid white' : 'none')};
 `
 
 export default function Tab({

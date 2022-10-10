@@ -6,7 +6,6 @@ import { devices } from 'styles/theme'
 const DEF_NUM_OF_COLUMNS = 6
 
 const Grid = styled.div`
-  padding: 2rem 0;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(${DEF_NUM_OF_COLUMNS}, 1fr);

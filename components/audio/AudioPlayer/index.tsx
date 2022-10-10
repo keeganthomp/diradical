@@ -8,7 +8,7 @@ import { IoClose } from 'react-icons/io5'
 
 const Container = styled.div`
   z-index: 9;
-  background: #8c92ac;
+  background: ${(p) => p.theme.colors.main};
   color: white;
   position: fixed;
   bottom: 0;
