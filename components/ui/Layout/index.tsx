@@ -8,6 +8,7 @@ const Content = styled.div`
   background: ${(p) => p.theme.colors.background};
   height: 100vh;
   padding-top: 3.5rem;
+  overflow-y: scroll;
 `
 
 export default function Layout({ children }) {

@@ -28,7 +28,7 @@ const Bar = styled.div`
   background: #b6b5b5;
 `
 const BarFill = styled.div<Props>`
-  background: white;
+  background: black;
   height: 100%;
   width: ${(p) => `${p.progress}%`};
   position: absolute;

@@ -5,9 +5,11 @@
     "build": "next build",
     "start": "next start",
     "migrate:dev": "npx prisma migrate dev",
-    "vercel-build": "npx prisma generate && npx prisma migrate deploy && next build"
+    "vercel-build": "npx prisma generate && npx prisma migrate deploy && next build",
+    "nexus:gen": "node --experimental-specifier-resolution=node --loader ts-node/esm graphql/schema"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.0",
     "@auth0/nextjs-auth0": "^1.9.1",
     "@aws-sdk/client-s3": "^3.183.0",
     "@aws-sdk/s3-request-presigner": "^3.183.0",
@@ -15,13 +17,19 @@
     "@prisma/client": "^4.4.0",
     "@types/uuid": "^8.3.4",
     "algosdk": "^1.21.0",
+    "apollo-server-micro": "^3.10.3",
     "axios": "^0.27.2",
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.11.1",
+    "graphql": "^16.6.0",
     "gray-matter": "^4.0.2",
     "jsonwebtoken": "^8.5.1",
+    "micro": "^9.4.1",
+    "micro-cors": "^0.1.1",
     "next": "latest",
+    "nexus": "^1.3.0",
+    "nexus-prisma": "^0.35.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.36.1",
@@ -31,13 +39,15 @@
     "remark": "^14.0.1",
     "remark-html": "^15.0.0",
     "styled-components": "^5.3.6",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.0",
     "use-interval": "^1.4.0",
     "uuid": "^9.0.0",
     "wallet.ts": "^1.0.1"
   },
   "devDependencies": {
-    "@types/node": "^16.3.3",
-    "@types/react": "^17.0.14",
+    "@types/node": "^18.8.3",
+    "@types/react": "^18.0.21",
     "@typescript-eslint/eslint-plugin": "^5.38.1",
     "@typescript-eslint/parser": "^5.38.1",
     "babel-plugin-styled-components": "^2.0.7",
@@ -46,7 +56,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.8",
     "prettier": "^2.7.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.8.4"
   },
   "resolutions": {
     "styled-components": "^5"

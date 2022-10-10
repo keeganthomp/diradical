@@ -14,7 +14,7 @@ const NAV_LINKS: NavLinkType[] = [
 ]
 
 const NavbarWrapper = styled.div`
-  background: ${(p) => p.theme.colors.main};
+  background: black;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -22,12 +22,9 @@ const NavbarWrapper = styled.div`
   position: fixed;
   width: 100%;
   height: 3rem;
+  z-index: 9;
   a {
     margin: 6px;
-    color: white;
-    &:visited {
-      color: white;
-    }
   }
 `
 

@@ -19,7 +19,13 @@ const Container = styled.div`
 `
 
 const UpdateButton = styled(Button)`
-background: ${(p) => p.theme.colors.main};}`
+  background: ${(p) => p.theme.colors.main};
+  text-align: center;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 
 type Props = {
   user: User

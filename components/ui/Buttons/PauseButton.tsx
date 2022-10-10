@@ -7,10 +7,12 @@ import { devices } from 'styles/theme'
 const StyledButton = styled(Button)`
   padding: 0;
   background: white;
-  color: ${(p) => p.theme.colors.main};
-  height: 2rem;
-  width: 2rem;
+  background: ${(p) => p.theme.colors.main};
+  color: black;
+  height: 3rem;
+  width: 3rem;
   border-radius: 50%;
+  z-index: 8;
   @media ${devices.mobile} {
     height: 4rem;
     width: 4rem;
@@ -20,6 +22,7 @@ const StyledButton = styled(Button)`
 const PauseIcon = styled(FaPause)`
   position: relative;
   top: 2px;
+  font-size: 20px;
   @media ${devices.mobile} {
     font-size: 30px;
   }

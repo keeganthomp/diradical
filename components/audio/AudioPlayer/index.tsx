@@ -5,11 +5,12 @@ import styled from 'styled-components'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import { IoClose } from 'react-icons/io5'
+import Button from 'components/ui/Buttons/Base'
 
 const Container = styled.div`
   z-index: 9;
   background: ${(p) => p.theme.colors.main};
-  color: white;
+  color: black;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -38,7 +39,7 @@ const Artist = styled.p`
   align-self: start;
 `
 
-const PauseButtonWrapper = styled.div`
+const ButtonWrapper = styled.div`
   grid-area: pause;
   justify-self: center;
 `
@@ -98,9 +99,9 @@ export default function AudioPlayer() {
           {nowPlayingTrack.artist.username || nowPlayingTrack.artist.email}
         </Artist>
         <CoverArt src={nowPlayingTrack.coverArt} />
-        <PauseButtonWrapper>
+        <ButtonWrapper>
           {isPlaying ? <PauseButton /> : <PlayButton track={nowPlayingTrack} />}
-        </PauseButtonWrapper>
+        </ButtonWrapper>
         <ProgressBar progress={progress} duration={duration} />
       </Container>
       {/* Used as a ref */}

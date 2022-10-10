@@ -9,7 +9,12 @@ type Props = {
 }
 
 const StyledLink = styled.a<{ active?: boolean }>`
-  text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
+  background: ${(props) =>
+    props.active ? props.theme.colors.main : 'transparent'};
+  padding: 5px 1rem;
+  font-size: 14px;
+  border-radius: 16px;
+  color: ${(props) => (props.active ? 'black' : 'white')};
   cursor: pointer;
 `
 

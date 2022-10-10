@@ -7,15 +7,17 @@ import { devices } from 'styles/theme'
 
 type Props = {
   track: TrackWithArtist
+  hidden?: boolean
 }
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ hidden?: boolean }>`
   padding: 0;
-  background: white;
-  color: ${(p) => p.theme.colors.main};
-  height: 2rem;
-  width: 2rem;
+  background: ${(p) => p.theme.colors.main};
+  color: black;
+  height: 3rem;
+  width: 3rem;
   border-radius: 50%;
+  z-index: 8;
   @media ${devices.mobile} {
     height: 4rem;
     width: 4rem;
@@ -25,18 +27,19 @@ const PlayIcon = styled(FaPlay)`
   position: relative;
   top: 2px;
   left: 2px;
+  font-size: 20px;
   @media ${devices.mobile} {
     font-size: 30px;
   }
 `
 
-export default function PlayButton({ track }: Props) {
+export default function PlayButton({ track, hidden }: Props) {
   const { play } = useNowPlaying()
 
   const handlePlay = () => play(track)
 
   return (
-    <StyledButton onClick={handlePlay}>
+    <StyledButton hidden={hidden} onClick={handlePlay}>
       <PlayIcon />
     </StyledButton>
   )
