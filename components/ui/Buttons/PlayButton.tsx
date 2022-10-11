@@ -12,7 +12,7 @@ type Props = {
 
 const StyledButton = styled(Button)<{ audioPlayer?: boolean }>`
   padding: 0;
-  background: ${(p) => p.theme.colors.main};
+  background: ${(p) => (p.audioPlayer ? 'transparent' : p.theme.colors.main)};
   color: black;
   border-radius: 50%;
   z-index: 8;

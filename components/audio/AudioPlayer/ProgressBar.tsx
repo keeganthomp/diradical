@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { devices } from 'styles/theme'
 
 type Props = {
   progress: number
@@ -16,6 +17,10 @@ const Container = styled.div`
     margin: 0;
     font-size: 15px;
   }
+  @media ${devices.mobile} {
+    align-self: end;
+    justify-self: start;
+  }
 `
 
 const Bar = styled.div`
@@ -26,6 +31,12 @@ const Bar = styled.div`
   border-radius: 7px;
   overflow: hidden;
   background: #b6b5b5;
+  @media ${devices.mobile} {
+    margin: 0;
+    width: 18rem;
+    border-radius: 0px;
+    width: 100vw;
+  }
 `
 const BarFill = styled.div<Props>`
   background: black;
@@ -38,9 +49,15 @@ const BarFill = styled.div<Props>`
 const CurrentTime = styled.p`
   width: 2.5rem;
   text-align: right;
+  @media ${devices.mobile} {
+    display: none;
+  }
 `
 const Duration = styled.p`
   width: 2.5rem;
+  @media ${devices.mobile} {
+    display: none;
+  }
 `
 
 const formatTime = (secs: number) => {
