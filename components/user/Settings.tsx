@@ -27,6 +27,12 @@ const UpdateButton = styled(Button)`
   align-items: center;
 `
 
+const truncateWallet = (wallet: string) => {
+  const first = wallet.slice(0, 6)
+  const last = wallet.slice(-4)
+  return `${first}...${last}`
+}
+
 type Props = {
   user: User
   wallet: string
@@ -52,6 +58,7 @@ export default function UserSettings({ user, wallet }: Props) {
   return (
     <Container>
       <EditableField
+        label='Username'
         isEditing={editingField === 'username'}
         value={vals.username}
         onChange={handleUsernameChange}
@@ -62,6 +69,7 @@ export default function UserSettings({ user, wallet }: Props) {
         onStartEdit={() => setEditingField('username')}
       />
       <EditableField
+        label='Email'
         isEditing={editingField === 'email'}
         value={vals.email}
         onChange={handleEmailChange}
@@ -71,7 +79,7 @@ export default function UserSettings({ user, wallet }: Props) {
         }}
         onStartEdit={() => setEditingField('email')}
       />
-      <Wallet>{wallet}</Wallet>
+      <Wallet>{truncateWallet(wallet)}</Wallet>
       {editingField && <UpdateButton>Update</UpdateButton>}
     </Container>
   )

@@ -4,10 +4,12 @@ import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import PlayButton from 'components/ui/Buttons/PlayButton'
-import { IoClose } from 'react-icons/io5'
-import Button from 'components/ui/Buttons/Base'
+import { IoCloseOutline } from 'react-icons/io5'
+import { devices } from 'styles/theme'
 
 const Container = styled.div`
+  box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
   z-index: 9;
   background: ${(p) => p.theme.colors.main};
   color: black;
@@ -23,6 +25,13 @@ const Container = styled.div`
   grid-template-areas:
     'title coverArt pause . .'
     'artist coverArt progress . .';
+  @media ${devices.mobile} {
+    grid-template-columns: 2rem 1fr 2rem;
+    grid-template-areas:
+      'title pause coverArt'
+      'artist progress coverArt';
+    padding: 3px;
+  }
 `
 
 const SongTitle = styled.p`
@@ -44,17 +53,23 @@ const ButtonWrapper = styled.div`
   justify-self: center;
 `
 
-const CloseIcon = styled(IoClose)`
+const CloseIcon = styled(IoCloseOutline)`
   position: absolute;
   margin: 0;
   top: 3px;
   right: 0.5rem;
   font-size: 1.5rem;
+  opacity: 0.5;
   cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+  &:hover {
+    opacity: 0.9;
+  }
 `
 
 const CoverArt = styled.img`
   grid-area: coverArt;
+  max-height: 6rem;
 `
 
 export default function AudioPlayer() {
@@ -100,7 +115,11 @@ export default function AudioPlayer() {
         </Artist>
         <CoverArt src={nowPlayingTrack.coverArt} />
         <ButtonWrapper>
-          {isPlaying ? <PauseButton /> : <PlayButton track={nowPlayingTrack} />}
+          {isPlaying ? (
+            <PauseButton audioPlayer />
+          ) : (
+            <PlayButton audioPlayer track={nowPlayingTrack} />
+          )}
         </ButtonWrapper>
         <ProgressBar progress={progress} duration={duration} />
       </Container>

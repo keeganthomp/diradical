@@ -11,6 +11,7 @@ const Grid = styled.div`
   grid-template-columns: repeat(${DEF_NUM_OF_COLUMNS}, 1fr);
   grid-gap: 0.5rem;
   justify-items: center;
+  row-gap: 1rem;
   @media ${devices.large} {
     grid-template-columns: repeat(5, 1fr);
   }
@@ -22,6 +23,7 @@ const Grid = styled.div`
   }
   @media ${devices.mobile} {
     grid-template-columns: repeat(1, 1fr);
+    row-gap: 0.25rem;
   }
 `
 

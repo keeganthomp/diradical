@@ -61,7 +61,7 @@ export default ProfilePage
 export async function getServerSideProps(context: NextPageContext) {
   context.res.setHeader(
     'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59',
+    'public, s-maxage=15, stale-while-revalidate=59',
   )
   const session = getSession(context.req, context.res)
   if (!session)

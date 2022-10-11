@@ -9,7 +9,21 @@ type Props = {
   onCancel: (e?: any) => void
   onStartEdit?: (e?: any) => void
   isEditing: boolean
+  label: string
 }
+
+const Field = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`
+
+const Icon = styled.div`
+  position: absolute;
+  right: -1.5rem;
+  top: 3px;
+`
 
 const EditIcon = styled(BiPencil)`
   position: relative;
@@ -18,6 +32,7 @@ const EditIcon = styled(BiPencil)`
   cursor: pointer;
   transition: color 0.1s ease-in-out;
   margin-left: 0.25rem;
+  font-size: 1.25rem;
   &:hover {
     color: white;
   }
@@ -30,14 +45,27 @@ const CancelEditIcon = styled(IoIosCloseCircleOutline)`
   cursor: pointer;
   transition: color 0.1s ease-in-out;
   margin-left: 0.25rem;
+  font-size: 1.25rem;
   &:hover {
     color: white;
   }
 `
 
-const Field = styled.div`
+const Label = styled.p`
+  font-weight: bold;
+  text-transform: uppercase;
+`
+
+const FieldInput = styled.div`
   display: flex;
   align-items: center;
+  position: relative;
+`
+
+const FieldValue = styled.p`
+  margin: 0;
+  width: 100%;
+  font-weight: 200;
 `
 
 export default function EditableField({
@@ -46,6 +74,7 @@ export default function EditableField({
   onCancel,
   onStartEdit,
   isEditing,
+  label,
 }: Props) {
   const handleCancel = () => {
     onCancel()
@@ -57,16 +86,21 @@ export default function EditableField({
 
   return (
     <Field>
-      {isEditing ? (
-        <TextInput onChange={onChange} value={value} />
-      ) : (
-        <p>{value}</p>
-      )}
-      {isEditing ? (
-        <CancelEditIcon onClick={handleCancel} />
-      ) : (
-        <EditIcon onClick={handleEdit} />
-      )}
+      <Label>{label}</Label>
+      <FieldInput>
+        {isEditing ? (
+          <TextInput onChange={onChange} value={value} />
+        ) : (
+          <FieldValue>{value}</FieldValue>
+        )}
+        <Icon>
+          {isEditing ? (
+            <CancelEditIcon onClick={handleCancel} />
+          ) : (
+            <EditIcon onClick={handleEdit} />
+          )}
+        </Icon>
+      </FieldInput>
     </Field>
   )
 }

@@ -5,6 +5,8 @@ import PlayButton from 'components/ui/Buttons/PlayButton'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
 import { useState } from 'react'
+import mobile from 'is-mobile'
+import moment from 'moment'
 import AudioCardMenu from './Menu'
 
 type Props = {
@@ -35,36 +37,36 @@ const ImageContainer = styled.div`
 
 const Meta = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  align-items: baseline;
   width: 100%;
-  padding: 0 7px;
+  color: white;
   p {
     padding: 0 4px;
     font-size: 14px;
-    @media ${devices.mobile} {
-      font-size: 30px;
-    }
   }
+`
+
+const TitleAndTrack = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 `
 
 const Title = styled.p`
   font-weight: bold;
-  color: white;
   font-weight: bold;
   margin: 0;
   text-align: center;
 `
 const Artist = styled.p`
-  color: white;
   position: relative;
   bottom: 6px;
   margin: 0;
   text-align: center;
-  @media ${devices.mobile} {
-    bottom: 22px;
-  }
+  font-weight: 200;
 `
 const CoverArt = styled.img`
   position: absolute;
@@ -73,14 +75,19 @@ const CoverArt = styled.img`
   object-fit: cover;
 `
 
+const Realesed = styled.p`
+  margin: 0;
+`
+
 export default function AudioCard({ track }: Props) {
-  const [isHovering, setHovering] = useState(false)
+  const isMobile = mobile()
+  const [isHovering, setHovering] = useState(isMobile)
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
 
-  const handleMouseEnter = () => setHovering(true)
-  const handleMouseLeave = () => setHovering(false)
+  const handleMouseEnter = () => !isMobile && setHovering(true)
+  const handleMouseLeave = () => !isMobile && setHovering(false)
 
   return (
     <Wrapper>
@@ -96,8 +103,11 @@ export default function AudioCard({ track }: Props) {
         )}
       </ImageContainer>
       <Meta>
-        <Title>{track.title}</Title>
-        <Artist>{track.artist.username || track.artist.email}</Artist>
+        <TitleAndTrack>
+          <Title>{track.title}</Title>
+          <Artist>{track.artist.username || track.artist.email}</Artist>
+        </TitleAndTrack>
+        <Realesed>{moment(track.createdAt).calendar()}</Realesed>
       </Meta>
     </Wrapper>
   )
