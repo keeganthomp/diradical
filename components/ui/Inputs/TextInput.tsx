@@ -9,6 +9,7 @@ const TextInput = styled.input`
   outline: none;
   text-align: center;
   font-size: 1rem;
+  border-radius: 0px;
 `
 
 export default TextInput

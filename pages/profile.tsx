@@ -40,7 +40,7 @@ const ProfilePage = ({ user }: Props) => {
       Component: () => <UserSettings user={user} wallet={user.wallet} />,
     },
     {
-      title: 'My Muic',
+      title: 'My Music',
       Component: () => <UserTacks tracks={tracks} user={user} />,
     },
     {
