@@ -38,6 +38,7 @@
     "react-hook-form": "^7.36.1",
     "react-icons": "^4.4.0",
     "react-player": "^2.11.0",
+    "react-query": "^3.39.2",
     "recoil": "^0.7.5",
     "remark": "^14.0.1",
     "remark-html": "^15.0.0",

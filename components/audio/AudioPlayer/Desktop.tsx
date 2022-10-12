@@ -9,10 +9,9 @@ import { devices } from 'styles/theme'
 
 const Container = styled.div`
   box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
-  border-radius: 10px;
   z-index: 9;
-  background: ${(p) => p.theme.colors.main};
-  color: black;
+  background: black;
+  color: white;
   position: fixed;
   bottom: 0;
   width: 100%;

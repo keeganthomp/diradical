@@ -32,7 +32,7 @@ const EditIcon = styled(BiPencil)`
   cursor: pointer;
   transition: color 0.1s ease-in-out;
   margin-left: 0.25rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
   &:hover {
     color: white;
   }
@@ -52,20 +52,21 @@ const CancelEditIcon = styled(IoIosCloseCircleOutline)`
 `
 
 const Label = styled.p`
-  font-weight: bold;
   text-transform: uppercase;
+  margin-bottom: 1rem;
 `
 
 const FieldInput = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+  height: 1.5rem;
 `
 
 const FieldValue = styled.p`
   margin: 0;
   width: 100%;
-  font-weight: 200;
+  font-weight: 100;
 `
 
 export default function EditableField({

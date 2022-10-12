@@ -13,15 +13,12 @@ const Container = styled.div`
     margin-bottom: 0.5rem;
   }
   p {
-    margin: 0;
     color: white;
   }
 `
 
 const UpdateButton = styled(Button)`
-  background: ${(p) => p.theme.colors.main};
   text-align: center;
-  color: black;
   display: flex;
   justify-content: center;
   align-items: center;

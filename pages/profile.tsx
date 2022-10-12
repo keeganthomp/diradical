@@ -1,15 +1,12 @@
 import React from 'react'
-import { getSession } from '@auth0/nextjs-auth0'
 import styled from 'styled-components'
-import prisma from 'lib/prisma'
-import { NextPageContext } from 'next'
-import { getWalletFromMdk } from 'lib/encryption'
 import { User, Track, Album } from '@prisma/client'
 import Tabs from 'components/ui/Tabs'
 import { Tab } from 'types'
 import UserTacks from 'components/user/UserTracks'
 import UserSettings from 'components/user/Settings'
 import UploadForm from 'components/forms/UploadForm'
+import { useQuery } from 'react-query'
 
 const Container = styled.div`
   display: flex;
@@ -19,11 +16,35 @@ const Container = styled.div`
   color: white;
 `
 
-type Props = {
-  user: (User & { singles: Track[]; albums: Album[]; wallet: string }) | null
-}
+type UserWithMusic =
+  | (User & { singles: Track[]; albums: Album[]; wallet: string })
+  | null
 
-const ProfilePage = ({ user }: Props) => {
+const ProfilePage = () => {
+  const {
+    isLoading,
+    error,
+    data: user,
+  } = useQuery<UserWithMusic>('profile', () =>
+    fetch('/api/profile').then((res) => res.json()),
+  )
+
+  console.log('data', user)
+
+  if (isLoading)
+    return (
+      <Container>
+        <p style={{ color: 'white' }}>Loading...</p>
+      </Container>
+    )
+
+  if (error) {
+    return (
+      <Container>
+        <p>Error occured fetching profile</p>
+      </Container>
+    )
+  }
   if (!user) {
     return (
       <Container>
@@ -57,54 +78,3 @@ const ProfilePage = ({ user }: Props) => {
 }
 
 export default ProfilePage
-
-export async function getServerSideProps(context: NextPageContext) {
-  context.res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=15, stale-while-revalidate=59',
-  )
-  const session = getSession(context.req, context.res)
-  if (!session)
-    return {
-      props: {
-        user: null,
-      },
-    }
-  const userWithMusic = await prisma.user.findFirst({
-    where: {
-      email: session.user.email,
-    },
-    select: {
-      mdk: true,
-      email: true,
-      username: true,
-      singles: {
-        orderBy: {
-          createdAt: 'desc', // newest first
-        },
-      },
-      albums: {
-        orderBy: {
-          createdAt: 'desc', // newest first
-        },
-      },
-    },
-  })
-  if (!userWithMusic)
-    return {
-      props: {
-        user: null,
-      },
-    }
-  const { mdk, ...rest } = userWithMusic
-  const wallet = getWalletFromMdk(mdk)
-  const props = {
-    ...rest,
-    wallet: wallet.addr, // public wallet address
-  }
-  return {
-    props: {
-      user: JSON.parse(JSON.stringify(props)),
-    },
-  }
-}

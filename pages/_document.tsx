@@ -33,9 +33,11 @@ class MyDocument extends Document {
       <Html lang='en' dir='ltr'>
         <Head>
           <meta charSet='utf-8' />
+          <link rel='preconnect' href='https://fonts.googleapis.com' />
+          <link rel='preconnect' href='https://fonts.gstatic.com' />
           <link
+            href='https://fonts.googleapis.com/css2?family=Abel&family=Raleway:wght@300;500&display=swap'
             rel='stylesheet'
-            href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
           />
         </Head>
         <body>

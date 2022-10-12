@@ -6,6 +6,9 @@ import Layout from 'components/ui/Layout'
 import { ThemeProvider } from 'styled-components'
 import theme from 'styles/theme'
 import Head from 'next/head'
+import { QueryClient, QueryClientProvider } from 'react-query'
+
+const queryClient = new QueryClient()
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -14,13 +17,15 @@ function App({ Component, pageProps }: AppProps) {
         <title>Diradical</title>
       </Head>
       <UserProvider>
-        <RecoilRoot>
-          <ThemeProvider theme={theme}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ThemeProvider>
-        </RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <RecoilRoot>
+            <ThemeProvider theme={theme}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
+          </RecoilRoot>
+        </QueryClientProvider>
       </UserProvider>
     </>
   )

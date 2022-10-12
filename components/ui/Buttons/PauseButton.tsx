@@ -6,8 +6,8 @@ import { devices } from 'styles/theme'
 
 const StyledButton = styled(Button)<{ audioPlayer?: boolean }>`
   padding: 0;
-  background: ${(p) => (p.audioPlayer ? 'transparent' : p.theme.colors.main)};
-  color: black;
+  background: black;
+  color: white;
   border-radius: 50%;
   z-index: 8;
   height: ${(p) => (p.audioPlayer ? '2rem' : '3rem')};

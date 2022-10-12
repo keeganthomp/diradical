@@ -13,8 +13,8 @@ const Container = styled.div`
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   z-index: 9;
-  background: ${(p) => p.theme.colors.main};
-  color: black;
+  background: black;
+  color: white;
   position: fixed;
   bottom: 0;
   flex-direction: column;
@@ -49,20 +49,6 @@ const ButtonWrapper = styled.div`
   justify-self: end;
   position: relative;
   top: 10px;
-`
-
-const CloseIcon = styled(IoCloseOutline)`
-  position: absolute;
-  margin: 0;
-  top: 1px;
-  right: 2px;
-  font-size: 20px;
-  opacity: 0.5;
-  cursor: pointer;
-  transition: opacity 0.1s ease-in-out;
-  &:hover {
-    opacity: 0.9;
-  }
 `
 
 const CoverArt = styled.img`
@@ -108,7 +94,6 @@ export default function MobileAudioPlayer() {
   return (
     <>
       <Container>
-        <CloseIcon onClick={stop} />
         <SongTitle>{nowPlayingTrack.title}</SongTitle>
         <Artist>
           {nowPlayingTrack.artist.username || nowPlayingTrack.artist.email}

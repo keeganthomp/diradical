@@ -11,8 +11,9 @@ const TabContainer = styled.div`
 
 const TabTitle = styled.p<TitleProps>`
   color: white;
-  border-bottom: ${(p) =>
-    p.active ? `1px solid ${p.theme.colors.main}` : 'none'};
+  text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
+  text-transform: lowercase;
+  font-weight: 200;
 `
 
 export default function Tab({

@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
 const StyledButton = styled.button`
-  background: ${(p) => p.theme.colors.main};
-  color: white;
+  background: white;
+  color: black;
   border: none;
   border-radius: 5px;
   padding: 0.5rem 1rem;

@@ -23,6 +23,7 @@ const NavbarWrapper = styled.div`
   width: 100%;
   height: 3rem;
   z-index: 9;
+  text-transform: lowercase;
   a {
     margin: 6px;
   }

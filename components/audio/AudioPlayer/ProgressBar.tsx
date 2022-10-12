@@ -24,13 +24,13 @@ const Container = styled.div`
 `
 
 const Bar = styled.div`
-  height: 7px;
-  width: 10rem;
+  height: 2px;
+  width: 15rem;
   position: relative;
   margin: 0 0.5rem;
   border-radius: 7px;
   overflow: hidden;
-  background: #b6b5b5;
+  background: #3e3e3e;
   @media ${devices.mobile} {
     margin: 0;
     width: 18rem;
@@ -39,7 +39,7 @@ const Bar = styled.div`
   }
 `
 const BarFill = styled.div<Props>`
-  background: black;
+  background: white;
   height: 100%;
   width: ${(p) => `${p.progress}%`};
   position: absolute;
