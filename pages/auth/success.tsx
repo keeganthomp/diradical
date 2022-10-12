@@ -3,7 +3,7 @@ import { getSession } from '@auth0/nextjs-auth0'
 import { NextPageContext } from 'next'
 import prisma from 'lib/prisma'
 import Router from 'next/router'
-import { generateWalletMdk, getWalletFromMdk } from 'lib/encryption'
+import { generateWalletMdk } from 'lib/encryption'
 
 const AuthSucess = ({ done }) => {
   React.useEffect(() => {
@@ -28,7 +28,7 @@ export async function getServerSideProps(context: NextPageContext) {
   // create user in DB if not exist
   try {
     const mdk = generateWalletMdk()
-    await prisma.user.upsert({
+    const user = await prisma.user.upsert({
       where: {
         email: session.user.email,
       },
@@ -38,8 +38,8 @@ export async function getServerSideProps(context: NextPageContext) {
         email: session.user.email,
       },
     })
+    return result
   } catch {
     return result
   }
-  return result
 }

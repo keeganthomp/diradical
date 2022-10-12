@@ -21,7 +21,7 @@ export default function NavLink({ href, exact, children }: Props) {
   const isActive = exact ? pathname === href : pathname.startsWith(href)
 
   return (
-    <Link href={href}>
+    <Link prefetch href={href}>
       <StyledLink active={isActive}>{children}</StyledLink>
     </Link>
   )
