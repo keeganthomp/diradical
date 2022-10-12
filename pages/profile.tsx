@@ -29,8 +29,6 @@ const ProfilePage = () => {
     fetch('/api/profile').then((res) => res.json()),
   )
 
-  console.log('data', user)
-
   if (isLoading)
     return (
       <Container>

@@ -4,14 +4,12 @@ import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import PlayButton from 'components/ui/Buttons/PlayButton'
-import { IoCloseOutline } from 'react-icons/io5'
 import { devices } from 'styles/theme'
+import { FaPause, FaPlay } from 'react-icons/fa'
 
 const Container = styled.div`
   display: none;
   box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
   z-index: 9;
   background: black;
   color: white;
@@ -20,48 +18,43 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
   @media ${devices.mobile} {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    grid-template-rows: 1fr 15px 20px;
-    grid-template-areas:
-      'coverArt title pause'
-      'coverArt artist pause'
-      'progress progress progress';
+    display: inherit;
+    flex-direction: column;
   }
 `
 
 const SongTitle = styled.p`
   margin: 0;
-  grid-area: title;
   font-size: 14px;
   font-weight: bold;
   align-self: end;
 `
 const Artist = styled.p`
   margin: 0;
-  grid-area: artist;
   font-size: 14px;
   align-self: end;
 `
 
-const ButtonWrapper = styled.div`
-  grid-area: pause;
-  justify-self: end;
-  position: relative;
-  top: 10px;
-`
-
 const CoverArt = styled.img`
-  grid-area: coverArt;
   max-width: 3rem;
-  align-self: end;
   border-radius: 2px;
   padding-left: 3px;
   margin-right: 3px;
 `
 
+const TopBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+`
+const ArtAndTitle = styled.div`
+  display: flex;
+`
+const TitleAndArtist = styled.div``
+
 export default function MobileAudioPlayer() {
-  const { track: nowPlayingTrack, isPlaying, stop, pause } = useNowPlaying()
+  const { track: nowPlayingTrack, isPlaying, pause, play } = useNowPlaying()
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
 
@@ -90,22 +83,33 @@ export default function MobileAudioPlayer() {
     }
   }, [nowPlayingTrack, isPlaying])
 
+  const handlePlay = () => {
+    if (nowPlayingTrack) {
+      play(nowPlayingTrack)
+    }
+  }
+
   if (!nowPlayingTrack) return null
   return (
     <>
       <Container>
-        <SongTitle>{nowPlayingTrack.title}</SongTitle>
-        <Artist>
-          {nowPlayingTrack.artist.username || nowPlayingTrack.artist.email}
-        </Artist>
-        <CoverArt src={nowPlayingTrack.coverArt} />
-        <ButtonWrapper>
+        <TopBar>
+          <ArtAndTitle>
+            <CoverArt src={nowPlayingTrack.coverArt} />
+            <TitleAndArtist>
+              <SongTitle>{nowPlayingTrack.title}</SongTitle>
+              <Artist>
+                {nowPlayingTrack.artist.username ||
+                  nowPlayingTrack.artist.email}
+              </Artist>
+            </TitleAndArtist>
+          </ArtAndTitle>
           {isPlaying ? (
-            <PauseButton audioPlayer />
+            <FaPause onClick={pause} />
           ) : (
-            <PlayButton audioPlayer track={nowPlayingTrack} />
+            <FaPlay onClick={handlePlay} />
           )}
-        </ButtonWrapper>
+        </TopBar>
         <ProgressBar progress={progress} duration={duration} />
       </Container>
       {/* Used as a ref */}
