@@ -2,8 +2,6 @@ import { useRef, useState, useEffect, SyntheticEvent } from 'react'
 import ProgressBar from './ProgressBar'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
-import PauseButton from 'components/ui/Buttons/PauseButton'
-import PlayButton from 'components/ui/Buttons/PlayButton'
 import { devices } from 'styles/theme'
 import { FaPause, FaPlay } from 'react-icons/fa'
 
@@ -41,6 +39,7 @@ const CoverArt = styled.img`
   border-radius: 4px;
   padding-left: 3px;
   margin-right: 6px;
+  object-fit: contain;
 `
 
 const TopBar = styled.div`
