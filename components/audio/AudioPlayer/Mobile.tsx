@@ -36,10 +36,11 @@ const Artist = styled.p`
 `
 
 const CoverArt = styled.img`
+  max-height: 3rem;
   max-width: 3rem;
-  border-radius: 2px;
+  border-radius: 4px;
   padding-left: 3px;
-  margin-right: 3px;
+  margin-right: 6px;
 `
 
 const TopBar = styled.div`
