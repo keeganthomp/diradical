@@ -16,7 +16,6 @@ const Container = styled.div`
   bottom: 0;
   width: 100%;
   padding: 0.75rem;
-  padding-bottom: 0;
   display: grid;
   align-items: center;
   grid-template-columns: 4rem 4rem 1fr 4rem 4rem;
@@ -66,7 +65,8 @@ const CloseIcon = styled(IoCloseOutline)`
 
 const CoverArt = styled.img`
   grid-area: coverArt;
-  max-height: 6rem;
+  max-height: 5rem;
+  max-width: 5rem;
 `
 
 export default function DesktopAudioPlayer() {
