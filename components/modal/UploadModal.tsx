@@ -1,4 +1,4 @@
-import BaseModal from './base'
+import BaseModal from './Base'
 import UploadForm from 'components/forms/UploadForm'
 
 function UploadModal({ onClose }: { onClose: () => void }) {
