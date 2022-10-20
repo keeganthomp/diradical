@@ -10,13 +10,8 @@ export default withApiAuthRequired(
       return
     }
     const { user: authedUser } = getSession(req, res)
-    const { title, genre, source, coverArt }: Partial<Track> = req.body
+    const { title, source, coverArt }: Partial<Track> = req.body
     try {
-      const { id: userId } = await prisma.user.findUnique({
-        where: {
-          email: authedUser.email,
-        },
-      })
       const track = await prisma.track.create({
         data: {
           title,
@@ -24,7 +19,7 @@ export default withApiAuthRequired(
           source,
           artist: {
             connect: {
-              id: userId,
+              email: authedUser.email,
             },
           },
         },

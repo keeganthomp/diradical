@@ -4,7 +4,9 @@ import axios from 'axios'
 import { Track } from '@prisma/client'
 import React from 'react'
 import styled from 'styled-components'
-import useRefresh from 'hooks/useRefresh'
+import Button from 'components/ui/Buttons/Base'
+import { useSetRecoilState } from 'recoil'
+import modalState, { ModalType } from 'atoms/modal'
 import TextInput from '../ui/Inputs/TextInput'
 import Form from './Form'
 
@@ -13,10 +15,15 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  text-align: center;
 `
 
-export function UploadForm() {
-  const refresh = useRefresh()
+const UploadButton = styled(Button)`
+  width: 100%;
+`
+
+export function UploadForm({ onUpload }: { onUpload?: () => void }) {
+  const setModal = useSetRecoilState(modalState)
   const { uploadFile } = useS3()
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     mode: 'all',
@@ -27,6 +34,8 @@ export function UploadForm() {
     },
   })
 
+  const hideModal = () => setModal(ModalType.NONE)
+
   const uploadTrack = async (data) => {
     const { title } = getValues()
     const audioS3Url = await uploadFile(data.audioFiles[0], title)
@@ -36,9 +45,12 @@ export function UploadForm() {
       source: audioS3Url as string,
       coverArt: artS3Url as string,
     }
-    await axios.post('/api/upload', payload)
+    await axios.post('/api/tracks', payload)
     reset()
-    refresh()
+    if (onUpload) {
+      onUpload()
+    }
+    hideModal()
   }
 
   return (
@@ -51,11 +63,11 @@ export function UploadForm() {
           })}
           placeholder='Song Title'
         />
-        <label htmlFor='audioSource'>Choose a audio file:</label>
+        <label htmlFor='audioFiles'>Choose a audio file:</label>
         <input
-          name='audioSource'
+          name='audioFiles'
           type='file'
-          accept='audio/*'
+          accept='.mp3,.wav'
           {...register('audioFiles', {
             required: true,
           })}
@@ -69,12 +81,12 @@ export function UploadForm() {
             required: true,
           })}
         />
-        <button
+        <UploadButton
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'
         >
           Submit
-        </button>
+        </UploadButton>
       </Form>
     </Container>
   )

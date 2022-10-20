@@ -12,6 +12,13 @@ const StyledButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
+  &:disabled {
+    background: #b8b8b8;
+    opacity: 0.3;
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
 `
 
 export default function Button({ children, ...props }) {

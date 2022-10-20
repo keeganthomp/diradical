@@ -7,6 +7,7 @@ import { ThemeProvider } from 'styled-components'
 import theme from 'styles/theme'
 import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import Modals from 'components/modal'
 
 const queryClient = new QueryClient()
 
@@ -23,6 +24,7 @@ function App({ Component, pageProps }: AppProps) {
               <Layout>
                 <Component {...pageProps} />
               </Layout>
+              <Modals />
             </ThemeProvider>
           </RecoilRoot>
         </QueryClientProvider>

@@ -1,8 +1,9 @@
 import { User } from '@prisma/client'
 import styled from 'styled-components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from 'components/ui/Buttons/Base'
 import EditableField from 'components/ui/Inputs/EditableField'
+import { useQuery } from 'react-query'
 
 const Container = styled.div`
   display: flex;
@@ -30,27 +31,52 @@ const truncateWallet = (wallet: string) => {
   return `${first}...${last}`
 }
 
-type Props = {
-  user: User
-  wallet: string
-}
-
 const Wallet = styled.p`
   color: #b8b8b8;
 `
 
-export default function UserSettings({ user, wallet }: Props) {
+export default function UserSettings() {
+  const {
+    isLoading,
+    error,
+    data: user,
+  } = useQuery<User & { wallet: string }>('user', () =>
+    fetch('/api/user').then((res) => res.json()),
+  )
   const [editingField, setEditingField] = useState<'username' | 'email' | null>(
     null,
   )
   const [vals, setVals] = useState({
-    username: user.username || '',
-    email: user.email,
+    username: '',
+    email: '',
   })
+
+  useEffect(() => {
+    if (!isLoading) {
+      setVals({
+        username: user?.username || '',
+        email: user?.email || '',
+      })
+    }
+  }, [isLoading])
 
   const handleUsernameChange = (e) =>
     setVals({ ...vals, username: e.target.value })
   const handleEmailChange = (e) => setVals({ ...vals, email: e.target.value })
+
+  if (isLoading)
+    return (
+      <Container>
+        <p>Loading...</p>
+      </Container>
+    )
+
+  if (error)
+    return (
+      <Container>
+        <p>Error getting user</p>
+      </Container>
+    )
 
   return (
     <Container>
@@ -76,7 +102,7 @@ export default function UserSettings({ user, wallet }: Props) {
         }}
         onStartEdit={() => setEditingField('email')}
       />
-      <Wallet>{truncateWallet(wallet)}</Wallet>
+      <Wallet>{truncateWallet(user.wallet)}</Wallet>
       {editingField && <UpdateButton>Update</UpdateButton>}
     </Container>
   )
