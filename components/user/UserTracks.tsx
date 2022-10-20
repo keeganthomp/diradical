@@ -1,11 +1,9 @@
-import { Track } from '@prisma/client'
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import { useSetRecoilState } from 'recoil'
 import modalState, { ModalType } from 'atoms/modal'
 import Button from 'components/ui/Buttons/Base'
-import { useUser } from '@auth0/nextjs-auth0'
 import { TrackWithArtist } from 'types'
 
 const Message = styled.p`
@@ -22,7 +20,6 @@ const Container = styled.div`
 `
 
 export default function UserTacks() {
-  const { user } = useUser()
   const setModal = useSetRecoilState(modalState)
   const {
     isLoading,
@@ -47,7 +44,12 @@ export default function UserTacks() {
   return (
     <Container>
       <UploadButton onClick={openUploadModal}>Upload</UploadButton>
-      <AudioGrid tracks={userTracks.map((t) => ({ ...t, artist: user }))} />
+      <AudioGrid
+        tracks={userTracks.map((t) => ({
+          ...t,
+          artist: t.artist,
+        }))}
+      />
     </Container>
   )
 }

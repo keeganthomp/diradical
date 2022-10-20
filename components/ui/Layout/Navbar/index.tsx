@@ -46,7 +46,7 @@ const Navbar = () => {
       {user ? (
         <NavLink href='/api/auth/logout'>Logout</NavLink>
       ) : (
-        <NavLink href='/api/auth/login'>Login</NavLink>
+        <NavLink href='/api/auth/login'>Login/Register</NavLink>
       )}
     </NavbarWrapper>
   )

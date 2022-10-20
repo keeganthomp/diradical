@@ -12,6 +12,7 @@ export default withApiAuthRequired(
     try {
       const userTracks = await prisma.track.findMany({
         where: { artist: { email: authedUser.email } },
+        include: { artist: { select: { username: true } } },
       })
       res.status(200).json(userTracks)
     } catch (err) {
