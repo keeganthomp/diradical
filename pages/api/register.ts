@@ -3,18 +3,19 @@ import prisma from 'lib/prisma'
 import { generateWalletMdk } from 'lib/encryption'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { email } = req.body
+  const { email, username } = req.body
   if (req.method !== 'POST') {
     res.status(405).send({ message: 'Only POST requests allowed' })
     return
   }
-  if (!email) {
-    res.status(500).json({ message: 'email is required' })
+  if (!email || !username) {
+    res.status(500).json({ message: 'email & username are required' })
   }
   try {
     const mdk = generateWalletMdk()
     await prisma.user.create({
       data: {
+        username,
         email,
         mdk,
       },
