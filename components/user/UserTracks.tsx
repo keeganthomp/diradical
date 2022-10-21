@@ -39,12 +39,17 @@ export default function UserTacks() {
   }
 
   if (isLoading) return <Loader />
-  if (error) return <p>Unable to fetch tracks</p>
+  if (error)
+    return (
+      <Container>
+        <p>unable to fetch tracks</p>
+      </Container>
+    )
   const hasNoTracks = userTracks.length === 0
-  if (hasNoTracks) return <Message>You have not uploaded any tracks.</Message>
+  if (hasNoTracks) return <Message>you have not uploaded any tracks</Message>
   return (
     <Container>
-      <UploadButton onClick={openUploadModal}>Upload</UploadButton>
+      <UploadButton onClick={openUploadModal}>upload</UploadButton>
       <AudioGrid
         tracks={userTracks.map((t) => ({
           ...t,

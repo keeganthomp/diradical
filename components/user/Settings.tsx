@@ -70,7 +70,7 @@ export default function UserSettings() {
   if (error)
     return (
       <Container>
-        <p>Error getting user</p>
+        <p>rrror fetching user</p>
       </Container>
     )
 
