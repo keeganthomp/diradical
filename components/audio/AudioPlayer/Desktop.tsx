@@ -66,7 +66,7 @@ const CloseIcon = styled(IoCloseOutline)`
 const CoverArt = styled.img`
   grid-area: coverArt;
   max-height: 5rem;
-  max-width: 5rem;
+  max-width: 3.5rem;
 `
 
 export default function DesktopAudioPlayer() {
