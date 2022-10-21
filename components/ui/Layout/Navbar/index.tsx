@@ -33,7 +33,8 @@ const NAV_LINKS: NavLinkType[] = [
 ]
 
 const NavbarWrapper = styled.div`
-  background: black;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
   display: flex;
   justify-content: flex-end;
   align-items: center;

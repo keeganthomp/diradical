@@ -10,7 +10,8 @@ import { devices } from 'styles/theme'
 const Container = styled.div`
   box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
   z-index: 9;
-  background: black;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
   color: white;
   position: fixed;
   bottom: 0;

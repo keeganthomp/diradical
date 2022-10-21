@@ -9,7 +9,8 @@ const Container = styled.div`
   display: none;
   box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
   z-index: 9;
-  background: #000;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
   color: white;
   position: fixed;
   bottom: 0;
