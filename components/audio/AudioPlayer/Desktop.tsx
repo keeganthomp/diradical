@@ -100,8 +100,6 @@ export default function DesktopAudioPlayer() {
     }
   }, [nowPlayingTrack, isPlaying])
 
-  console.log('eee', window)
-
   if (!nowPlayingTrack) return null
   return (
     <>
