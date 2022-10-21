@@ -8,6 +8,7 @@ body {
   font-size: 18px;
   font-family: Jost;
   background: #000;
+  height: 100%;
 }
 
 * {

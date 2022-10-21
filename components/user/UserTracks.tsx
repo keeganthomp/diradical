@@ -30,7 +30,7 @@ export default function UserTacks() {
     'userTracks',
     () => fetch(`/api/tracks/user`).then((res) => res.json()),
     {
-      refetchInterval: 5000,
+      refetchInterval: 10000,
     },
   )
 

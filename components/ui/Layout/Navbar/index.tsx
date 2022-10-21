@@ -41,7 +41,7 @@ const NavbarWrapper = styled.div`
   position: fixed;
   width: 100%;
   height: 3rem;
-  z-index: 9;
+  z-index: 10;
   text-transform: lowercase;
   padding: 0 2rem;
   a {
