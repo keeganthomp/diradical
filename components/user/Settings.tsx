@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Button from 'components/ui/Buttons/Base'
 import EditableField from 'components/ui/Inputs/EditableField'
 import { useQuery } from 'react-query'
+import Loader from 'components/ui/Loader'
 
 const Container = styled.div`
   display: flex;
@@ -26,7 +27,7 @@ const UpdateButton = styled(Button)`
 `
 
 const truncateWallet = (wallet: string) => {
-  const first = wallet.slice(0, 6)
+  const first = wallet.slice(0, 4)
   const last = wallet.slice(-4)
   return `${first}...${last}`
 }
@@ -64,12 +65,7 @@ export default function UserSettings() {
     setVals({ ...vals, username: e.target.value })
   const handleEmailChange = (e) => setVals({ ...vals, email: e.target.value })
 
-  if (isLoading)
-    return (
-      <Container>
-        <p>Loading...</p>
-      </Container>
-    )
+  if (isLoading) return <Loader />
 
   if (error)
     return (

@@ -70,6 +70,7 @@ const CoverArt = styled.img`
 `
 
 export default function DesktopAudioPlayer() {
+  if (typeof window === 'undefined') return null
   const { track: nowPlayingTrack, isPlaying, stop, pause } = useNowPlaying()
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
@@ -98,6 +99,8 @@ export default function DesktopAudioPlayer() {
       audioRef.current.play()
     }
   }, [nowPlayingTrack, isPlaying])
+
+  console.log('eee', window)
 
   if (!nowPlayingTrack) return null
   return (

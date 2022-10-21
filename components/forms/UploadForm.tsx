@@ -22,6 +22,16 @@ const UploadButton = styled(Button)`
   width: 100%;
 `
 
+const ModalTitle = styled.h3`
+  font-weight: 400;
+  margin: 0;
+`
+
+const Label = styled.label`
+  font-weight: 100;
+  text-transform: lowercase;
+`
+
 export function UploadForm({ onUpload }: { onUpload?: () => void }) {
   const setModal = useSetRecoilState(modalState)
   const { uploadFile } = useS3()
@@ -55,15 +65,15 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
 
   return (
     <Container>
-      <h2>Upload a song</h2>
+      <ModalTitle>upload a song</ModalTitle>
       <Form onSubmit={handleSubmit(uploadTrack)}>
         <TextInput
           {...register('title', {
             required: true,
           })}
-          placeholder='Song Title'
+          placeholder='song title'
         />
-        <label htmlFor='audioFiles'>Choose a audio file:</label>
+        <Label htmlFor='audioFiles'>Choose audio file</Label>
         <input
           name='audioFiles'
           type='file'
@@ -72,7 +82,7 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
             required: true,
           })}
         />
-        <label htmlFor='coverArt'>Choose a cover image:</label>
+        <Label htmlFor='coverArt'>Choose cover image</Label>
         <input
           name='coverArt'
           type='file'

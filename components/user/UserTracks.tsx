@@ -5,6 +5,7 @@ import { useSetRecoilState } from 'recoil'
 import modalState, { ModalType } from 'atoms/modal'
 import Button from 'components/ui/Buttons/Base'
 import { TrackWithArtist } from 'types'
+import Loader from 'components/ui/Loader'
 
 const Message = styled.p`
   text-align: center;
@@ -12,7 +13,7 @@ const Message = styled.p`
 
 const UploadButton = styled(Button)`
   width: 10rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 `
 
 const Container = styled.div`
@@ -37,7 +38,7 @@ export default function UserTacks() {
     setModal(ModalType.UPLOAD)
   }
 
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) return <Loader />
   if (error) return <p>Unable to fetch tracks</p>
   const hasNoTracks = userTracks.length === 0
   if (hasNoTracks) return <Message>You have not uploaded any tracks.</Message>

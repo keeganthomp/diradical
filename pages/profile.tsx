@@ -17,11 +17,11 @@ const ProfilePage = () => {
   const ProfileTabs: Tab[] = [
     {
       title: 'My Music',
-      Component: () => <UserTacks />,
+      Component: UserTacks,
     },
     {
       title: 'Settings',
-      Component: () => <UserSettings />,
+      Component: UserSettings,
     },
   ]
 

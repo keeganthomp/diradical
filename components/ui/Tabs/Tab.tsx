@@ -14,6 +14,7 @@ const TabTitle = styled.p<TitleProps>`
   text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
   text-transform: lowercase;
   font-weight: 200;
+  margin: 0;
 `
 
 export default function Tab({

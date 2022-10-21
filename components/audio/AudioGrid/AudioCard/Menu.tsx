@@ -14,8 +14,8 @@ const MENU_ITEM_CLASS = 'menu-item'
 
 const MenuIconWrapper = styled.div`
   position: absolute;
-  top: 5px;
-  right: 1px;
+  top: 3px;
+  right: 3px;
   z-index: 9;
   cursor: pointer;
   display: flex;
@@ -24,11 +24,16 @@ const MenuIconWrapper = styled.div`
   padding: 3px;
   opacity: 0.6;
   transition: opacity 0.1s ease-in-out;
+  border: 1px solid white;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.4);
   &:hover {
     opacity: 0.8;
   }
 `
-const MenuIcon = styled(HiDotsVertical)``
+const MenuIcon = styled(HiDotsVertical)`
+  color: #fff;
+`
 
 const MenuWrapper = styled.div`
   z-index: 9;
@@ -40,13 +45,14 @@ const MenuWrapper = styled.div`
   background: white;
   padding: 0 4px;
 `
-const MenuItem = styled.p`
-  color: black;
-  font-weight: 100;
-  font-size: 12px;
+const MenuItem = styled.p<{ color?: string }>`
+  color: ${(p) => p.color || '#000'};
+  font-weight: 300;
+  font-size: 13px;
   margin: 0;
-  padding: 0.25rem 0.75rem;
+  padding: 2px 0.5rem;
   border-bottom: 1px solid #e5e1e6;
+  text-transform: lowercase;
   cursor: pointer;
   &:last-child {
     border-bottom: none;
@@ -94,9 +100,9 @@ export default function AudioCardMenu({ track }: Props) {
       </MenuIconWrapper>
       {isOpen && (
         <MenuWrapper ref={menuRef}>
-          <MenuItem className={MENU_ITEM_CLASS}>weee</MenuItem>
-          <MenuItem className={MENU_ITEM_CLASS}>weee</MenuItem>
-          <MenuItem className={MENU_ITEM_CLASS}>weee</MenuItem>
+          <MenuItem color='red' className={MENU_ITEM_CLASS}>
+            delete
+          </MenuItem>
         </MenuWrapper>
       )}
     </>

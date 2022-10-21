@@ -11,7 +11,7 @@ const TextInput = styled.input`
   font-size: 1rem;
   border-radius: 0px;
   font-weight: 100;
-  font-family: raleway;
+  font-family: Jost;
 `
 
 export default TextInput

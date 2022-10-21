@@ -1,16 +1,35 @@
 import styled from 'styled-components'
 import { useUser } from '@auth0/nextjs-auth0'
+import { SlMusicToneAlt, SlLogin, SlLogout } from 'react-icons/sl'
+import { BsPerson } from 'react-icons/bs'
 import NavLink from './NavLink'
 
 type NavLinkType = {
-  name: string
+  Icon: any
   path: string
   authRequired?: boolean
 }
 
+const MusicIcon = styled(SlMusicToneAlt)`
+  font-size: 22px;
+  padding: 3px;
+`
+const ProfleIcon = styled(BsPerson)`
+  font-size: 22px;
+  padding: 3px;
+`
+const LoginIcon = styled(SlLogin)`
+  font-size: 22px;
+  padding: 3px;
+`
+const LogoutIcon = styled(SlLogout)`
+  font-size: 22px;
+  padding: 3px;
+`
+
 const NAV_LINKS: NavLinkType[] = [
-  { name: 'Home', path: '/' },
-  { name: 'Profile', path: '/profile', authRequired: true },
+  { Icon: MusicIcon, path: '/' },
+  { Icon: ProfleIcon, path: '/profile', authRequired: true },
 ]
 
 const NavbarWrapper = styled.div`
@@ -24,8 +43,9 @@ const NavbarWrapper = styled.div`
   height: 3rem;
   z-index: 9;
   text-transform: lowercase;
+  padding: 0 2rem;
   a {
-    margin: 6px;
+    margin-left: 25px;
   }
 `
 
@@ -40,13 +60,17 @@ const Navbar = () => {
     <NavbarWrapper>
       {validNavLinks.map((link) => (
         <NavLink exact key={link.path} href={link.path}>
-          {link.name}
+          <link.Icon />
         </NavLink>
       ))}
       {user ? (
-        <NavLink href='/api/auth/logout'>Logout</NavLink>
+        <NavLink href='/api/auth/logout'>
+          <LogoutIcon />
+        </NavLink>
       ) : (
-        <NavLink href='/api/auth/login'>Login/Register</NavLink>
+        <NavLink href='/api/auth/login'>
+          <LoginIcon />
+        </NavLink>
       )}
     </NavbarWrapper>
   )

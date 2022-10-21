@@ -10,10 +10,20 @@ type Props = {
 
 const StyledLink = styled.a<{ active?: boolean }>`
   text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
-  padding: 5px 1rem;
-  font-size: 16px;
-  color: white;
+  background: transparent;
+  height: 1.5rem;
+  width: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  border-radius: 50%;
+  color: #fff;
+  transition: all 0.1s ease-in-out;
+  &:hover {
+    background: #fff;
+    color: #000;
+  }
 `
 
 export default function NavLink({ href, exact, children }: Props) {
@@ -21,7 +31,7 @@ export default function NavLink({ href, exact, children }: Props) {
   const isActive = exact ? pathname === href : pathname.startsWith(href)
 
   return (
-    <Link prefetch href={href}>
+    <Link href={href}>
       <StyledLink active={isActive}>{children}</StyledLink>
     </Link>
   )
