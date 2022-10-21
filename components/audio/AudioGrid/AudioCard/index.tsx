@@ -7,6 +7,7 @@ import { devices } from 'styles/theme'
 import { useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
+import Image from 'next/image'
 import AudioCardMenu from './Menu'
 
 type Props = {
@@ -68,13 +69,6 @@ const Artist = styled.p`
   text-align: center;
   font-weight: 200;
 `
-const CoverArt = styled.img`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`
-
 const Realesed = styled.p`
   margin: 0;
 `
@@ -97,7 +91,13 @@ export default function AudioCard({ track }: Props) {
         bgImage={track.coverArt}
       >
         <AudioCardMenu track={track} />
-        <CoverArt src={track.coverArt} />
+        <Image
+          layout='fill'
+          loading='eager'
+          priority
+          objectFit='cover'
+          src={track.coverArt}
+        />
         {isHovering && (
           <>{isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}</>
         )}
