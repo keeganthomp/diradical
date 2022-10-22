@@ -21,7 +21,9 @@ const NumberInput = styled.input`
   text-align: center;
   padding: 3px 6px;
   font-size: 1rem;
+  border-radius: 0px;
   width: 12rem;
+  outline: none;
   &:focus,
   &:active {
     outline: none;
