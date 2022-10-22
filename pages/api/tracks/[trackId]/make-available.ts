@@ -9,12 +9,12 @@ export default withApiAuthRequired(
       res.status(405).send({ message: 'Only POST requests allowed' })
       return
     }
-    const { sharesAvailable, pricePerShare } = req.body
-    if (!sharesAvailable || !pricePerShare) {
+    const { percentAvailable, pricePerShare } = req.body
+    if (!percentAvailable || !pricePerShare) {
       res.status(400).send({ message: 'Missing required fields' })
     }
     try {
-      const fmtSharesAvailable = Number(sharesAvailable)
+      const fmtPercentAvailable = Number(percentAvailable)
       const fmtPrice = Number(pricePerShare)
       const { user: authedUser } = getSession(req, res)
       const track = await prisma.track.findFirst({
@@ -31,7 +31,7 @@ export default withApiAuthRequired(
       await makeSharesAvailable(
         track.artist.mdk,
         track.contractAddress,
-        fmtSharesAvailable,
+        fmtPercentAvailable,
         fmtPrice,
       )
       res.status(200).json({ success: true })
