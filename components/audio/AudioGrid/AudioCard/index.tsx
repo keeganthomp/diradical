@@ -4,10 +4,12 @@ import styled from 'styled-components'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
+import useContractViews from 'hooks/useCtcViews'
 import AudioCardMenu from './Menu'
+import Button from 'components/ui/Buttons/Base'
 
 type Props = {
   track: TrackWithArtist
@@ -35,6 +37,8 @@ const ImageContainer = styled.div`
   }
 `
 
+const MetaData = styled.div``
+
 const Meta = styled.div`
   display: flex;
   align-items: center;
@@ -55,17 +59,14 @@ const TitleAndTrack = styled.div`
   align-items: flex-start;
 `
 
-const Title = styled.p`
+const TitleInfo = styled.p`
   font-weight: bold;
   font-weight: bold;
   margin: 0;
-  text-align: center;
+  text-align: left;
+  line-height: 13px;
 `
-const Artist = styled.p`
-  position: relative;
-  bottom: 6px;
-  margin: 0;
-  text-align: center;
+const Artist = styled.span`
   font-weight: 200;
 `
 const CoverArt = styled.img`
@@ -78,8 +79,36 @@ const CoverArt = styled.img`
 const Realesed = styled.p`
   margin: 0;
 `
+const Shares = styled.p`
+  margin: 0;
+  margin-top: 6px;
+  text-transform: lowercase;
+  font-weight: 300;
+  z-index: 9;
+  position: absolute;
+  bottom: 3px;
+  left: 2px;
+  font-size: 12px;
+  background: #000;
+  color: #fff;
+  padding: 2px 4px;
+  border-radius: 5px;
+  opacity: 0.8;
+`
+const BuyButton = styled(Button)`
+  padding: 2px 2px;
+  text-transform: lowercase;
+  border-radius: 3px;
+  width: 4.5rem;
+  z-index: 9;
+  position: absolute;
+  bottom: 7px;
+  right: 2px;
+  opacity: 0.9;
+`
 
 export default function AudioCard({ track }: Props) {
+  const { isFetching, views } = useContractViews(track.contractAddress)
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
@@ -88,6 +117,8 @@ export default function AudioCard({ track }: Props) {
 
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
+
+  console.log({ isFetching, views })
 
   return (
     <Wrapper>
@@ -99,16 +130,38 @@ export default function AudioCard({ track }: Props) {
         <AudioCardMenu track={track} />
         <CoverArt src={track.coverArt} />
         {isHovering && (
-          <>{isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}</>
+          <>
+            {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
+            {!isFetching && views && (
+              <>
+                <Shares>Shares Available: {views.sharesAvailable}</Shares>
+                <BuyButton disabled={views.sharesAvailable > 0}>
+                  Buy shares
+                </BuyButton>
+              </>
+            )}
+          </>
         )}
       </ImageContainer>
-      <Meta>
-        <TitleAndTrack>
-          <Title>{track.title}</Title>
-          <Artist>{track.artist.username || track.artist.email}</Artist>
-        </TitleAndTrack>
-        <Realesed>{moment(track.createdAt).calendar()}</Realesed>
-      </Meta>
+      <MetaData>
+        <Meta>
+          <TitleInfo>
+            {track.title} <br />{' '}
+            <Artist>{track.artist.username || track.artist.email}</Artist>
+          </TitleInfo>
+          <Realesed>{moment(track.createdAt).calendar()}</Realesed>
+        </Meta>
+        <Meta>
+          {!isFetching && views && (
+            <>
+              <Shares>Shares Available: {views.sharesAvailable}</Shares>
+              <BuyButton disabled={views.sharesAvailable === 0}>
+                Buy shares
+              </BuyButton>
+            </>
+          )}
+        </Meta>
+      </MetaData>
     </Wrapper>
   )
 }

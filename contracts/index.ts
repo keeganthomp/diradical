@@ -1,10 +1,7 @@
-import { loadStdlib } from '@reach-sh/stdlib'
+import stdlib from 'lib/reach'
 import algosdk from 'algosdk'
 import { getWalletFromMdk } from 'lib/encryption'
 import * as backend from './index.song.mjs'
-
-const stdlib = loadStdlib('ALGO')
-stdlib.setProviderByName('TestNet')
 
 const getAccountFromMdk = async (mdk) => {
   const wallet = getWalletFromMdk(mdk)
@@ -36,7 +33,7 @@ export const makeSharesAvailable = async (
   mdk: string,
   ctcAddress: number,
   numOfShares: number,
-  pps: number // in microAlgos - 1 = 0.000001 ALGO
+  pps: number, // in microAlgos - 1 = 0.000001 ALGO
 ) => {
   const acc: any = await getAccountFromMdk(mdk)
   const ctc = acc.contract(backend, ctcAddress)
@@ -44,7 +41,6 @@ export const makeSharesAvailable = async (
   const pricePerShare = stdlib.bigNumberify(pps)
   await ctc.a.makeSharesAvailable(numOfSharesAvailable, pricePerShare)
 }
-
 
 export const purschaseShares = async (
   mdk: string,
@@ -55,4 +51,10 @@ export const purschaseShares = async (
   const ctc = acc.contract(backend, ctcAddress)
   const numOfSharesToPurchase = stdlib.bigNumberify(numOfShares)
   await ctc.a.purchaseShares(numOfSharesToPurchase)
+}
+
+export const getViews = async (ctcAddress: number) => {
+  const acc = await stdlib.createAccount()
+  const ctc = acc.contract(backend, ctcAddress)
+  console.log('ctc', ctc)
 }
