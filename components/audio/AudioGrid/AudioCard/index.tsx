@@ -151,16 +151,6 @@ export default function AudioCard({ track }: Props) {
           </TitleInfo>
           <Realesed>{moment(track.createdAt).calendar()}</Realesed>
         </Meta>
-        <Meta>
-          {!isFetching && views && (
-            <>
-              <Shares>Shares Available: {views.sharesAvailable}</Shares>
-              <BuyButton disabled={views.sharesAvailable === 0}>
-                Buy shares
-              </BuyButton>
-            </>
-          )}
-        </Meta>
       </MetaData>
     </Wrapper>
   )
