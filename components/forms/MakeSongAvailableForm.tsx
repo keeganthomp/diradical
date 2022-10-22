@@ -62,10 +62,14 @@ const Error = styled.p`
 
 const PercentIcon = styled(BsPercent)`
   position: absolute;
+  bottom: 5px;
+  left: 0;
 `
 const AlgoSymbol = styled.span`
   position: absolute;
   font-weight: 200;
+  bottom: 2px;
+  left: 0;
 `
 
 export function MakeSongAvailableForm({ track }: { track: Track }) {

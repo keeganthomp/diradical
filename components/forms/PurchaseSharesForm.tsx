@@ -48,6 +48,8 @@ const Field = styled.div`
 `
 const PercentIcon = styled(BsPercent)`
   position: absolute;
+  bottom: 5px;
+  left: 0;
 `
 
 const ModalTitle = styled.h3`
