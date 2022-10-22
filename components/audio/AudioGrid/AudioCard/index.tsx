@@ -10,6 +10,7 @@ import moment from 'moment'
 import useContractViews from 'hooks/useCtcViews'
 import AudioCardMenu from './Menu'
 import Button from 'components/ui/Buttons/Base'
+import { useRouter } from 'next/router'
 
 type Props = {
   track: TrackWithArtist
@@ -111,6 +112,8 @@ const BuyButton = styled(Button)`
 `
 
 export default function AudioCard({ track }: Props) {
+  const router = useRouter()
+  const isProfilePage = router.pathname === '/profile'
   const { isFetching, views } = useContractViews(track.contractAddress)
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
@@ -120,8 +123,6 @@ export default function AudioCard({ track }: Props) {
 
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
-
-  console.log({ isFetching, views })
 
   return (
     <Wrapper>
@@ -135,7 +136,7 @@ export default function AudioCard({ track }: Props) {
         {isHovering && (
           <>
             {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
-            {!isFetching && views && (
+            {!isProfilePage && !isFetching && views && (
               <>
                 <Shares>Shares Available: {views.sharesAvailable}</Shares>
                 <BuyButton disabled={views.sharesAvailable > 0}>
