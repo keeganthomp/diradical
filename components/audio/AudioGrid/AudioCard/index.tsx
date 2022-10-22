@@ -81,30 +81,33 @@ const Realesed = styled.p`
 `
 const Shares = styled.p`
   margin: 0;
-  margin-top: 6px;
   text-transform: lowercase;
-  font-weight: 300;
+  font-weight: 400;
   z-index: 9;
   position: absolute;
   bottom: 3px;
   left: 2px;
   font-size: 12px;
-  background: #000;
-  color: #fff;
-  padding: 2px 4px;
+  background: #fff;
+  color: #000;
+  padding: 0 4px;
   border-radius: 5px;
   opacity: 0.8;
 `
 const BuyButton = styled(Button)`
-  padding: 2px 2px;
+  font-size: 12px;
+  padding: 0 4px;
   text-transform: lowercase;
-  border-radius: 3px;
+  border-radius: 5px;
   width: 4.5rem;
   z-index: 9;
   position: absolute;
-  bottom: 7px;
+  bottom: 2px;
   right: 2px;
   opacity: 0.9;
+  background: #000;
+  color: #fff;
+  height: 25px;
 `
 
 export default function AudioCard({ track }: Props) {
