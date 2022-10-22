@@ -10,6 +10,7 @@ type Props = {
   onStartEdit?: (e?: any) => void
   isEditing: boolean
   label: string
+  disabled?: boolean
 }
 
 const Field = styled.div`
@@ -76,6 +77,7 @@ export default function EditableField({
   onStartEdit,
   isEditing,
   label,
+  disabled,
 }: Props) {
   const handleCancel = () => {
     onCancel()
@@ -94,13 +96,15 @@ export default function EditableField({
         ) : (
           <FieldValue>{value}</FieldValue>
         )}
-        <Icon>
-          {isEditing ? (
-            <CancelEditIcon onClick={handleCancel} />
-          ) : (
-            <EditIcon onClick={handleEdit} />
-          )}
-        </Icon>
+        {!disabled && (
+          <Icon>
+            {isEditing ? (
+              <CancelEditIcon onClick={handleCancel} />
+            ) : (
+              <EditIcon onClick={handleEdit} />
+            )}
+          </Icon>
+        )}
       </FieldInput>
     </Field>
   )

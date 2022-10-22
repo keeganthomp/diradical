@@ -31,11 +31,12 @@ export default function UserTacks() {
     () => fetch(`/api/tracks/user`).then((res) => res.json()),
     {
       refetchInterval: 10000,
+      staleTime: 10000,
     },
   )
 
   const openUploadModal = () => {
-    setModal(ModalType.UPLOAD)
+    setModal({ type: ModalType.UPLOAD, state: null })
   }
 
   if (isLoading) return <Loader />

@@ -4,6 +4,9 @@ import Tabs from 'components/ui/Tabs'
 import { Tab } from 'types'
 import UserTacks from 'components/user/UserTracks'
 import UserSettings from 'components/user/Settings'
+import { getSession } from '@auth0/nextjs-auth0'
+import prisma from 'lib/prisma'
+import { getWalletFromMdk } from 'lib/encryption'
 
 const Container = styled.div`
   display: flex;
@@ -13,7 +16,7 @@ const Container = styled.div`
   color: white;
 `
 
-const ProfilePage = () => {
+const ProfilePage = ({ wallet }) => {
   const ProfileTabs: Tab[] = [
     {
       title: 'My Music',
@@ -21,7 +24,7 @@ const ProfilePage = () => {
     },
     {
       title: 'Settings',
-      Component: UserSettings,
+      Component: () => <UserSettings wallet={wallet} />,
     },
   ]
 
@@ -33,3 +36,21 @@ const ProfilePage = () => {
 }
 
 export default ProfilePage
+
+export async function getServerSideProps(context) {
+  const { user: authedUser } = getSession(context.req, context.res)
+  const user = await prisma.user.findUnique({
+    where: {
+      email: authedUser.email,
+    },
+    select: {
+      mdk: true,
+    },
+  })
+  const wallet = getWalletFromMdk(user.mdk)
+  return {
+    props: {
+      wallet: wallet.addr,
+    },
+  }
+}

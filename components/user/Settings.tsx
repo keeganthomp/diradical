@@ -1,10 +1,8 @@
-import { User } from '@prisma/client'
 import styled from 'styled-components'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from 'components/ui/Buttons/Base'
 import EditableField from 'components/ui/Inputs/EditableField'
-import { useQuery } from 'react-query'
-import Loader from 'components/ui/Loader'
+import { useUser } from '@auth0/nextjs-auth0'
 
 const Container = styled.div`
   display: flex;
@@ -26,6 +24,17 @@ const UpdateButton = styled(Button)`
   align-items: center;
 `
 
+const WalletField = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`
+const WalletLabel = styled.p`
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+`
+
 const truncateWallet = (wallet: string) => {
   const first = wallet.slice(0, 4)
   const last = wallet.slice(-4)
@@ -34,45 +43,23 @@ const truncateWallet = (wallet: string) => {
 
 const Wallet = styled.p`
   color: #b8b8b8;
+  margin: 0;
+  width: 100%;
+  font-weight: 100;
 `
 
-export default function UserSettings() {
-  const {
-    isLoading,
-    error,
-    data: user,
-  } = useQuery<User & { wallet: string }>('user', () =>
-    fetch('/api/user').then((res) => res.json()),
-  )
+export default function UserSettings({ wallet }: { wallet: string | null }) {
+  const { user } = useUser()
   const [editingField, setEditingField] = useState<'username' | 'email' | null>(
     null,
   )
   const [vals, setVals] = useState({
-    username: '',
-    email: '',
+    username: user.username as string,
+    email: user.email,
   })
-
-  useEffect(() => {
-    if (!isLoading) {
-      setVals({
-        username: user?.username || '',
-        email: user?.email || '',
-      })
-    }
-  }, [isLoading])
-
   const handleUsernameChange = (e) =>
     setVals({ ...vals, username: e.target.value })
   const handleEmailChange = (e) => setVals({ ...vals, email: e.target.value })
-
-  if (isLoading) return <Loader />
-
-  if (error)
-    return (
-      <Container>
-        <p>error fetching user</p>
-      </Container>
-    )
 
   return (
     <Container>
@@ -82,10 +69,11 @@ export default function UserSettings() {
         value={vals.username}
         onChange={handleUsernameChange}
         onCancel={() => {
-          setVals({ ...vals, username: user.username })
+          setVals({ ...vals, username: user.username as string })
           setEditingField(null)
         }}
         onStartEdit={() => setEditingField('username')}
+        disabled
       />
       <EditableField
         label='Email'
@@ -97,8 +85,14 @@ export default function UserSettings() {
           setEditingField(null)
         }}
         onStartEdit={() => setEditingField('email')}
+        disabled
       />
-      <Wallet>{truncateWallet(user.wallet)}</Wallet>
+      {wallet && (
+        <WalletField>
+          <WalletLabel>Wallet</WalletLabel>
+          <Wallet>{truncateWallet(wallet)}</Wallet>
+        </WalletField>
+      )}
       {editingField && <UpdateButton>Update</UpdateButton>}
     </Container>
   )

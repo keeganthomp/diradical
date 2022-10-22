@@ -7,6 +7,7 @@ import NavLink from './NavLink'
 type NavLinkType = {
   Icon: any
   path: string
+  title: string
   authRequired?: boolean
 }
 
@@ -26,10 +27,28 @@ const LogoutIcon = styled(SlLogout)`
   font-size: 22px;
   padding: 3px;
 `
+const Title = styled.span`
+  font-weight: 200;
+`
+const SignupButton = styled.a`
+  text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #000;
+  border-radius: 20px;
+  padding: 0 14px;
+  transition: opacity 0.1s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+  }
+`
 
 const NAV_LINKS: NavLinkType[] = [
-  { Icon: MusicIcon, path: '/' },
-  { Icon: ProfleIcon, path: '/profile', authRequired: true },
+  { Icon: MusicIcon, title: 'Music', path: '/' },
+  { Icon: ProfleIcon, title: 'profile', path: '/profile', authRequired: true },
 ]
 
 const NavbarWrapper = styled.div`
@@ -56,22 +75,26 @@ const Navbar = () => {
   const validNavLinks = NAV_LINKS.filter(
     (link) => (link.authRequired && user) || !link.authRequired,
   )
-
   return (
     <NavbarWrapper>
       {validNavLinks.map((link) => (
         <NavLink exact key={link.path} href={link.path}>
-          <link.Icon />
+          <Title>{link.title}</Title>
         </NavLink>
       ))}
       {user ? (
         <NavLink href='/api/auth/logout'>
-          <LogoutIcon />
+          <Title>Logout</Title>
         </NavLink>
       ) : (
-        <NavLink href='/api/auth/login'>
-          <LoginIcon />
-        </NavLink>
+        <>
+          <NavLink href='/api/auth/login'>
+            <Title>Login</Title>
+          </NavLink>
+          <SignupButton href='/api/auth/signup'>
+            <Title>Signup</Title>
+          </SignupButton>
+        </>
       )}
     </NavbarWrapper>
   )

@@ -43,7 +43,7 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
     },
   })
 
-  const hideModal = () => setModal(ModalType.NONE)
+  const hideModal = () => setModal({ type: ModalType.NONE, state: null })
 
   const uploadTrack = async (data) => {
     try {

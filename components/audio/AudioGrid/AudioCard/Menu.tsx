@@ -5,6 +5,8 @@ import { TrackWithArtist } from 'types'
 import activeMenuState from 'atoms/audioMenu'
 import { useRecoilState } from 'recoil'
 import { useRef, useEffect } from 'react'
+import { useSetRecoilState } from 'recoil'
+import modalState, { ModalType } from 'atoms/modal'
 
 type Props = {
   track: TrackWithArtist
@@ -63,6 +65,7 @@ const MenuItem = styled.p<{ color?: string }>`
 `
 
 export default function AudioCardMenu({ track }: Props) {
+  const setModal = useSetRecoilState(modalState)
   const menuRef = useRef<HTMLDivElement>(null)
   const [activeMenu, setActiveMenu] = useRecoilState(activeMenuState)
   const router = useRouter()
@@ -93,6 +96,9 @@ export default function AudioCardMenu({ track }: Props) {
     }
   }
 
+  const openSongModal = () =>
+    setModal({ type: ModalType.MAKE_SONG_AVAILABLE, state: { track } })
+
   return (
     <>
       <MenuIconWrapper onClick={handleClick}>
@@ -100,6 +106,9 @@ export default function AudioCardMenu({ track }: Props) {
       </MenuIconWrapper>
       {isOpen && (
         <MenuWrapper ref={menuRef}>
+          <MenuItem onClick={openSongModal} className={MENU_ITEM_CLASS}>
+            Make Available
+          </MenuItem>
           <MenuItem color='red' className={MENU_ITEM_CLASS}>
             delete
           </MenuItem>

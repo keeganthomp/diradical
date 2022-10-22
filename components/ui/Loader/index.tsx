@@ -1,15 +1,20 @@
-import { Puff } from 'react-loader-spinner'
+import styled from 'styled-components'
 
-const LOADER_SIZE = '40'
+const Container = styled.div`
+  width: 100%;
+  text-align: center;
+`
 
 function Loader() {
   return (
-    <Puff
-      wrapperStyle={{ justifyContent: 'center' }}
-      height={LOADER_SIZE}
-      width={LOADER_SIZE}
-      color='#fff'
-    />
+    <Container>
+      <div className='lds-ring'>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </Container>
   )
 }
 

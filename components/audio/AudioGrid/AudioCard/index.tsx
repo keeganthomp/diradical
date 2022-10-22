@@ -6,6 +6,7 @@ import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
+import { useUser } from '@auth0/nextjs-auth0'
 import moment from 'moment'
 import useContractViews from 'hooks/useCtcViews'
 import AudioCardMenu from './Menu'
@@ -41,6 +42,7 @@ const ImageContainer = styled.div`
 const MetaData = styled.div``
 
 const Meta = styled.div`
+  margin-top: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,18 +50,9 @@ const Meta = styled.div`
   width: 100%;
   color: white;
   p {
-    padding: 0 4px;
     font-size: 14px;
   }
 `
-
-const TitleAndTrack = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-`
-
 const TitleInfo = styled.p`
   font-weight: bold;
   font-weight: bold;
@@ -79,6 +72,8 @@ const CoverArt = styled.img`
 
 const Realesed = styled.p`
   margin: 0;
+  font-size: 14px;
+  text-transform: lowercase;
 `
 const Shares = styled.p`
   margin: 0;
@@ -105,13 +100,30 @@ const BuyButton = styled(Button)`
   position: absolute;
   bottom: 2px;
   right: 2px;
-  opacity: 0.9;
   background: #000;
   color: #fff;
   height: 25px;
 `
+const RightCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 13px;
+`
+const ContractAddress = styled.a`
+  font-size: 12px;
+  text-align: right;
+  cursor: pointer;
+  text-decoration: underline;
+  color: white;
+  justify-self: flex-start;
+  font-weight: 200;
+  &:visited {
+    color: white;
+  }
+`
 
 export default function AudioCard({ track }: Props) {
+  const { user } = useUser()
   const router = useRouter()
   const isProfilePage = router.pathname === '/profile'
   const { isFetching, views } = useContractViews(track.contractAddress)
@@ -136,10 +148,10 @@ export default function AudioCard({ track }: Props) {
         {isHovering && (
           <>
             {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
-            {!isProfilePage && !isFetching && views && (
+            {!isProfilePage && !isFetching && views && user && (
               <>
                 <Shares>Shares Available: {views.sharesAvailable}</Shares>
-                <BuyButton disabled={views.sharesAvailable > 0}>
+                <BuyButton disabled={views.sharesAvailable === 0}>
                   Buy shares
                 </BuyButton>
               </>
@@ -153,7 +165,15 @@ export default function AudioCard({ track }: Props) {
             {track.title} <br />{' '}
             <Artist>{track.artist.username || track.artist.email}</Artist>
           </TitleInfo>
-          <Realesed>{moment(track.createdAt).calendar()}</Realesed>
+          <RightCol>
+            <Realesed>{moment(track.createdAt).calendar()}</Realesed>
+            <ContractAddress
+              target='_blank'
+              href={`https://testnet.algoexplorer.io/application/${track.contractAddress}`}
+            >
+              {track.contractAddress}
+            </ContractAddress>
+          </RightCol>
         </Meta>
       </MetaData>
     </Wrapper>
