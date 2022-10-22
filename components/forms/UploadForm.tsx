@@ -25,6 +25,13 @@ const ModalTitle = styled.h3`
   font-weight: 400;
   margin: 0;
 `
+const Field = styled.div`
+  position: relative;
+  margin-bottom: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+`
 
 const Label = styled.label`
   font-weight: 100;
@@ -58,7 +65,6 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
       formData.append('title', title)
       formData.append('source', audioS3Url as string)
       formData.append('coverArt', artS3Url as string)
-      console.log('yesp')
       await axios.post('/api/tracks', formData)
       reset()
       if (onUpload) {
@@ -74,30 +80,37 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
     <Container>
       <ModalTitle>upload a song</ModalTitle>
       <Form onSubmit={handleSubmit(uploadTrack)}>
-        <TextInput
-          {...register('title', {
-            required: true,
-          })}
-          placeholder='song title'
-        />
-        <Label htmlFor='audioFiles'>Choose audio file</Label>
-        <input
-          name='audioFiles'
-          type='file'
-          accept='.mp3,.wav'
-          {...register('audioFiles', {
-            required: true,
-          })}
-        />
-        <Label htmlFor='coverArt'>Choose cover image</Label>
-        <input
-          name='coverArt'
-          type='file'
-          accept='image/*'
-          {...register('artFiles', {
-            required: true,
-          })}
-        />
+        <Field>
+          <Label>song sitle</Label>
+          <TextInput
+            {...register('title', {
+              required: true,
+            })}
+            placeholder='rad song xxx'
+          />
+        </Field>
+        <Field>
+          <Label>Choose audio file</Label>
+          <input
+            name='audioFiles'
+            type='file'
+            accept='.mp3,.wav'
+            {...register('audioFiles', {
+              required: true,
+            })}
+          />
+        </Field>
+        <Field>
+          <Label>Choose cover image</Label>
+          <input
+            name='coverArt'
+            type='file'
+            accept='image/*'
+            {...register('artFiles', {
+              required: true,
+            })}
+          />
+        </Field>
         <UploadButton
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'

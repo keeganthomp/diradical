@@ -7,12 +7,19 @@ import Form from './Form'
 import { Track } from '@prisma/client'
 import modalState, { ModalType } from 'atoms/modal'
 import { useSetRecoilState } from 'recoil'
+import { BsPercent } from 'react-icons/bs'
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`
+
+const Field = styled.div`
+  position: relative;
+  margin-bottom: 0.5rem;
+  text-align: center;
 `
 
 const NumberInput = styled.input`
@@ -32,6 +39,10 @@ const NumberInput = styled.input`
   }
 `
 
+const Label = styled.p`
+  font-weight: 200;
+`
+
 const SubmitButton = styled(Button)`
   width: 100%;
 `
@@ -49,12 +60,20 @@ const Error = styled.p`
   margin-bottom: 1rem;
 `
 
+const PercentIcon = styled(BsPercent)`
+  position: absolute;
+`
+const AlgoSymbol = styled.span`
+  position: absolute;
+  font-weight: 200;
+`
+
 export function MakeSongAvailableForm({ track }: { track: Track }) {
   const setModal = useSetRecoilState(modalState)
-  const { register, handleSubmit, reset, formState } = useForm({
+  const { register, handleSubmit, setValue, formState, getValues } = useForm({
     mode: 'all',
     defaultValues: {
-      sharesAvailable: null as number,
+      percentAvailable: null as number,
       pricePerShare: null as number,
     },
   })
@@ -70,38 +89,47 @@ export function MakeSongAvailableForm({ track }: { track: Track }) {
     <Container>
       <ModalTitle>open to buyers</ModalTitle>
       <Form onSubmit={handleSubmit(makeAvailable)}>
-        <NumberInput
-          {...register('sharesAvailable', {
-            required: true,
-            pattern: {
-              value: /\b([1-9]|[1-9][0-9]|100)\b/,
-              message: 'shares must be between 1 and 100',
-            },
-          })}
-          type='number'
-          min='0'
-          max='100'
-          placeholder='Shares to offer'
-        />
-        {formState.errors.sharesAvailable?.message && (
-          <Error>{formState.errors.sharesAvailable?.message}</Error>
-        )}
-        <NumberInput
-          {...register('pricePerShare', {
-            required: true,
-            pattern: {
-              value: /^\d{0,10}(\.\d{0,2})?$/,
-              message: 'price must be a positive number',
-            },
-          })}
-          type='number'
-          min='0'
-          max='100'
-          placeholder='Price per share (mAlgo)'
-        />
-        {formState.errors.pricePerShare?.message && (
-          <Error>{formState.errors.pricePerShare?.message}</Error>
-        )}
+        <Field>
+          <Label>Percent to offer</Label>
+          <PercentIcon />
+          <NumberInput
+            {...register('percentAvailable', {
+              required: true,
+              valueAsNumber: true,
+              max: 100,
+              pattern: {
+                value: /\b([1-9]|[1-9][0-9]|100)\b/,
+                message: 'shares must be between 1 and 100',
+              },
+            })}
+            type='number'
+            min='0'
+            max='100'
+            placeholder='0'
+          />
+          {formState.errors.percentAvailable?.message && (
+            <Error>{formState.errors.percentAvailable?.message}</Error>
+          )}
+        </Field>
+        <Field>
+          <Label>Price per %</Label>
+          <AlgoSymbol>Algo</AlgoSymbol>
+          <NumberInput
+            {...register('pricePerShare', {
+              valueAsNumber: true,
+              required: true,
+              pattern: {
+                value: /^\d{0,10}(\.\d{0,2})?$/,
+                message: 'price must be a positive number',
+              },
+            })}
+            type='number'
+            placeholder='0.000000'
+          />
+          {formState.errors.pricePerShare?.message && (
+            <Error>{formState.errors.pricePerShare?.message}</Error>
+          )}
+        </Field>
         <SubmitButton
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'

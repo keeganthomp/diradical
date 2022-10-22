@@ -7,6 +7,7 @@ import Form from './Form'
 import { Track } from '@prisma/client'
 import modalState, { ModalType } from 'atoms/modal'
 import { useSetRecoilState } from 'recoil'
+import { BsPercent } from 'react-icons/bs'
 
 const Container = styled.div`
   display: flex;
@@ -34,6 +35,19 @@ const NumberInput = styled.input`
 
 const SubmitButton = styled(Button)`
   width: 100%;
+`
+
+const Label = styled.p`
+  font-weight: 200;
+`
+
+const Field = styled.div`
+  position: relative;
+  margin-bottom: 0.5rem;
+  text-align: center;
+`
+const PercentIcon = styled(BsPercent)`
+  position: absolute;
 `
 
 const ModalTitle = styled.h3`
@@ -67,24 +81,28 @@ export function PurchaseSharesForm({ track }: { track: Track }) {
 
   return (
     <Container>
-      <ModalTitle>purchase shares</ModalTitle>
+      <ModalTitle>purchase ownership</ModalTitle>
       <Form onSubmit={handleSubmit(purchaseShares)}>
-        <NumberInput
-          {...register('sharesToPurchase', {
-            required: true,
-            pattern: {
-              value: /\b([1-9]|[1-9][0-9]|100)\b/,
-              message: 'shares must be between 1 and 100',
-            },
-          })}
-          type='number'
-          min='0'
-          max='100'
-          placeholder='Shares to purchase'
-        />
-        {formState.errors.sharesToPurchase?.message && (
-          <Error>{formState.errors.sharesToPurchase?.message}</Error>
-        )}
+        <Field>
+          <Label>Percent ownership</Label>
+          <PercentIcon />
+          <NumberInput
+            {...register('sharesToPurchase', {
+              required: true,
+              pattern: {
+                value: /\b([1-9]|[1-9][0-9]|100)\b/,
+                message: 'shares must be between 1 and 100',
+              },
+            })}
+            type='number'
+            min='0'
+            max='100'
+            placeholder='0'
+          />
+          {formState.errors.sharesToPurchase?.message && (
+            <Error>{formState.errors.sharesToPurchase?.message}</Error>
+          )}
+        </Field>
         <SubmitButton
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'
