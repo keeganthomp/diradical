@@ -1,5 +1,6 @@
 import UploadModal from './UploadModal'
 import MakeSongAvailableModal from './MakeSongAvailable'
+import PurchaseSharesModal from './PurchaseSharesModal'
 import { useRecoilState } from 'recoil'
 import modalState, { ModalType } from 'atoms/modal'
 
@@ -16,6 +17,11 @@ function Modals() {
           onClose={closeModal}
           track={modal.state.track}
         />
+      )
+    }
+    case ModalType.PURCHASE_SHARES: {
+      return (
+        <PurchaseSharesModal onClose={closeModal} track={modal.state.track} />
       )
     }
     case ModalType.NONE: {

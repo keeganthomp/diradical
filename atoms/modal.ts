@@ -3,6 +3,7 @@ import { atom } from 'recoil'
 export enum ModalType {
   UPLOAD = 'UPLOAD',
   MAKE_SONG_AVAILABLE = 'MAKE_SONG_AVAILABLE',
+  PURCHASE_SHARES = 'PURCHASE_SHARES',
   NONE = '',
 }
 

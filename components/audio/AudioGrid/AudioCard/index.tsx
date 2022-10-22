@@ -12,6 +12,8 @@ import useContractViews from 'hooks/useCtcViews'
 import AudioCardMenu from './Menu'
 import Button from 'components/ui/Buttons/Base'
 import { useRouter } from 'next/router'
+import modalState, { ModalType } from 'atoms/modal'
+import { useSetRecoilState } from 'recoil'
 
 type Props = {
   track: TrackWithArtist
@@ -123,6 +125,7 @@ const ContractAddress = styled.a`
 `
 
 export default function AudioCard({ track }: Props) {
+  const setModal = useSetRecoilState(modalState)
   const { user } = useUser()
   const router = useRouter()
   const isProfilePage = router.pathname === '/profile'
@@ -135,6 +138,9 @@ export default function AudioCard({ track }: Props) {
 
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
+
+  const openBuySharesModal = () =>
+    setModal({ type: ModalType.PURCHASE_SHARES, state: { track } })
 
   return (
     <Wrapper>
@@ -151,7 +157,10 @@ export default function AudioCard({ track }: Props) {
             {!isProfilePage && !isFetching && views && user && (
               <>
                 <Shares>Shares Available: {views.sharesAvailable}</Shares>
-                <BuyButton disabled={views.sharesAvailable === 0}>
+                <BuyButton
+                  onClick={openBuySharesModal}
+                  disabled={views.sharesAvailable === 0}
+                >
                   Buy shares
                 </BuyButton>
               </>

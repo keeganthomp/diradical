@@ -49,29 +49,28 @@ const Error = styled.p`
   margin-bottom: 1rem;
 `
 
-export function MakeSongAvailableForm({ track }: { track: Track }) {
+export function PurchaseSharesForm({ track }: { track: Track }) {
   const setModal = useSetRecoilState(modalState)
   const { register, handleSubmit, reset, formState } = useForm({
     mode: 'all',
     defaultValues: {
-      sharesAvailable: null as number,
-      pricePerShare: null as number,
+      sharesToPurchase: null as number,
     },
   })
 
   const hideModal = () => setModal({ type: ModalType.NONE, state: null })
 
-  const makeAvailable = async (data) => {
-    await axios.post(`/api/tracks/${track.id}/make-available`, data)
+  const purchaseShares = async (data) => {
+    await axios.post(`/api/tracks/${track.id}/purchase-shares`, data)
     hideModal()
   }
 
   return (
     <Container>
-      <ModalTitle>open to buyers</ModalTitle>
-      <Form onSubmit={handleSubmit(makeAvailable)}>
+      <ModalTitle>purchase shares</ModalTitle>
+      <Form onSubmit={handleSubmit(purchaseShares)}>
         <NumberInput
-          {...register('sharesAvailable', {
+          {...register('sharesToPurchase', {
             required: true,
             pattern: {
               value: /\b([1-9]|[1-9][0-9]|100)\b/,
@@ -81,36 +80,20 @@ export function MakeSongAvailableForm({ track }: { track: Track }) {
           type='number'
           min='0'
           max='100'
-          placeholder='Shares to offer'
+          placeholder='Shares to purchase'
         />
-        {formState.errors.sharesAvailable?.message && (
-          <Error>{formState.errors.sharesAvailable?.message}</Error>
-        )}
-        <NumberInput
-          {...register('pricePerShare', {
-            required: true,
-            pattern: {
-              value: /^\d{0,10}(\.\d{0,2})?$/,
-              message: 'price must be a positive number',
-            },
-          })}
-          type='number'
-          min='0'
-          max='100'
-          placeholder='Price per share (mAlgo)'
-        />
-        {formState.errors.pricePerShare?.message && (
-          <Error>{formState.errors.pricePerShare?.message}</Error>
+        {formState.errors.sharesToPurchase?.message && (
+          <Error>{formState.errors.sharesToPurchase?.message}</Error>
         )}
         <SubmitButton
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'
         >
-          Submit
+          Purchase
         </SubmitButton>
       </Form>
     </Container>
   )
 }
 
-export default MakeSongAvailableForm
+export default PurchaseSharesForm
