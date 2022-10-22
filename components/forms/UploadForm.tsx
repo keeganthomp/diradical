@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form'
 import useS3 from 'hooks/useS3'
 import axios from 'axios'
-import { Track } from '@prisma/client'
 import React from 'react'
 import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
@@ -34,7 +33,7 @@ const Label = styled.label`
 
 export function UploadForm({ onUpload }: { onUpload?: () => void }) {
   const setModal = useSetRecoilState(modalState)
-  const { uploadFile } = useS3()
+  const { uploadToS3 } = useS3()
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     mode: 'all',
     defaultValues: {
@@ -47,20 +46,28 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
   const hideModal = () => setModal(ModalType.NONE)
 
   const uploadTrack = async (data) => {
-    const { title } = getValues()
-    const audioS3Url = await uploadFile(data.audioFiles[0], title)
-    const artS3Url = await uploadFile(data.artFiles[0], title)
-    const payload: Partial<Track> = {
-      title: data.title,
-      source: audioS3Url as string,
-      coverArt: artS3Url as string,
+    try {
+      const { title } = getValues()
+      const audioFile = data.audioFiles[0]
+      const artFile = data.artFiles[0]
+      const audioS3Url = await uploadToS3(audioFile, title)
+      const artS3Url = await uploadToS3(artFile, title)
+      const formData = new FormData()
+      formData.append('audioFile', audioFile)
+      formData.append('artFile', artFile)
+      formData.append('title', title)
+      formData.append('source', audioS3Url as string)
+      formData.append('coverArt', artS3Url as string)
+      console.log('yesp')
+      await axios.post('/api/tracks', formData)
+      reset()
+      if (onUpload) {
+        onUpload()
+      }
+      hideModal()
+    } catch (err) {
+      console.log('err uploading', err)
     }
-    await axios.post('/api/tracks', payload)
-    reset()
-    if (onUpload) {
-      onUpload()
-    }
-    hideModal()
   }
 
   return (

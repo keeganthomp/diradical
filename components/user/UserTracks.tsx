@@ -46,7 +46,13 @@ export default function UserTacks() {
       </Container>
     )
   const hasNoTracks = userTracks.length === 0
-  if (hasNoTracks) return <Message>you have not uploaded any tracks</Message>
+  if (hasNoTracks)
+    return (
+      <Container>
+        <UploadButton onClick={openUploadModal}>upload</UploadButton>
+        <Message>you have not uploaded any tracks</Message>
+      </Container>
+    )
   return (
     <Container>
       <UploadButton onClick={openUploadModal}>upload</UploadButton>

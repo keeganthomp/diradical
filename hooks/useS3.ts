@@ -14,7 +14,7 @@ export default function useS3() {
   const [isUploading, setUploading] = useState(false)
   const { user } = useUser()
 
-  const uploadFile = async (
+  const uploadToS3 = async (
     files: any,
     title: string,
     parentFolder: FolderOptions = 'singles',
@@ -55,5 +55,5 @@ export default function useS3() {
     }
   }
 
-  return { uploadFile, isUploading }
+  return { uploadToS3, isUploading }
 }
