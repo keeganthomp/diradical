@@ -59,6 +59,8 @@ type PurchaseSharesProps = {
 export const purchaseOwnership = async (props: PurchaseSharesProps) => {
   const acc: any = await getAccountFromMdk(props.mdk)
   const ctc = acc.contract(backend, props.ctcAddress)
+  const ownershipTok = await ctc.v.ownershipTokId()
+  await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
   const amtToPurchase = stdlib.bigNumberify(props.amtOfTokensToPurchase)
   await ctc.a.purchaseOwnership(amtToPurchase)
 }
