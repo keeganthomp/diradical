@@ -192,7 +192,7 @@ export default function AudioCard({ track }: Props) {
               target='_blank'
               href={`https://testnet.algoexplorer.io/application/${track.contractAddress}`}
             >
-              {views?.ownershipTokId}
+              {track.contractAddress}
             </ContractAddress>
           </RightCol>
         </Meta>
