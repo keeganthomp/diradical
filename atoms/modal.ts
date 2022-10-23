@@ -7,12 +7,18 @@ export enum ModalType {
   NONE = '',
 }
 
+type ModalState = {
+  type: ModalType
+  state: any | null
+  onClose?: () => void
+}
 const modalState = atom({
   key: 'modal',
   default: {
     type: ModalType.NONE,
     state: null as any,
-  },
+    onClose: null as (ard: any) => void,
+  } as ModalState,
 })
 
 export default modalState

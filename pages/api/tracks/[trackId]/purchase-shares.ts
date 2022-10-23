@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withApiAuthRequired } from '@auth0/nextjs-auth0'
-import { purschaseShares } from 'contracts'
+import { purchaseOwnership } from 'contracts'
 import prisma from 'lib/prisma'
 
 export default withApiAuthRequired(
@@ -9,12 +9,12 @@ export default withApiAuthRequired(
       res.status(405).send({ message: 'Only POST requests allowed' })
       return
     }
-    const { sharesToPurchase } = req.body
-    if (!sharesToPurchase) {
+    const { tokenAmtToPurchase } = req.body
+    if (!tokenAmtToPurchase) {
       res.status(400).send({ message: 'Missing required fields' })
     }
     try {
-      const fmtSharesToPurchase = Number(sharesToPurchase)
+      const fmtTokenAmtToPurchase = Number(tokenAmtToPurchase)
       const track = await prisma.track.findFirst({
         where: { id: req.query.trackId as string },
         include: {
@@ -23,14 +23,14 @@ export default withApiAuthRequired(
           },
         },
       })
-      await purschaseShares(
-        track.artist.mdk,
-        track.contractAddress,
-        fmtSharesToPurchase,
-      )
+      await purchaseOwnership({
+        mdk: track.artist.mdk,
+        ctcAddress: track.contractAddress,
+        amtOfTokensToPurchase: fmtTokenAmtToPurchase,
+      })
       res.status(200).json({ success: true })
     } catch (err) {
-      res.status(500).json({ message: 'unable to purchase shares' })
+      res.status(500).json({ message: err.message })
     }
   },
 )

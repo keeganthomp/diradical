@@ -1,5 +1,5 @@
 import BaseModal from './Base'
-import PurchaseSharesForm from 'components/forms/PurchaseSharesForm'
+import PurchaseSharesForm from 'components/forms/PurchaseOwnershipForm'
 import { Track } from '@prisma/client'
 
 function MakeSongAvailableModal({
@@ -11,7 +11,7 @@ function MakeSongAvailableModal({
 }) {
   return (
     <BaseModal onClose={onClose}>
-      <PurchaseSharesForm track={track} />
+      <PurchaseSharesForm track={track} onSubmit={onClose} />
     </BaseModal>
   )
 }

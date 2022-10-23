@@ -95,9 +95,8 @@ const Shares = styled.p`
 const BuyButton = styled(Button)`
   font-size: 12px;
   padding: 0 4px;
-  text-transform: lowercase;
   border-radius: 5px;
-  width: 4.5rem;
+  width: 5rem;
   z-index: 9;
   position: absolute;
   bottom: 2px;
@@ -129,7 +128,9 @@ export default function AudioCard({ track }: Props) {
   const { user } = useUser()
   const router = useRouter()
   const isProfilePage = router.pathname === '/profile'
-  const { isFetching, views } = useContractViews(track.contractAddress)
+  const { views, refetch: refetchViews } = useContractViews(
+    track.contractAddress,
+  )
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
@@ -140,7 +141,11 @@ export default function AudioCard({ track }: Props) {
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
   const openBuySharesModal = () =>
-    setModal({ type: ModalType.PURCHASE_SHARES, state: { track } })
+    setModal({
+      type: ModalType.PURCHASE_SHARES,
+      state: { track },
+      onClose: refetchViews,
+    })
 
   return (
     <Wrapper>
@@ -149,19 +154,26 @@ export default function AudioCard({ track }: Props) {
         onMouseLeave={handleMouseLeave}
         bgImage={track.coverArt}
       >
-        <AudioCardMenu track={track} />
+        <AudioCardMenu track={track} isOpenToPublic={views?.isOpenToPublic} />
         <CoverArt src={track.coverArt} />
         {isHovering && (
           <>
             {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
-            {!isProfilePage && !isFetching && views && user && (
+            {!isProfilePage && user && views?.isOpenToPublic && (
               <>
-                <Shares>Shares Available: {views.sharesAvailable}</Shares>
+                <Shares>
+                  ~
+                  {(
+                    (views.tokensAvailable / views.totalTokenAllocation) *
+                    100
+                  ).toFixed(2)}
+                  % Available
+                </Shares>
                 <BuyButton
                   onClick={openBuySharesModal}
-                  disabled={views.sharesAvailable === 0}
+                  disabled={views.tokensAvailable === 0}
                 >
-                  Buy shares
+                  Buy Ownership
                 </BuyButton>
               </>
             )}
@@ -180,7 +192,7 @@ export default function AudioCard({ track }: Props) {
               target='_blank'
               href={`https://testnet.algoexplorer.io/application/${track.contractAddress}`}
             >
-              {track.contractAddress}
+              {views?.ownershipTokId}
             </ContractAddress>
           </RightCol>
         </Meta>

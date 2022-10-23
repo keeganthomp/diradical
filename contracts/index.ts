@@ -3,58 +3,62 @@ import algosdk from 'algosdk'
 import { getWalletFromMdk } from 'lib/encryption'
 import * as backend from './index.song.mjs'
 
-const getAccountFromMdk = async (mdk) => {
+const getAccountFromMdk = async (mdk: string) => {
   const wallet = getWalletFromMdk(mdk)
   const mnemonic = algosdk.secretKeyToMnemonic(wallet.sk)
   const acc: any = await stdlib.newAccountFromMnemonic(mnemonic)
   return acc
 }
 
-export const launchSongCtc = async (
-  mdk: string,
-  audioIpfsCid: string,
-  coverArtIpfsHash: string,
-) => {
-  const acc: any = await getAccountFromMdk(mdk)
+const optinToAsset = async (mdk: string, tokId: number) => {
+  const acc = await getAccountFromMdk(mdk)
+  await acc.tokenAccept(tokId)
+}
+
+type launchSongCtcProps = {
+  mdk: string
+  audioIpfsCid: string
+  coverArtIpfsCid: string
+}
+export const launchSongCtc = async (props: launchSongCtcProps) => {
+  const acc: any = await getAccountFromMdk(props.mdk)
   const ctc = acc.contract(backend)
   await stdlib.withDisconnect(() =>
     ctc.p.Creator({
-      art: coverArtIpfsHash,
-      audio: audioIpfsCid,
+      art: props.coverArtIpfsCid,
+      audio: props.audioIpfsCid,
       ready: stdlib.disconnect,
     }),
   )
   const ctcInfo = await ctc.getInfo()
+  const ownershipTok = await ctc.v.ownershipTokId()
+  await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
   const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
   return contractAddress
 }
 
-export const makeSharesAvailable = async (
-  mdk: string,
-  ctcAddress: number,
-  numOfShares: number,
-  pps: number, // in microAlgos - 1 = 0.000001 ALGO
-) => {
-  const acc: any = await getAccountFromMdk(mdk)
-  const ctc = acc.contract(backend, ctcAddress)
-  const numOfSharesAvailable = stdlib.bigNumberify(numOfShares)
-  const pricePerShare = stdlib.bigNumberify(pps)
-  await ctc.a.makeSharesAvailable(numOfSharesAvailable, pricePerShare)
+type OpenToPublicProps = {
+  mdk: string
+  ctcAddress: number
+  amtOfTokensToRetain: number // in mAlgo
+  totalValue: number // in mAlgo
+}
+export const openToPublic = async (props: OpenToPublicProps) => {
+  const acc: any = await getAccountFromMdk(props.mdk)
+  const ctc = acc.contract(backend, props.ctcAddress)
+  const amtToRetain = stdlib.bigNumberify(props.amtOfTokensToRetain)
+  const totalValue = stdlib.bigNumberify(props.totalValue)
+  await ctc.a.openToPublic(amtToRetain, totalValue)
 }
 
-export const purschaseShares = async (
-  mdk: string,
-  ctcAddress: number,
-  numOfShares: number,
-) => {
-  const acc: any = await getAccountFromMdk(mdk)
-  const ctc = acc.contract(backend, ctcAddress)
-  const numOfSharesToPurchase = stdlib.bigNumberify(numOfShares)
-  await ctc.a.purchaseShares(numOfSharesToPurchase)
+type PurchaseSharesProps = {
+  mdk: string
+  ctcAddress: number
+  amtOfTokensToPurchase: number // in mAlgo
 }
-
-export const getViews = async (ctcAddress: number) => {
-  const acc = await stdlib.createAccount()
-  const ctc = acc.contract(backend, ctcAddress)
-  console.log('ctc', ctc)
+export const purchaseOwnership = async (props: PurchaseSharesProps) => {
+  const acc: any = await getAccountFromMdk(props.mdk)
+  const ctc = acc.contract(backend, props.ctcAddress)
+  const amtToPurchase = stdlib.bigNumberify(props.amtOfTokensToPurchase)
+  await ctc.a.purchaseOwnership(amtToPurchase)
 }

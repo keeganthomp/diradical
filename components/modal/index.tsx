@@ -1,12 +1,15 @@
 import UploadModal from './UploadModal'
 import MakeSongAvailableModal from './MakeSongAvailable'
-import PurchaseSharesModal from './PurchaseSharesModal'
+import PurchaseSharesModal from './PurchaseOwnership'
 import { useRecoilState } from 'recoil'
 import modalState, { ModalType } from 'atoms/modal'
 
 function Modals() {
   const [modal, setModal] = useRecoilState(modalState)
-  const closeModal = () => setModal({ ...modal, type: ModalType.NONE })
+  const closeModal = () => {
+    if (modal.onClose) modal.onClose()
+    setModal({ type: ModalType.NONE, state: null, onClose: null })
+  }
   switch (modal.type) {
     case ModalType.UPLOAD: {
       return <UploadModal onClose={closeModal} />

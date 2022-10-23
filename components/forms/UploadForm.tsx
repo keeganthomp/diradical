@@ -4,8 +4,6 @@ import axios from 'axios'
 import React from 'react'
 import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
-import { useSetRecoilState } from 'recoil'
-import modalState, { ModalType } from 'atoms/modal'
 import TextInput from '../ui/Inputs/TextInput'
 import Form from './Form'
 
@@ -38,8 +36,7 @@ const Label = styled.label`
   text-transform: lowercase;
 `
 
-export function UploadForm({ onUpload }: { onUpload?: () => void }) {
-  const setModal = useSetRecoilState(modalState)
+export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
   const { uploadToS3 } = useS3()
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     mode: 'all',
@@ -49,8 +46,6 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
       artFiles: [] as File[],
     },
   })
-
-  const hideModal = () => setModal({ type: ModalType.NONE, state: null })
 
   const uploadTrack = async (data) => {
     try {
@@ -67,10 +62,7 @@ export function UploadForm({ onUpload }: { onUpload?: () => void }) {
       formData.append('coverArt', artS3Url as string)
       await axios.post('/api/tracks', formData)
       reset()
-      if (onUpload) {
-        onUpload()
-      }
-      hideModal()
+      if (onSubmit) onSubmit()
     } catch (err) {
       console.log('err uploading', err)
     }

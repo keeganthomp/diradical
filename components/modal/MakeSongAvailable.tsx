@@ -11,7 +11,7 @@ function MakeSongAvailableModal({
 }) {
   return (
     <BaseModal onClose={onClose}>
-      <MakeSongAvailableForm track={track} />
+      <MakeSongAvailableForm track={track} onSubmit={onClose} />
     </BaseModal>
   )
 }

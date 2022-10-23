@@ -56,13 +56,13 @@ export default withApiAuthRequired(
             mdk: true,
           },
         })
-        const { path: audioIpfsHash } = await ipfs.add(fileBuffers.audio)
-        const { path: coverArtIpfsHash } = await ipfs.add(fileBuffers.converArt)
-        const contractAddress = await launchSongCtc(
-          user.mdk,
-          audioIpfsHash,
-          coverArtIpfsHash,
-        )
+        const { path: audioIpfsCid } = await ipfs.add(fileBuffers.audio)
+        const { path: coverArtIpfsCid } = await ipfs.add(fileBuffers.converArt)
+        const contractAddress = await launchSongCtc({
+          mdk: user.mdk,
+          audioIpfsCid,
+          coverArtIpfsCid,
+        })
         const { title, source, coverArt } = payload
         try {
           const track = await prisma.track.create({
@@ -70,8 +70,8 @@ export default withApiAuthRequired(
               title,
               source,
               coverArt,
-              audioIpfsHash,
-              coverArtIpfsHash,
+              audioIpfsHash: audioIpfsCid,
+              coverArtIpfsHash: coverArtIpfsCid,
               contractAddress,
               artist: {
                 connect: {

@@ -5,9 +5,8 @@ import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
 import Form from './Form'
 import { Track } from '@prisma/client'
-import modalState, { ModalType } from 'atoms/modal'
-import { useSetRecoilState } from 'recoil'
 import { BsPercent } from 'react-icons/bs'
+import useContractViews from 'hooks/useCtcViews'
 
 const Container = styled.div`
   display: flex;
@@ -72,21 +71,31 @@ const AlgoSymbol = styled.span`
   left: 0;
 `
 
-export function MakeSongAvailableForm({ track }: { track: Track }) {
-  const setModal = useSetRecoilState(modalState)
-  const { register, handleSubmit, setValue, formState, getValues } = useForm({
+export function MakeSongAvailableForm({
+  track,
+  onSubmit,
+}: {
+  track: Track
+  onSubmit: () => void
+}) {
+  const { views } = useContractViews(track.contractAddress)
+  const { register, handleSubmit, formState } = useForm({
     mode: 'all',
     defaultValues: {
-      percentAvailable: null as number,
-      pricePerShare: null as number,
+      percentToRetain: null as number,
+      totalValue: null as number,
     },
   })
 
-  const hideModal = () => setModal({ type: ModalType.NONE, state: null })
-
   const makeAvailable = async (data) => {
-    await axios.post(`/api/tracks/${track.id}/make-available`, data)
-    hideModal()
+    const { percentToRetain } = data
+    const amtToRetain = (percentToRetain / 100) * views.tokensAvailable
+    const payload = {
+      totalValue: data.totalValue * 1000000, // to Algo - only accepting whole algo values
+      amtToRetain,
+    }
+    await axios.post(`/api/tracks/${track.id}/make-available`, payload)
+    if (onSubmit) onSubmit()
   }
 
   return (
@@ -94,16 +103,16 @@ export function MakeSongAvailableForm({ track }: { track: Track }) {
       <ModalTitle>open to buyers</ModalTitle>
       <Form onSubmit={handleSubmit(makeAvailable)}>
         <Field>
-          <Label>Percent to offer</Label>
+          <Label>Percent To retain</Label>
           <PercentIcon />
           <NumberInput
-            {...register('percentAvailable', {
+            {...register('percentToRetain', {
               required: true,
               valueAsNumber: true,
-              max: 100,
-              pattern: {
-                value: /\b([1-9]|[1-9][0-9]|100)\b/,
-                message: 'shares must be between 1 and 100',
+              min: 0,
+              max: {
+                value: 100,
+                message: `Must be less than 100`,
               },
             })}
             type='number'
@@ -111,15 +120,15 @@ export function MakeSongAvailableForm({ track }: { track: Track }) {
             max='100'
             placeholder='0'
           />
-          {formState.errors.percentAvailable?.message && (
-            <Error>{formState.errors.percentAvailable?.message}</Error>
-          )}
         </Field>
+        {formState.errors.percentToRetain?.message && (
+          <Error>{formState.errors.percentToRetain?.message}</Error>
+        )}
         <Field>
-          <Label>Price per %</Label>
+          <Label>Total Value</Label>
           <AlgoSymbol>Algo</AlgoSymbol>
           <NumberInput
-            {...register('pricePerShare', {
+            {...register('totalValue', {
               valueAsNumber: true,
               required: true,
               pattern: {
@@ -128,12 +137,12 @@ export function MakeSongAvailableForm({ track }: { track: Track }) {
               },
             })}
             type='number'
-            placeholder='0.000000'
+            placeholder='0'
           />
-          {formState.errors.pricePerShare?.message && (
-            <Error>{formState.errors.pricePerShare?.message}</Error>
-          )}
         </Field>
+        {formState.errors.totalValue?.message && (
+          <Error>{formState.errors.totalValue?.message}</Error>
+        )}
         <SubmitButton
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'

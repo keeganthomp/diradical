@@ -2,34 +2,61 @@ import { useState, useEffect } from 'react'
 import stdlib from 'lib/reach'
 import * as backend from 'contracts/index.song.mjs'
 
+type CtcViews = {
+  creator: string
+  isOpenToPublic: boolean
+  tokensAvailable: number
+  ownershipTokId: number
+  tokenPrice: number
+  totalValue: number
+  totalPaid: number
+  totalTokenAllocation: number
+  checkOwnership: (walletAddress: string) => Promise<number>
+}
+
 const useContractViews = (contractAddress: number) => {
   const [isFetchingCtcState, setFetchingCtcState] = useState(false)
-  const [ctcViews, setCtcViews] = useState<{
-    sharesAvailable: number
-    canPurchase: boolean
-    creator: string
-  } | null>(null)
+  const [ctcViews, setCtcViews] = useState<CtcViews | null>(null)
+
+  const fetchCtcViews = async () => {
+    setFetchingCtcState(true)
+    const acc = await stdlib.createAccount()
+    const ctc = acc.contract(backend, contractAddress)
+    const creator = await ctc.v.creator()
+    const toksAvailable = await ctc.v.toksAvailable()
+    const ownershipTokId = await ctc.v.ownershipTokId()
+    const pricePerShare = await ctc.v.pricePerUnit()
+    const totValue = await ctc.v.totalValue()
+    const isOpenToPublic = await ctc.v.isOpenToPublic()
+    const totalPaid = await ctc.v.totalPaid()
+    const totalTokenAllocation = await ctc.v.totalTokenAllocation()
+    const views = {
+      creator: creator[1],
+      isOpenToPublic: isOpenToPublic[1],
+      tokensAvailable: stdlib.bigNumberToNumber(toksAvailable[1]),
+      ownershipTokId: stdlib.bigNumberToNumber(ownershipTokId[1]),
+      tokenPrice: stdlib.bigNumberToNumber(pricePerShare[1]),
+      totalValue: stdlib.bigNumberToNumber(totValue[1]),
+      totalPaid: stdlib.bigNumberToNumber(totalPaid[1]),
+      totalTokenAllocation: stdlib.bigNumberToNumber(totalTokenAllocation[1]),
+      checkOwnership: async (walletAddress: string) => {
+        const toksOwned = await ctc.v.checkOwnership(walletAddress)
+        return stdlib.bigNumberToNumber(toksOwned[1])
+      },
+    }
+    setFetchingCtcState(false)
+    setCtcViews(views)
+  }
 
   useEffect(() => {
-    const asyncGetViews = async () => {
-      setFetchingCtcState(true)
-      const acc = await stdlib.createAccount()
-      const ctc = acc.contract(backend, contractAddress)
-      const creator = await ctc.v.creator()
-      const sharesAvailable = await ctc.v.sharesAvailable()
-      const canPurchase = await ctc.v.canPurchase()
-      const views = {
-        sharesAvailable: stdlib.bigNumberToNumber(sharesAvailable[1]),
-        canPurchase: canPurchase[1],
-        creator: creator[1],
-      }
-      setFetchingCtcState(false)
-      setCtcViews(views)
-    }
-    asyncGetViews()
+    fetchCtcViews()
   }, [])
 
-  return { isFetching: isFetchingCtcState, views: ctcViews }
+  return {
+    isFetching: isFetchingCtcState,
+    views: ctcViews,
+    refetch: fetchCtcViews,
+  }
 }
 
 export default useContractViews

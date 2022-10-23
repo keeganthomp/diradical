@@ -10,6 +10,7 @@ import modalState, { ModalType } from 'atoms/modal'
 
 type Props = {
   track: TrackWithArtist
+  isOpenToPublic: boolean
 }
 
 const MENU_ITEM_CLASS = 'menu-item'
@@ -47,7 +48,7 @@ const MenuWrapper = styled.div`
   background: white;
   padding: 0 4px;
 `
-const MenuItem = styled.p<{ color?: string }>`
+const MenuItem = styled.p<{ color?: string; disabled?: boolean }>`
   color: ${(p) => p.color || '#000'};
   font-weight: 300;
   font-size: 13px;
@@ -55,7 +56,7 @@ const MenuItem = styled.p<{ color?: string }>`
   padding: 2px 0.5rem;
   border-bottom: 1px solid #e5e1e6;
   text-transform: lowercase;
-  cursor: pointer;
+  cursor: ${(p) => (p.disabled ? 'not-allowed' : 'pointer')};
   &:last-child {
     border-bottom: none;
   }
@@ -64,7 +65,7 @@ const MenuItem = styled.p<{ color?: string }>`
   }
 `
 
-export default function AudioCardMenu({ track }: Props) {
+export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
   const setModal = useSetRecoilState(modalState)
   const menuRef = useRef<HTMLDivElement>(null)
   const [activeMenu, setActiveMenu] = useRecoilState(activeMenuState)
@@ -106,11 +107,13 @@ export default function AudioCardMenu({ track }: Props) {
       </MenuIconWrapper>
       {isOpen && (
         <MenuWrapper ref={menuRef}>
-          <MenuItem onClick={openSongModal} className={MENU_ITEM_CLASS}>
-            Make Available
-          </MenuItem>
+          {!isOpenToPublic && (
+            <MenuItem onClick={openSongModal} className={MENU_ITEM_CLASS}>
+              Open to investors
+            </MenuItem>
+          )}
           <MenuItem color='red' className={MENU_ITEM_CLASS}>
-            delete
+            Archive
           </MenuItem>
         </MenuWrapper>
       )}
