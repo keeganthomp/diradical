@@ -48,7 +48,7 @@ const Wallet = styled.p`
   font-weight: 100;
 `
 
-export default function UserSettings({ wallet }: { wallet: string | null }) {
+export default function UserSettings() {
   const { user } = useUser()
   const [editingField, setEditingField] = useState<'username' | 'email' | null>(
     null,
@@ -87,12 +87,6 @@ export default function UserSettings({ wallet }: { wallet: string | null }) {
         onStartEdit={() => setEditingField('email')}
         disabled
       />
-      {wallet && (
-        <WalletField>
-          <WalletLabel>Wallet</WalletLabel>
-          <Wallet>{truncateWallet(wallet)}</Wallet>
-        </WalletField>
-      )}
       {editingField && <UpdateButton>Update</UpdateButton>}
     </Container>
   )

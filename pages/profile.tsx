@@ -16,7 +16,7 @@ const Container = styled.div`
   color: white;
 `
 
-const ProfilePage = ({ wallet }) => {
+const ProfilePage = () => {
   const ProfileTabs: Tab[] = [
     {
       title: 'My Music',
@@ -24,7 +24,7 @@ const ProfilePage = ({ wallet }) => {
     },
     {
       title: 'Settings',
-      Component: () => <UserSettings wallet={wallet} />,
+      Component: () => <UserSettings />,
     },
   ]
 
@@ -36,21 +36,3 @@ const ProfilePage = ({ wallet }) => {
 }
 
 export default ProfilePage
-
-export async function getServerSideProps(context) {
-  const { user: authedUser } = getSession(context.req, context.res)
-  const user = await prisma.user.findUnique({
-    where: {
-      email: authedUser.email,
-    },
-    select: {
-      mdk: true,
-    },
-  })
-  const wallet = getWalletFromMdk(user.mdk)
-  return {
-    props: {
-      wallet: wallet.addr,
-    },
-  }
-}
