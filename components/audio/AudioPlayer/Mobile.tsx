@@ -17,6 +17,7 @@ const Container = styled.div`
   bottom: 0;
   flex-direction: column;
   width: 100%;
+  height: 4rem;
   @media ${devices.mobile} {
     display: inherit;
     flex-direction: column;
@@ -48,7 +49,7 @@ const TopBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem;
+  padding: 0.4rem 0.75rem 0rem 0.75rem;
 `
 const ArtAndTitle = styled.div`
   display: flex;

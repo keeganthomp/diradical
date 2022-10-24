@@ -20,6 +20,7 @@ const Container = styled.div`
   padding: 0.75rem;
   display: grid;
   align-items: center;
+  height: 5rem;
   grid-template-columns: 4rem 4rem 1fr 4rem 4rem;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
@@ -67,7 +68,7 @@ const CloseIcon = styled(IoCloseOutline)`
 
 const CoverArt = styled.img`
   grid-area: coverArt;
-  max-height: 5rem;
+  max-height: 4rem;
   max-width: 3.5rem;
 `
 

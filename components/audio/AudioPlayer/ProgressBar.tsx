@@ -32,6 +32,8 @@ const Bar = styled.div`
   overflow: hidden;
   background: #3e3e3e;
   @media ${devices.mobile} {
+    position: absolute;
+    bottom: 0;
     margin: 0;
     width: 18rem;
     border-radius: 0px;
