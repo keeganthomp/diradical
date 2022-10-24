@@ -88,14 +88,18 @@ export function MakeSongAvailableForm({
   })
 
   const makeAvailable = async (data) => {
-    const { percentToRetain } = data
-    const amtToRetain = (percentToRetain / 100) * views.tokensAvailable
-    const payload = {
-      totalValue: data.totalValue * 1000000, // to Algo - only accepting whole algo values
-      amtToRetain,
+    try {
+      const { percentToRetain } = data
+      const amtToRetain = (percentToRetain / 100) * views.tokensAvailable
+      const payload = {
+        totalValue: data.totalValue * 1000000, // to Algo - only accepting whole algo values
+        amtToRetain,
+      }
+      await axios.post(`/api/tracks/${track.id}/make-available`, payload)
+      if (onSubmit) onSubmit()
+    } catch (err) {
+      console.error('Error making song available', err)
     }
-    await axios.post(`/api/tracks/${track.id}/make-available`, payload)
-    if (onSubmit) onSubmit()
   }
 
   return (

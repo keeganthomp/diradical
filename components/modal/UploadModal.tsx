@@ -1,5 +1,5 @@
 import BaseModal from './Base'
-import UploadForm from 'components/forms/UploadForm'
+import UploadForm from 'components/forms/UploadSongForm'
 
 function UploadModal({ onClose }: { onClose: () => void }) {
   return (

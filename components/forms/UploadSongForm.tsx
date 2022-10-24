@@ -54,17 +54,16 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
       const artFile = data.artFiles[0]
       const audioS3Url = await uploadToS3(audioFile, title)
       const artS3Url = await uploadToS3(artFile, title)
-      const formData = new FormData()
-      formData.append('audioFile', audioFile)
-      formData.append('artFile', artFile)
-      formData.append('title', title)
-      formData.append('source', audioS3Url as string)
-      formData.append('coverArt', artS3Url as string)
-      await axios.post('/api/tracks', formData)
+      const payload = {
+        title,
+        audioS3Url,
+        artS3Url,
+      }
+      await axios.post('/api/tracks', payload)
       reset()
       if (onSubmit) onSubmit()
     } catch (err) {
-      console.log('err uploading', err)
+      console.error('Err uploading:', err)
     }
   }
 

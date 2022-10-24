@@ -87,8 +87,12 @@ export function PurchaseSharesForm({
   })
 
   const purchaseShares = async (data) => {
-    await axios.post(`/api/tracks/${track.id}/purchase-shares`, data)
-    if (onSubmit) onSubmit()
+    try {
+      await axios.post(`/api/tracks/${track.id}/purchase-shares`, data)
+      if (onSubmit) onSubmit()
+    } catch (err) {
+      console.error('Error purchasing shares', err)
+    }
   }
 
   const amtToPurchase = watch('tokenAmtToPurchase')

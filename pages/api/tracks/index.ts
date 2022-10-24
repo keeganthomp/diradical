@@ -1,16 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withApiAuthRequired, getSession } from '@auth0/nextjs-auth0'
 import prisma from 'lib/prisma'
-import { Track } from '@prisma/client'
-import formidable from 'formidable'
 import ipfs from 'lib/IPFS'
-import fs from 'fs'
 import { launchSongCtc } from 'contracts'
+import axios from 'axios'
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+type SongPayload = {
+  title: string
+  audioS3Url: string
+  artS3Url: string
 }
 
 export default withApiAuthRequired(
@@ -19,74 +17,49 @@ export default withApiAuthRequired(
       res.status(405).send({ message: 'Only POST requests allowed' })
       return
     }
-    const fileBuffers = {
-      audio: null as Buffer | null,
-      converArt: null as Buffer | null,
+    const payload: SongPayload = req.body
+    if (!payload.title || !payload.audioS3Url || !payload.artS3Url) {
+      res.status(400).send({ message: 'Missing required fields' })
     }
-    const payload: Partial<Track> = {
-      audioIpfsHash: '',
-      coverArtIpfsHash: '',
-      title: '',
-      source: '',
-      coverArt: '',
-    }
-    const form = new formidable.IncomingForm()
-    form
-      .on('error', () => {
-        res.status(500).json({ message: 'unable to upload track' })
-      })
-      .on('field', (field, value) => {
-        payload[field] = value
-      })
-      .on('file', async (field: 'audioFile' | 'artFile', value) => {
-        const bufferKey = field === 'audioFile' ? 'audio' : 'converArt'
-        const file = value
-        fileBuffers[bufferKey] = fs.readFileSync(file.filepath)
-      })
-      .on('end', async () => {
-        const { user: authedUser } = getSession(req, res)
-        if (!fileBuffers.audio || !fileBuffers.converArt) {
-          res.status(500).json({ message: 'unable to upload track' })
-        }
-        const user = await prisma.user.findUnique({
-          where: {
-            email: authedUser.email,
-          },
-          select: {
-            mdk: true,
-          },
-        })
-        const { path: audioIpfsCid } = await ipfs.add(fileBuffers.audio)
-        const { path: coverArtIpfsCid } = await ipfs.add(fileBuffers.converArt)
-        const contractAddress = await launchSongCtc({
-          mdk: user.mdk,
-          audioIpfsCid,
-          coverArtIpfsCid,
-        })
-        const { title, source, coverArt } = payload
-        try {
-          const track = await prisma.track.create({
-            data: {
-              title,
-              source,
-              coverArt,
-              audioIpfsHash: audioIpfsCid,
-              coverArtIpfsHash: coverArtIpfsCid,
-              contractAddress,
-              artist: {
-                connect: {
-                  email: authedUser.email,
-                },
-              },
+    const { user: authedUser } = getSession(req, res)
+    const user = await prisma.user.findFirst({
+      where: { email: authedUser.email },
+      select: { mdk: true },
+    })
+    const { data: artFileContent } = await axios.get(payload.artS3Url, {
+      responseType: 'arraybuffer',
+    })
+    const { data: audioFileContent } = await axios.get(payload.audioS3Url, {
+      responseType: 'arraybuffer',
+    })
+    const artFileBuffer = Buffer.from(artFileContent, 'utf-8')
+    const audioFileBuffer = Buffer.from(audioFileContent, 'utf-8')
+    const { path: coverArtIpfsHash } = await ipfs.add(artFileBuffer)
+    const { path: audioIpfsHash } = await ipfs.add(audioFileBuffer)
+    const contractAddress = await launchSongCtc({
+      coverArtIpfsCid: coverArtIpfsHash,
+      audioIpfsCid: audioIpfsHash,
+      mdk: user.mdk,
+    })
+    try {
+      const track = await prisma.track.create({
+        data: {
+          title: payload.title,
+          source: payload.audioS3Url,
+          coverArt: payload.artS3Url,
+          audioIpfsHash,
+          coverArtIpfsHash,
+          contractAddress,
+          artist: {
+            connect: {
+              email: authedUser.email,
             },
-          })
-          res.status(200).json({ track })
-        } catch (err) {
-          console.log(err)
-          res.status(500).json({ message: 'unable to upload track' })
-        }
+          },
+        },
       })
-
-    form.parse(req)
+      res.status(200).json({ track })
+    } catch (err) {
+      res.status(500).json({ message: 'unable to upload track' })
+    }
   },
 )
