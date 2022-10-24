@@ -1,12 +1,9 @@
 import React from 'react'
-import prisma from 'lib/prisma'
 import styled from 'styled-components'
 import { TrackWithArtist } from 'types'
 import AudioGrid from 'components/audio/AudioGrid'
-
-type Props = {
-  tracks: TrackWithArtist[]
-}
+import { useQuery } from 'react-query'
+import Loader from 'components/ui/Loader'
 
 const Container = styled.div`
   display: flex;
@@ -15,23 +12,23 @@ const Container = styled.div`
   align-items: center;
 `
 
-export default function HomePage({ tracks }: Props) {
+export default function HomePage() {
+  const {
+    isLoading,
+    error,
+    data: tracks,
+  } = useQuery<TrackWithArtist[]>(
+    'userTracks',
+    () => fetch(`/api/tracks`).then((res) => res.json()),
+    {
+      refetchInterval: 10000,
+      staleTime: 10000,
+    },
+  )
+  if (isLoading) return <Loader />
   return (
     <Container>
       <AudioGrid tracks={tracks} />
     </Container>
   )
-}
-
-export async function getStaticProps() {
-  const tracks = await prisma.track.findMany({
-    include: {
-      artist: true,
-    },
-  })
-  return {
-    props: {
-      tracks: JSON.parse(JSON.stringify(tracks)) as Props,
-    },
-  }
 }
