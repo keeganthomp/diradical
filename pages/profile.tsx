@@ -4,9 +4,7 @@ import Tabs from 'components/ui/Tabs'
 import { Tab } from 'types'
 import UserTacks from 'components/user/UserTracks'
 import UserSettings from 'components/user/Settings'
-import { getSession } from '@auth0/nextjs-auth0'
-import prisma from 'lib/prisma'
-import { getWalletFromMdk } from 'lib/encryption'
+import { withPageAuthRequired } from '@auth0/nextjs-auth0'
 
 const Container = styled.div`
   display: flex;
@@ -36,3 +34,5 @@ const ProfilePage = () => {
 }
 
 export default ProfilePage
+
+export const getServerSideProps = withPageAuthRequired()
