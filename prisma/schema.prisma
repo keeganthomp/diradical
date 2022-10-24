@@ -46,4 +46,5 @@ model Track {
   audioIpfsHash    String   @db.VarChar(46)
   coverArtIpfsHash String   @db.VarChar(46)
   contractAddress  Int
+  archived         Boolean  @default(false)
 }

@@ -4,13 +4,16 @@ import { useRouter } from 'next/router'
 import { TrackWithArtist } from 'types'
 import activeMenuState from 'atoms/audioMenu'
 import { useRecoilState } from 'recoil'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useSetRecoilState } from 'recoil'
+import axios from 'axios'
 import modalState, { ModalType } from 'atoms/modal'
+import { useQueryClient } from 'react-query'
 
 type Props = {
   track: TrackWithArtist
   isOpenToPublic: boolean
+  refetch?: () => void
 }
 
 const MENU_ITEM_CLASS = 'menu-item'
@@ -65,7 +68,13 @@ const MenuItem = styled.p<{ color?: string; disabled?: boolean }>`
   }
 `
 
-export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
+export default function AudioCardMenu({
+  track,
+  isOpenToPublic,
+  refetch,
+}: Props) {
+  const [isArchived, setArchived] = useState(track.archived)
+  const queryClient = useQueryClient()
   const setModal = useSetRecoilState(modalState)
   const menuRef = useRef<HTMLDivElement>(null)
   const [activeMenu, setActiveMenu] = useRecoilState(activeMenuState)
@@ -89,7 +98,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   })
 
-  const handleClick = () => {
+  const handleMenuToggle = () => {
     if (isOpen) {
       setActiveMenu({ id: '' })
     } else {
@@ -97,12 +106,20 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
     }
   }
 
+  const handleArchive = async () => {
+    await axios.post(`/api/tracks/${track.id}/archive`)
+    queryClient.invalidateQueries(['tracks', 'userTracks'])
+    setArchived(!isArchived)
+    console.log('refetch', refetch)
+    if (refetch) refetch()
+  }
+
   const openSongModal = () =>
     setModal({ type: ModalType.MAKE_SONG_AVAILABLE, state: { track } })
 
   return (
     <>
-      <MenuIconWrapper onClick={handleClick}>
+      <MenuIconWrapper onClick={handleMenuToggle}>
         <MenuIcon />
       </MenuIconWrapper>
       {isOpen && (
@@ -112,8 +129,12 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
               Open to investors
             </MenuItem>
           )}
-          <MenuItem color='red' className={MENU_ITEM_CLASS}>
-            Archive
+          <MenuItem
+            onClick={handleArchive}
+            color={!isArchived ? 'red' : '#000'}
+            className={MENU_ITEM_CLASS}
+          >
+            {isArchived ? 'unarchive' : 'Archive'}
           </MenuItem>
         </MenuWrapper>
       )}

@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
 import Form from './Form'
 import { Track } from '@prisma/client'
+import { TrackWithArtist } from 'types'
 import useContractViews from 'hooks/useCtcViews'
 import Loader from 'components/ui/Loader'
 
@@ -15,10 +16,19 @@ const Container = styled.div`
   flex-direction: column;
 `
 
+const Meta = styled.div`
+  text-align: center;
+  position: relative;
+  margin-top: 1rem;
+  p {
+    margin: 0;
+  }
+`
+
 const NumberInput = styled.input`
   background: transparent;
   border: none;
-  border-bottom: 1px dotted white;
+  border-bottom: 1px solid #acacacb8;
   color: #fff;
   text-align: center;
   padding: 3px 6px;
@@ -38,6 +48,7 @@ const SubmitButton = styled(Button)`
 
 const Label = styled.p`
   font-weight: 200;
+  margin: 0;
 `
 
 const Field = styled.div`
@@ -71,11 +82,26 @@ const HelpText = styled.div`
   }
 `
 
+const CoverArt = styled.img`
+  max-height: 4rem;
+  max-width: 3.5rem;
+  border-radius: 5px;
+`
+
+const Title = styled.p`
+  font-weight: bold;
+`
+const Artist = styled.p`
+  font-weight: 200;
+  position: relative;
+  bottom: 8px;
+`
+
 export function PurchaseSharesForm({
   track,
   onSubmit,
 }: {
-  track: Track
+  track: TrackWithArtist
   onSubmit?: () => void
 }) {
   const { views, isFetching } = useContractViews(track.contractAddress)
@@ -111,44 +137,54 @@ export function PurchaseSharesForm({
       {isFetching || !views ? (
         <Loader />
       ) : (
-        <Form onSubmit={handleSubmit(purchaseShares)}>
-          <Field>
-            <Label>amount of tokens to purchase</Label>
-            <NumberInput
-              {...register('tokenAmtToPurchase', {
-                required: true,
-                valueAsNumber: true,
-                min: 1,
-                max: {
-                  value: views.tokensAvailable,
-                  message: `can not purchase more than allocated amount`,
-                },
-              })}
-              type='number'
-              min='0'
-              placeholder='0'
-            />
-          </Field>
-          <HelpText>
-            {isValidAmount && (
+        <>
+          <Meta>
+            <CoverArt src={track.coverArt} />
+            <div>
+              <Title>{track.title}</Title>
+              <Artist>{track.artist.username || track.artist.email}</Artist>
+            </div>
+          </Meta>
+          <Form onSubmit={handleSubmit(purchaseShares)}>
+            <Field>
+              <Label>amount of tokens to purchase</Label>
+              <NumberInput
+                {...register('tokenAmtToPurchase', {
+                  required: true,
+                  valueAsNumber: true,
+                  min: 1,
+                  max: {
+                    value: views.tokensAvailable,
+                    message: `can not purchase more than allocated amount`,
+                  },
+                })}
+                type='number'
+                min='0'
+                placeholder='0'
+              />
+            </Field>
+            <HelpText>
+              {isValidAmount && (
+                <p>
+                  {amtToPurchase} Tokens = ~{purchasePercent}% ownership
+                </p>
+              )}
               <p>
-                {amtToPurchase} Tokens = ~{purchasePercent}% ownership
+                Max available: {views.tokensAvailable} ({totalAvailablePercent}
+                %)
               </p>
+            </HelpText>
+            {formState.errors.tokenAmtToPurchase?.message && (
+              <Error>{formState.errors.tokenAmtToPurchase?.message}</Error>
             )}
-            <p>
-              Max available: {views.tokensAvailable} ({totalAvailablePercent}%)
-            </p>
-          </HelpText>
-          {formState.errors.tokenAmtToPurchase?.message && (
-            <Error>{formState.errors.tokenAmtToPurchase?.message}</Error>
-          )}
-          <SubmitButton
-            disabled={!formState.isValid || formState.isSubmitting}
-            type='submit'
-          >
-            Purchase
-          </SubmitButton>
-        </Form>
+            <SubmitButton
+              disabled={!formState.isValid || formState.isSubmitting}
+              type='submit'
+            >
+              Purchase
+            </SubmitButton>
+          </Form>
+        </>
       )}
     </Container>
   )

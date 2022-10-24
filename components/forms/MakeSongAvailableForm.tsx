@@ -24,7 +24,7 @@ const Field = styled.div`
 const NumberInput = styled.input`
   background: transparent;
   border: none;
-  border-bottom: 1px dotted white;
+  border-bottom: 1px solid white;
   color: #fff;
   text-align: center;
   padding: 3px 6px;

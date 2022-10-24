@@ -64,6 +64,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'GET': {
       try {
         const tracks = await prisma.track.findMany({
+          where: { archived: false },
           include: { artist: { select: { username: true } } },
         })
         res.status(200).json(tracks)

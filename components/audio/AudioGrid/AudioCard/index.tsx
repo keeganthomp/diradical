@@ -17,6 +17,7 @@ import { useSetRecoilState } from 'recoil'
 
 type Props = {
   track: TrackWithArtist
+  refetch?: () => void
 }
 
 const Wrapper = styled.div`
@@ -77,7 +78,7 @@ const Realesed = styled.p`
   font-size: 14px;
   text-transform: lowercase;
 `
-const PercentAvailable = styled.p`
+const Tag = styled.p`
   margin: 0;
   text-transform: lowercase;
   font-weight: 400;
@@ -90,12 +91,17 @@ const PercentAvailable = styled.p`
   opacity: 0.8;
 `
 
-const AvailablePercent = styled(PercentAvailable)`
+const AvailablePercent = styled(Tag)`
   position: absolute;
   bottom: 3px;
   left: 2px;
 `
-const ArtistPercent = styled(PercentAvailable)`
+const ArtistPercent = styled(Tag)`
+  position: absolute;
+  top: 3px;
+  right: 2px;
+`
+const NotAvailable = styled(Tag)`
   position: absolute;
   top: 3px;
   right: 2px;
@@ -132,7 +138,7 @@ const ContractAddress = styled.a`
   }
 `
 
-export default function AudioCard({ track }: Props) {
+export default function AudioCard({ track, refetch }: Props) {
   const setModal = useSetRecoilState(modalState)
   const { user } = useUser()
   const router = useRouter()
@@ -163,35 +169,45 @@ export default function AudioCard({ track }: Props) {
         onMouseLeave={handleMouseLeave}
         bgImage={track.coverArt}
       >
-        <AudioCardMenu track={track} isOpenToPublic={views?.isOpenToPublic} />
+        <AudioCardMenu
+          track={track}
+          isOpenToPublic={views?.isOpenToPublic}
+          refetch={refetch}
+        />
         <CoverArt src={track.coverArt} />
         {isHovering && (
           <>
             {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
-            {!isProfilePage && user && views?.isOpenToPublic && (
+            {!isProfilePage && user && views && (
               <>
-                <ArtistPercent>
-                  {(
-                    (views.creatorTokenAllocation /
-                      views.totalTokenAllocation) *
-                    100
-                  ).toFixed(2)}
-                  % Retained
-                </ArtistPercent>
-                <AvailablePercent>
-                  ~
-                  {(
-                    (views.tokensAvailable / views.totalTokenAllocation) *
-                    100
-                  ).toFixed(2)}
-                  % Available
-                </AvailablePercent>
-                <BuyButton
-                  onClick={openBuySharesModal}
-                  disabled={views.tokensAvailable === 0}
-                >
-                  Buy Ownership
-                </BuyButton>
+                {views?.isOpenToPublic ? (
+                  <>
+                    <ArtistPercent>
+                      {(
+                        (views.creatorTokenAllocation /
+                          views.totalTokenAllocation) *
+                        100
+                      ).toFixed(2)}
+                      % Retained
+                    </ArtistPercent>
+                    <AvailablePercent>
+                      ~
+                      {(
+                        (views.tokensAvailable / views.totalTokenAllocation) *
+                        100
+                      ).toFixed(2)}
+                      % Available
+                    </AvailablePercent>
+                    <BuyButton
+                      onClick={openBuySharesModal}
+                      disabled={views.tokensAvailable === 0}
+                    >
+                      Buy Ownership
+                    </BuyButton>
+                  </>
+                ) : (
+                  <NotAvailable>Not Available</NotAvailable>
+                )}
               </>
             )}
           </>

@@ -1,13 +1,13 @@
 import BaseModal from './Base'
 import PurchaseSharesForm from 'components/forms/PurchaseOwnershipForm'
-import { Track } from '@prisma/client'
+import { TrackWithArtist } from 'types'
 
 function MakeSongAvailableModal({
   onClose,
   track,
 }: {
   onClose: () => void
-  track: Track
+  track: TrackWithArtist
 }) {
   return (
     <BaseModal onClose={onClose}>
