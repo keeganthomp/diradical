@@ -10,13 +10,14 @@ const customStyles = {
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
     borderRadius: '10px',
-    background: '#000',
+    background: 'transparent',
     color: '#fff',
     border: 'none',
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     backdropFilter: 'saturate(180%) blur(20px)',
+    '-webkit-backdrop-filter': 'saturate(180%) blur(20px)',
     zIndex: 10,
   },
 }

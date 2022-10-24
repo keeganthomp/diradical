@@ -24,30 +24,6 @@ const UpdateButton = styled(Button)`
   align-items: center;
 `
 
-const WalletField = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-`
-const WalletLabel = styled.p`
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-`
-
-const truncateWallet = (wallet: string) => {
-  const first = wallet.slice(0, 4)
-  const last = wallet.slice(-4)
-  return `${first}...${last}`
-}
-
-const Wallet = styled.p`
-  color: #b8b8b8;
-  margin: 0;
-  width: 100%;
-  font-weight: 100;
-`
-
 export default function UserSettings() {
   const { user } = useUser()
   const [editingField, setEditingField] = useState<'username' | 'email' | null>(

@@ -11,6 +11,7 @@ const Container = styled.div`
   z-index: 9;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   color: white;
   position: fixed;
   bottom: 0;

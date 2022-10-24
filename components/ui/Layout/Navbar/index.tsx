@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { useUser } from '@auth0/nextjs-auth0'
-import { SlMusicToneAlt, SlLogin, SlLogout } from 'react-icons/sl'
+import { SlMusicToneAlt } from 'react-icons/sl'
 import { BsPerson } from 'react-icons/bs'
 import NavLink from './NavLink'
 
@@ -16,14 +16,6 @@ const MusicIcon = styled(SlMusicToneAlt)`
   padding: 3px;
 `
 const ProfleIcon = styled(BsPerson)`
-  font-size: 22px;
-  padding: 3px;
-`
-const LoginIcon = styled(SlLogin)`
-  font-size: 22px;
-  padding: 3px;
-`
-const LogoutIcon = styled(SlLogout)`
   font-size: 22px;
   padding: 3px;
 `
@@ -54,6 +46,7 @@ const NAV_LINKS: NavLinkType[] = [
 const NavbarWrapper = styled.div`
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   display: flex;
   justify-content: flex-end;
   align-items: center;

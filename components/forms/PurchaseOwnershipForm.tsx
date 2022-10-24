@@ -59,10 +59,16 @@ const Error = styled.p`
   margin-bottom: 1rem;
 `
 
-const HelpText = styled.p`
+const HelpText = styled.div`
+  font-style: italic;
   font-size: 12px;
   font-weight: 200;
   color: lightgray;
+  padding: 10px 0;
+  text-align: center;
+  p {
+    margin: 0;
+  }
 `
 
 export function PurchaseSharesForm({
@@ -90,7 +96,7 @@ export function PurchaseSharesForm({
     views &&
     ((views.tokensAvailable / views.totalTokenAllocation) * 100).toFixed(2)
   const purchasePercent =
-    views && ((amtToPurchase / views.tokensAvailable) * 100).toFixed(2)
+    views && ((amtToPurchase / views.totalTokenAllocation) * 100).toFixed(2)
 
   // check that there is an amount and is a valid number
   const isValidAmount = Boolean(amtToPurchase && !isNaN(amtToPurchase))
@@ -119,12 +125,16 @@ export function PurchaseSharesForm({
               placeholder='0'
             />
           </Field>
-          {isValidAmount && (
-            <HelpText>
-              ~{purchasePercent}% of {totalAvailablePercent}% available
-            </HelpText>
-          )}
-          <HelpText>Max available: {views.tokensAvailable}</HelpText>
+          <HelpText>
+            {isValidAmount && (
+              <p>
+                {amtToPurchase} Tokens = ~{purchasePercent}% ownership
+              </p>
+            )}
+            <p>
+              Max available: {views.tokensAvailable} ({totalAvailablePercent}%)
+            </p>
+          </HelpText>
           {formState.errors.tokenAmtToPurchase?.message && (
             <Error>{formState.errors.tokenAmtToPurchase?.message}</Error>
           )}

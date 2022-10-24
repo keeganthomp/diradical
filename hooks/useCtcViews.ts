@@ -11,6 +11,7 @@ type CtcViews = {
   totalValue: number
   totalPaid: number
   totalTokenAllocation: number
+  creatorTokenAllocation: number
   checkOwnership: (walletAddress: string) => Promise<number>
 }
 
@@ -30,6 +31,7 @@ const useContractViews = (contractAddress: number) => {
     const isOpenToPublic = await ctc.v.isOpenToPublic()
     const totalPaid = await ctc.v.totalPaid()
     const totalTokenAllocation = await ctc.v.totalTokenAllocation()
+    const creatorTokenAllocation = await ctc.v.creatorTokenAllocation()
     const views = {
       creator: creator[1],
       isOpenToPublic: isOpenToPublic[1],
@@ -39,6 +41,9 @@ const useContractViews = (contractAddress: number) => {
       totalValue: stdlib.bigNumberToNumber(totValue[1]),
       totalPaid: stdlib.bigNumberToNumber(totalPaid[1]),
       totalTokenAllocation: stdlib.bigNumberToNumber(totalTokenAllocation[1]),
+      creatorTokenAllocation: stdlib.bigNumberToNumber(
+        creatorTokenAllocation[1],
+      ),
       checkOwnership: async (walletAddress: string) => {
         const toksOwned = await ctc.v.checkOwnership(walletAddress)
         return stdlib.bigNumberToNumber(toksOwned[1])

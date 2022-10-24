@@ -77,14 +77,11 @@ const Realesed = styled.p`
   font-size: 14px;
   text-transform: lowercase;
 `
-const Shares = styled.p`
+const PercentAvailable = styled.p`
   margin: 0;
   text-transform: lowercase;
   font-weight: 400;
   z-index: 9;
-  position: absolute;
-  bottom: 3px;
-  left: 2px;
   font-size: 12px;
   background: #fff;
   color: #000;
@@ -92,16 +89,28 @@ const Shares = styled.p`
   border-radius: 5px;
   opacity: 0.8;
 `
+
+const AvailablePercent = styled(PercentAvailable)`
+  position: absolute;
+  bottom: 3px;
+  left: 2px;
+`
+const ArtistPercent = styled(PercentAvailable)`
+  position: absolute;
+  top: 3px;
+  right: 2px;
+`
+
 const BuyButton = styled(Button)`
   font-size: 12px;
   padding: 0 4px;
   border-radius: 5px;
-  width: 5rem;
+  width: 5.75rem;
   z-index: 9;
   position: absolute;
   bottom: 2px;
   right: 2px;
-  background: #000;
+  background: #b784a7;
   color: #fff;
   height: 25px;
 `
@@ -161,14 +170,22 @@ export default function AudioCard({ track }: Props) {
             {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
             {!isProfilePage && user && views?.isOpenToPublic && (
               <>
-                <Shares>
+                <ArtistPercent>
+                  {(
+                    (views.creatorTokenAllocation /
+                      views.totalTokenAllocation) *
+                    100
+                  ).toFixed(2)}
+                  % Retained
+                </ArtistPercent>
+                <AvailablePercent>
                   ~
                   {(
                     (views.tokensAvailable / views.totalTokenAllocation) *
                     100
                   ).toFixed(2)}
                   % Available
-                </Shares>
+                </AvailablePercent>
                 <BuyButton
                   onClick={openBuySharesModal}
                   disabled={views.tokensAvailable === 0}
