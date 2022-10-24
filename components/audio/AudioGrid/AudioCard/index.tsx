@@ -17,7 +17,6 @@ import { useSetRecoilState } from 'recoil'
 
 type Props = {
   track: TrackWithArtist
-  refetch?: () => void
 }
 
 const Wrapper = styled.div`
@@ -138,7 +137,7 @@ const ContractAddress = styled.a`
   }
 `
 
-export default function AudioCard({ track, refetch }: Props) {
+export default function AudioCard({ track }: Props) {
   const setModal = useSetRecoilState(modalState)
   const { user } = useUser()
   const router = useRouter()
@@ -169,11 +168,7 @@ export default function AudioCard({ track, refetch }: Props) {
         onMouseLeave={handleMouseLeave}
         bgImage={track.coverArt}
       >
-        <AudioCardMenu
-          track={track}
-          isOpenToPublic={views?.isOpenToPublic}
-          refetch={refetch}
-        />
+        <AudioCardMenu track={track} isOpenToPublic={views?.isOpenToPublic} />
         <CoverArt src={track.coverArt} />
         {isHovering && (
           <>

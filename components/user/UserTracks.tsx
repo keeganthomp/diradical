@@ -26,7 +26,6 @@ export default function UserTacks() {
     isLoading,
     error,
     data: userTracks,
-    refetch,
   } = useQuery<TrackWithArtist[]>(
     'userTracks',
     () => fetch(`/api/tracks/user`).then((res) => res.json()),
@@ -63,7 +62,6 @@ export default function UserTacks() {
           ...t,
           artist: t.artist,
         }))}
-        refetch={refetch}
       />
     </Container>
   )

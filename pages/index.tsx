@@ -17,7 +17,6 @@ export default function HomePage() {
     isLoading,
     error,
     data: tracks,
-    refetch,
   } = useQuery<TrackWithArtist[]>(
     'tracks',
     () => fetch(`/api/tracks`).then((res) => res.json()),
@@ -29,7 +28,7 @@ export default function HomePage() {
   if (isLoading) return <Loader />
   return (
     <Container>
-      <AudioGrid tracks={tracks} refetch={refetch} />
+      <AudioGrid tracks={tracks} />
     </Container>
   )
 }

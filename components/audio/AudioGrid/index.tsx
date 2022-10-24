@@ -25,14 +25,13 @@ const Grid = styled.div`
 
 type Props = {
   tracks: TrackWithArtist[]
-  refetch?: () => void
 }
 
-export default function AudioGrid({ tracks, refetch }: Props) {
+export default function AudioGrid({ tracks }: Props) {
   return (
     <Grid>
       {tracks.map((track: TrackWithArtist) => (
-        <AudioCard key={track.id} track={track} refetch={refetch} />
+        <AudioCard key={track.id} track={track} />
       ))}
     </Grid>
   )

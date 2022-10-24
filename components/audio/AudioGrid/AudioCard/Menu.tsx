@@ -13,7 +13,6 @@ import { useQueryClient } from 'react-query'
 type Props = {
   track: TrackWithArtist
   isOpenToPublic: boolean
-  refetch?: () => void
 }
 
 const MENU_ITEM_CLASS = 'menu-item'
@@ -68,11 +67,7 @@ const MenuItem = styled.p<{ color?: string; disabled?: boolean }>`
   }
 `
 
-export default function AudioCardMenu({
-  track,
-  isOpenToPublic,
-  refetch,
-}: Props) {
+export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
   const [isArchived, setArchived] = useState(track.archived)
   const queryClient = useQueryClient()
   const setModal = useSetRecoilState(modalState)
@@ -108,10 +103,8 @@ export default function AudioCardMenu({
 
   const handleArchive = async () => {
     await axios.post(`/api/tracks/${track.id}/archive`)
-    queryClient.invalidateQueries(['tracks', 'userTracks'])
+    await queryClient.refetchQueries(['tracks', 'userTracks'])
     setArchived(!isArchived)
-    console.log('refetch', refetch)
-    if (refetch) refetch()
   }
 
   const openSongModal = () =>
