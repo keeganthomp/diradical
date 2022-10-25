@@ -38,6 +38,7 @@ const Label = styled.label`
 
 export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
   const { uploadToS3 } = useS3()
+  const [error, setError] = React.useState('')
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     mode: 'all',
     defaultValues: {
@@ -63,7 +64,8 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
       reset()
       if (onSubmit) onSubmit()
     } catch (err) {
-      console.error('Err uploading:', err)
+      const parsedError = err.toJSON()
+      setError(parsedError.message)
     }
   }
 
@@ -78,6 +80,7 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
               required: true,
             })}
             placeholder='rad song xxx'
+            disabled={formState.isSubmitting}
           />
         </Field>
         <Field>
@@ -89,6 +92,7 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
             {...register('audioFiles', {
               required: true,
             })}
+            disabled={formState.isSubmitting}
           />
         </Field>
         <Field>
@@ -100,6 +104,7 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
             {...register('artFiles', {
               required: true,
             })}
+            disabled={formState.isSubmitting}
           />
         </Field>
         <UploadButton

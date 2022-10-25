@@ -26,6 +26,7 @@ export default function HomePage() {
     },
   )
   if (isLoading) return <Loader />
+  if (error || !Array.isArray(tracks)) return <p>Error</p>
   return (
     <Container>
       <AudioGrid tracks={tracks} />

@@ -11,8 +11,12 @@ const getAccountFromMdk = async (mdk: string) => {
 }
 
 const optinToAsset = async (mdk: string, tokId: number) => {
-  const acc = await getAccountFromMdk(mdk)
-  await acc.tokenAccept(tokId)
+  try {
+    const acc = await getAccountFromMdk(mdk)
+    await acc.tokenAccept(tokId)
+  } catch (err) {
+    console.log('Unable to optin to token:', err)
+  }
 }
 
 type launchSongCtcProps = {
@@ -21,20 +25,24 @@ type launchSongCtcProps = {
   coverArtIpfsCid: string
 }
 export const launchSongCtc = async (props: launchSongCtcProps) => {
-  const acc: any = await getAccountFromMdk(props.mdk)
-  const ctc = acc.contract(backend)
-  await stdlib.withDisconnect(() =>
-    ctc.p.Creator({
-      art: props.coverArtIpfsCid,
-      audio: props.audioIpfsCid,
-      ready: stdlib.disconnect,
-    }),
-  )
-  const ctcInfo = await ctc.getInfo()
-  const ownershipTok = await ctc.v.ownershipTokId()
-  await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
-  const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
-  return contractAddress
+  try {
+    const acc: any = await getAccountFromMdk(props.mdk)
+    const ctc = acc.contract(backend)
+    await stdlib.withDisconnect(() =>
+      ctc.p.Creator({
+        art: props.coverArtIpfsCid,
+        audio: props.audioIpfsCid,
+        ready: stdlib.disconnect,
+      }),
+    )
+    const ctcInfo = ctc.getInfo().catch((err) => console.log('5555', err))
+    const ownershipTok = await ctc.v.ownershipTokId()
+    await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
+    const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
+    return contractAddress
+  } catch (err) {
+    throw new Error('Error uploading song')
+  }
 }
 
 type OpenToPublicProps = {

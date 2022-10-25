@@ -4,7 +4,6 @@ import axios from 'axios'
 import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
 import Form from './Form'
-import { Track } from '@prisma/client'
 import { TrackWithArtist } from 'types'
 import useContractViews from 'hooks/useCtcViews'
 import Loader from 'components/ui/Loader'
@@ -150,14 +149,20 @@ export function PurchaseSharesForm({
               <Artist>{track.artist.username || track.artist.email}</Artist>
               <p>
                 You will spend{' '}
-                {(
-                  Number(
-                    stdlib.formatCurrency(
-                      stdlib.bigNumberify(views.tokenPrice),
-                      6,
-                    ),
-                  ) * amtToPurchase
-                ).toFixed(6)}{' '}
+                {!amtToPurchase
+                  ? 0
+                  : parseFloat(
+                      (
+                        Number(
+                          stdlib.formatCurrency(
+                            stdlib.bigNumberify(views.tokenPrice),
+                            6,
+                          ),
+                        ) * amtToPurchase
+                      )
+                        .toFixed(6)
+                        .toString(),
+                    )}{' '}
                 Algos
               </p>
             </div>

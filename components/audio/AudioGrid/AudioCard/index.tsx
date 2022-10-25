@@ -6,7 +6,6 @@ import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
-import { useUser } from '@auth0/nextjs-auth0'
 import moment from 'moment'
 import useContractViews from 'hooks/useCtcViews'
 import AudioCardMenu from './Menu'
@@ -139,7 +138,6 @@ const ContractAddress = styled.a`
 
 export default function AudioCard({ track }: Props) {
   const setModal = useSetRecoilState(modalState)
-  const { user } = useUser()
   const router = useRouter()
   const isProfilePage = router.pathname === '/profile'
   const { views, refetch: refetchViews } = useContractViews(
@@ -173,7 +171,7 @@ export default function AudioCard({ track }: Props) {
         {isHovering && (
           <>
             {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
-            {!isProfilePage && user && views && (
+            {!isProfilePage && views && (
               <>
                 {views?.isOpenToPublic ? (
                   <>

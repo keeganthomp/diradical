@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { withApiAuthRequired, getSession } from '@auth0/nextjs-auth0'
+import { getSession } from '@auth0/nextjs-auth0'
 import prisma from 'lib/prisma'
 import ipfs from 'lib/IPFS'
 import { launchSongCtc } from 'contracts'
@@ -24,22 +24,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         where: { email: authedUser.email },
         select: { mdk: true },
       })
-      const { data: artFileContent } = await axios.get(payload.artS3Url, {
-        responseType: 'arraybuffer',
-      })
-      const { data: audioFileContent } = await axios.get(payload.audioS3Url, {
-        responseType: 'arraybuffer',
-      })
-      const artFileBuffer = Buffer.from(artFileContent, 'utf-8')
-      const audioFileBuffer = Buffer.from(audioFileContent, 'utf-8')
-      const { path: coverArtIpfsHash } = await ipfs.add(artFileBuffer)
-      const { path: audioIpfsHash } = await ipfs.add(audioFileBuffer)
-      const contractAddress = await launchSongCtc({
-        coverArtIpfsCid: coverArtIpfsHash,
-        audioIpfsCid: audioIpfsHash,
-        mdk: user.mdk,
-      })
       try {
+        const { data: artFileContent } = await axios.get(payload.artS3Url, {
+          responseType: 'arraybuffer',
+        })
+        const { data: audioFileContent } = await axios.get(payload.audioS3Url, {
+          responseType: 'arraybuffer',
+        })
+        const artFileBuffer = Buffer.from(artFileContent, 'utf-8')
+        const audioFileBuffer = Buffer.from(audioFileContent, 'utf-8')
+        const { path: coverArtIpfsHash } = await ipfs.add(artFileBuffer)
+        const { path: audioIpfsHash } = await ipfs.add(audioFileBuffer)
+        const contractAddress = await launchSongCtc({
+          coverArtIpfsCid: coverArtIpfsHash,
+          audioIpfsCid: audioIpfsHash,
+          mdk: user.mdk,
+        })
         const track = await prisma.track.create({
           data: {
             title: payload.title,
