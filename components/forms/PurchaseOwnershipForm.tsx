@@ -8,6 +8,7 @@ import { Track } from '@prisma/client'
 import { TrackWithArtist } from 'types'
 import useContractViews from 'hooks/useCtcViews'
 import Loader from 'components/ui/Loader'
+import stdlib from 'lib/reach'
 
 const Container = styled.div`
   display: flex;
@@ -20,6 +21,10 @@ const Meta = styled.div`
   text-align: center;
   position: relative;
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   p {
     margin: 0;
   }
@@ -143,6 +148,18 @@ export function PurchaseSharesForm({
             <div>
               <Title>{track.title}</Title>
               <Artist>{track.artist.username || track.artist.email}</Artist>
+              <p>
+                You will spend{' '}
+                {(
+                  Number(
+                    stdlib.formatCurrency(
+                      stdlib.bigNumberify(views.tokenPrice),
+                      6,
+                    ),
+                  ) * amtToPurchase
+                ).toFixed(6)}{' '}
+                Algos
+              </p>
             </div>
           </Meta>
           <Form onSubmit={handleSubmit(purchaseShares)}>
