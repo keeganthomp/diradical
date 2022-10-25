@@ -188,7 +188,9 @@ export function PurchaseSharesForm({
             <HelpText>
               {isValidAmount && (
                 <p>
-                  {amtToPurchase} Tokens = ~{purchasePercent}% ownership
+                  {amtToPurchase} Tokens ={' '}
+                  {purchasePercent === '0.00' ? '<0.01' : purchasePercent}%
+                  ownership
                 </p>
               )}
               <p>

@@ -21,8 +21,7 @@ export default function HomePage() {
     'tracks',
     () => fetch(`/api/tracks`).then((res) => res.json()),
     {
-      refetchInterval: 10000,
-      staleTime: 10000,
+      refetchInterval: 20000,
     },
   )
   if (isLoading) return <Loader />
