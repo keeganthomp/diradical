@@ -22,12 +22,12 @@ const ProfilePage = () => {
       Component: UserTacks,
     },
     {
-      title: 'Settings',
-      Component: () => <UserSettings />,
-    },
-    {
       title: 'Wallet',
       Component: Wallet,
+    },
+    {
+      title: 'Account',
+      Component: () => <UserSettings />,
     },
   ]
 

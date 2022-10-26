@@ -23,7 +23,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
     res.status(200).json({ sucess: true })
   } catch (err) {
-    console.log('err', err)
     res.status(500).json({ message: 'unable to register user' })
   }
 }

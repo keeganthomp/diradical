@@ -12,8 +12,7 @@ export default withApiAuthRequired(
           const user = await prisma.user.findUnique({
             where: { email: authedUser.email },
           })
-          const wallet = getWalletFromMdk(user.mdk)
-          res.status(200).json({ ...user, wallet: wallet.addr })
+          res.status(200).json(user)
         } catch (err) {
           res.status(500).json({ message: 'unable to get user' })
         }

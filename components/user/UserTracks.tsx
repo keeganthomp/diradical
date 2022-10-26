@@ -38,7 +38,7 @@ export default function UserTacks() {
     setModal({ type: ModalType.UPLOAD, state: null })
   }
 
-  if (isLoading) return <Loader />
+  if (isLoading || !userTracks) return <Loader />
   if (error)
     return (
       <Container>
