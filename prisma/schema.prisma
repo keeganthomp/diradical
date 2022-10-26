@@ -11,14 +11,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String   @unique @db.VarChar(255)
-  mdk       String   @unique @db.VarChar(255) // used to access wallet
-  username  String   @unique @db.VarChar(255)
-  singles   Track[]
-  albums    Album[]
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  walletAddress String   @unique @db.VarChar(255)
+  email         String   @unique @db.VarChar(255)
+  mdk           String   @unique @db.VarChar(255) // used to access wallet
+  username      String   @unique @db.VarChar(255)
+  singles       Track[]
+  albums        Album[]
 }
 
 model Album {

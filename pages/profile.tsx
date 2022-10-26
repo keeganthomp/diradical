@@ -4,6 +4,7 @@ import Tabs from 'components/ui/Tabs'
 import { Tab } from 'types'
 import UserTacks from 'components/user/UserTracks'
 import UserSettings from 'components/user/Settings'
+import Wallet from 'components/user/Wallet'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0'
 
 const Container = styled.div`
@@ -23,6 +24,10 @@ const ProfilePage = () => {
     {
       title: 'Settings',
       Component: () => <UserSettings />,
+    },
+    {
+      title: 'Wallet',
+      Component: Wallet,
     },
   ]
 

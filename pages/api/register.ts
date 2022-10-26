@@ -12,12 +12,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ message: 'email & username are required' })
   }
   try {
-    const mdk = generateWalletMdk()
+    const { mdk, walletAddress } = generateWalletMdk()
     await prisma.user.create({
       data: {
         username,
         email,
         mdk,
+        walletAddress,
       },
     })
     res.status(200).json({ sucess: true })

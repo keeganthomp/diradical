@@ -157,5 +157,6 @@ export function getWalletFromMdk(mdk: string) {
 export function generateWalletMdk() {
   const { xprv } = compressHDKey(createMasterDerivationKey())
   const mdk = encryptAES(xprv)
-  return mdk
+  const wall = getWalletFromMdk(mdk)
+  return { mdk, walletAddress: wall.addr }
 }
