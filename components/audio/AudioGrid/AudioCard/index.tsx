@@ -40,7 +40,10 @@ const ImageContainer = styled.div`
   }
 `
 
-const MetaData = styled.div``
+const MetaData = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 const Meta = styled.div`
   margin-top: 0.5rem;
@@ -86,14 +89,9 @@ const Tag = styled.p`
   color: #000;
   padding: 0 4px;
   border-radius: 5px;
-  opacity: 0.8;
 `
 
-const AvailablePercent = styled(Tag)`
-  position: absolute;
-  bottom: 3px;
-  left: 2px;
-`
+const AvailablePercent = styled(Tag)``
 const ArtistPercent = styled(Tag)`
   position: absolute;
   top: 3px;
@@ -111,10 +109,9 @@ const BuyButton = styled(Button)`
   border-radius: 5px;
   width: 5.75rem;
   z-index: 9;
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  background: #b784a7;
+  background: #7d12ff;
+  border: 1px solid lightgray;
+  font-weight: bold;
   color: #fff;
   height: 25px;
 `
@@ -168,43 +165,8 @@ export default function AudioCard({ track }: Props) {
       >
         <AudioCardMenu track={track} isOpenToPublic={views?.isOpenToPublic} />
         <CoverArt src={track.coverArt} />
-        {isHovering && (
-          <>
-            {isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />}
-            {!isProfilePage && views && (
-              <>
-                {views?.isOpenToPublic ? (
-                  <>
-                    <ArtistPercent>
-                      {(
-                        (views.creatorTokenAllocation /
-                          views.totalTokenAllocation) *
-                        100
-                      ).toFixed(2)}
-                      % Retained
-                    </ArtistPercent>
-                    <AvailablePercent>
-                      ~
-                      {(
-                        (views.tokensAvailable / views.totalTokenAllocation) *
-                        100
-                      ).toFixed(2)}
-                      % Available
-                    </AvailablePercent>
-                    <BuyButton
-                      onClick={openBuySharesModal}
-                      disabled={views.tokensAvailable === 0}
-                    >
-                      Buy Ownership
-                    </BuyButton>
-                  </>
-                ) : (
-                  <NotAvailable>Not Available</NotAvailable>
-                )}
-              </>
-            )}
-          </>
-        )}
+        {isHovering &&
+          (isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />)}
       </ImageContainer>
       <MetaData>
         <Meta>
@@ -222,6 +184,30 @@ export default function AudioCard({ track }: Props) {
             </ContractAddress>
           </RightCol>
         </Meta>
+        {views && (
+          <Meta>
+            {views.isOpenToPublic ? (
+              <AvailablePercent>
+                ~
+                {(
+                  (views.tokensAvailable / views.totalTokenAllocation) *
+                  100
+                ).toFixed(2)}
+                % Available
+              </AvailablePercent>
+            ) : (
+              <AvailablePercent>Not Available</AvailablePercent>
+            )}
+            {views.isOpenToPublic && (
+              <BuyButton
+                onClick={openBuySharesModal}
+                disabled={views.tokensAvailable === 0}
+              >
+                Buy Ownership
+              </BuyButton>
+            )}
+          </Meta>
+        )}
       </MetaData>
     </Wrapper>
   )

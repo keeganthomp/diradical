@@ -35,12 +35,13 @@ export const launchSongCtc = async (props: launchSongCtcProps) => {
         ready: stdlib.disconnect,
       }),
     )
-    const ctcInfo = ctc.getInfo()
+    const ctcInfo = await ctc.getInfo()
     const ownershipTok = await ctc.v.ownershipTokId()
     await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
     const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
     return contractAddress
   } catch (err) {
+    console.log('err', err)
     throw new Error('Error uploading song')
   }
 }

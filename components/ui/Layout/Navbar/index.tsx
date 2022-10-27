@@ -62,6 +62,8 @@ const NavbarWrapper = styled.div`
   }
 `
 
+const Balance = styled.div``
+
 const Navbar = () => {
   const { user } = useUser()
 

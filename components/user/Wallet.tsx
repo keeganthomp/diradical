@@ -6,6 +6,7 @@ import Loader from 'components/ui/Loader'
 import React from 'react'
 import stdlib from 'lib/reach'
 import axios from 'axios'
+import useWalletBalance from 'hooks/useWalletBalance'
 
 const Container = styled.div`
   display: flex;
@@ -23,7 +24,6 @@ const Message = styled.p``
 const Balance = styled.p``
 
 function Wallet() {
-  const [bal, setBal] = React.useState(null as number)
   const {
     isLoading,
     error,
@@ -35,33 +35,11 @@ function Wallet() {
       refetchInterval: 30000,
     },
   )
-
-  React.useEffect(() => {
-    if (!user) return
-    const getBal = async () => {
-      try {
-        const { data } = await axios.get(
-          `https://algoindexer.testnet.algoexplorerapi.io/v2/accounts/${user.walletAddress}`,
-        )
-        setBal(data.account.amount)
-      } catch {
-        // the balance wallet balance be 0
-        setBal(0)
-      }
-    }
-    getBal()
-  }, [user])
-
-  if (isLoading || bal === null)
+  const { isLoading: isFetchingBalance, balance } = useWalletBalance(user)
+  if (isFetchingBalance)
     return (
       <Container>
         <Loader />
-      </Container>
-    )
-  if (error)
-    return (
-      <Container>
-        <div>Something went wrong</div>
       </Container>
     )
   return (
@@ -70,7 +48,7 @@ function Wallet() {
       <Address>{user.walletAddress}</Address>
       <Message>use the QR code above to fund account with algo</Message>
       {/* micro algos */}
-      <Balance>Balance: {bal / 1000000} Algo</Balance>
+      <Balance>Balance: {balance / 1000000} Algo</Balance>
     </Container>
   )
 }

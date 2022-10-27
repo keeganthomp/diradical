@@ -68,7 +68,6 @@ const MenuItem = styled.p<{ color?: string; disabled?: boolean }>`
 `
 
 export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
-  const [isArchived, setArchived] = useState(track.archived)
   const queryClient = useQueryClient()
   const setModal = useSetRecoilState(modalState)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -79,6 +78,28 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
   const isOpen = activeMenu?.id === track.id
 
   if (!isProfilePage) return null
+
+  const updateCache = () => {
+    queryClient.setQueryData('userTracks', (old: any[]) => {
+      const updatedArray = [...old]
+      const findTrackIndex = old.findIndex((t) => t.id === track.id)
+      updatedArray[findTrackIndex] = {
+        ...updatedArray[findTrackIndex],
+        archived: !updatedArray[findTrackIndex].archived,
+      }
+      return updatedArray
+    })
+    queryClient.setQueryData('tracks', (old: any[]) => {
+      const updatedArray = old ? [...old] : []
+      const findTrackIndex = updatedArray.findIndex((t) => t.id === track.id)
+      if (findTrackIndex < 0) return old
+      updatedArray[findTrackIndex] = {
+        ...updatedArray[findTrackIndex],
+        archived: !updatedArray[findTrackIndex].archived,
+      }
+      return updatedArray
+    })
+  }
 
   const handleClickOutside = (e) => {
     if (
@@ -103,8 +124,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
 
   const handleArchive = async () => {
     await axios.post(`/api/tracks/${track.id}/archive`)
-    await queryClient.refetchQueries(['tracks', 'userTracks'])
-    setArchived(!isArchived)
+    updateCache()
   }
 
   const openSongModal = () =>
@@ -124,10 +144,10 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
           )}
           <MenuItem
             onClick={handleArchive}
-            color={!isArchived ? 'red' : '#000'}
+            color={!track.archived ? 'red' : '#000'}
             className={MENU_ITEM_CLASS}
           >
-            {isArchived ? 'unarchive' : 'Archive'}
+            {track.archived ? 'unarchive' : 'Archive'}
           </MenuItem>
         </MenuWrapper>
       )}

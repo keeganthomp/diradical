@@ -4,6 +4,7 @@ export enum ModalType {
   UPLOAD = 'UPLOAD',
   MAKE_SONG_AVAILABLE = 'MAKE_SONG_AVAILABLE',
   PURCHASE_SHARES = 'PURCHASE_SHARES',
+  PLEASE_WAIT = 'PLEASE_WAIT',
   NONE = '',
 }
 
@@ -11,6 +12,7 @@ type ModalState = {
   type: ModalType
   state: any | null
   onClose?: () => void
+  hideClose?: boolean
 }
 const modalState = atom({
   key: 'modal',

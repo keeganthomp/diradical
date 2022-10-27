@@ -5,7 +5,9 @@ const IPFS_GATEWAY = 'https://diradical.infura-ipfs.io/ipfs'
 
 const projectId = process.env.INFURA_PROJECT_ID
 const projectSecret = process.env.INFURA_PROJECT_SECRET
-const authorization = 'Basic ' + btoa(projectId + ':' + projectSecret)
+const authorization =
+  'Basic ' +
+  Buffer.from(projectId + ':' + projectSecret, 'binary').toString('base64')
 
 export const getIPFSUrl = (path: string) => `${IPFS_GATEWAY}/${path}`
 

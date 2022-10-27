@@ -4,6 +4,8 @@ import axios from 'axios'
 import React from 'react'
 import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
+import { useSetRecoilState } from 'recoil'
+import modalState, { ModalType } from 'atoms/modal'
 import TextInput from '../ui/Inputs/TextInput'
 import Form from './Form'
 
@@ -37,6 +39,7 @@ const Label = styled.label`
 `
 
 export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
+  const setModalState = useSetRecoilState(modalState)
   const { uploadToS3 } = useS3()
   const [error, setError] = React.useState('')
   const { register, handleSubmit, reset, formState, getValues } = useForm({
@@ -48,8 +51,13 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
     },
   })
 
+  const showWaitModal = () => {
+    setModalState({ type: ModalType.PLEASE_WAIT, state: null, hideClose: true })
+  }
+
   const uploadTrack = async (data) => {
     try {
+      showWaitModal()
       const { title } = getValues()
       const audioFile = data.audioFiles[0]
       const artFile = data.artFiles[0]
