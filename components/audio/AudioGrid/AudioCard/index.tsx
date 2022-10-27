@@ -198,7 +198,7 @@ export default function AudioCard({ track }: Props) {
             ) : (
               <AvailablePercent>Not Available</AvailablePercent>
             )}
-            {views.isOpenToPublic && (
+            {views.isOpenToPublic && !isProfilePage && (
               <BuyButton
                 onClick={openBuySharesModal}
                 disabled={views.tokensAvailable === 0}
