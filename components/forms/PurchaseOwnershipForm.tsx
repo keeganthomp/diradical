@@ -8,6 +8,7 @@ import { TrackWithArtist } from 'types'
 import useContractViews from 'hooks/useCtcViews'
 import Loader from 'components/ui/Loader'
 import stdlib from 'lib/reach'
+import useWalletBalance from 'hooks/useWalletBalance'
 
 const Container = styled.div`
   display: flex;
@@ -108,7 +109,10 @@ export function PurchaseSharesForm({
   track: TrackWithArtist
   onSubmit?: () => void
 }) {
-  const { views, isFetching } = useContractViews(track.contractAddress)
+  const { isFetching: isFetchingWalletBalance, balance } = useWalletBalance()
+  const { views, isFetching: isFetchingViews } = useContractViews(
+    track.contractAddress,
+  )
   const { register, handleSubmit, formState, watch } = useForm({
     mode: 'all',
     defaultValues: {
@@ -134,11 +138,16 @@ export function PurchaseSharesForm({
 
   // check that there is an amount and is a valid number
   const isValidAmount = Boolean(amtToPurchase && !isNaN(amtToPurchase))
+  const totalCost = views
+    ? Number(stdlib.formatCurrency(stdlib.bigNumberify(views.tokenPrice), 6)) *
+      amtToPurchase
+    : 0
+  const hasEnoughBalance = isValidAmount ? totalCost < balance : true
 
   return (
     <Container>
       <ModalTitle>Purchase Ownership</ModalTitle>
-      {isFetching || !views ? (
+      {isFetchingViews || isFetchingWalletBalance || !views ? (
         <Loader />
       ) : (
         <>
@@ -151,18 +160,7 @@ export function PurchaseSharesForm({
                 You will spend{' '}
                 {!amtToPurchase
                   ? 0
-                  : parseFloat(
-                      (
-                        Number(
-                          stdlib.formatCurrency(
-                            stdlib.bigNumberify(views.tokenPrice),
-                            6,
-                          ),
-                        ) * amtToPurchase
-                      )
-                        .toFixed(6)
-                        .toString(),
-                    )}{' '}
+                  : parseFloat(totalCost.toFixed(6).toString())}{' '}
                 Algos
               </p>
             </div>
@@ -172,6 +170,7 @@ export function PurchaseSharesForm({
               <Label>amount of tokens to purchase</Label>
               <NumberInput
                 {...register('tokenAmtToPurchase', {
+                  disabled: formState.isSubmitting,
                   required: true,
                   valueAsNumber: true,
                   min: 1,
@@ -186,6 +185,7 @@ export function PurchaseSharesForm({
               />
             </Field>
             <HelpText>
+              {!hasEnoughBalance && <Error>Not Enough Algo</Error>}
               {isValidAmount && (
                 <p>
                   {amtToPurchase} Tokens ={' '}
@@ -202,7 +202,11 @@ export function PurchaseSharesForm({
               <Error>{formState.errors.tokenAmtToPurchase?.message}</Error>
             )}
             <SubmitButton
-              disabled={!formState.isValid || formState.isSubmitting}
+              disabled={
+                !formState.isValid ||
+                formState.isSubmitting ||
+                !hasEnoughBalance
+              }
               type='submit'
             >
               Purchase

@@ -41,8 +41,7 @@ export const launchSongCtc = async (props: launchSongCtcProps) => {
     const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
     return contractAddress
   } catch (err) {
-    console.log('err', err)
-    throw new Error('Error uploading song')
+    throw new Error(err.message)
   }
 }
 

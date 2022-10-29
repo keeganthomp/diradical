@@ -38,10 +38,11 @@ const Label = styled.label`
   text-transform: lowercase;
 `
 
+const Error = styled.p``
+
 export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
   const setModalState = useSetRecoilState(modalState)
   const { uploadToS3 } = useS3()
-  const [error, setError] = React.useState('')
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     mode: 'all',
     defaultValues: {
@@ -53,6 +54,9 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
 
   const showWaitModal = () => {
     setModalState({ type: ModalType.PLEASE_WAIT, state: null, hideClose: true })
+  }
+  const showErrorModal = (error: string) => {
+    setModalState({ type: ModalType.ERROR, state: { error } })
   }
 
   const uploadTrack = async (data) => {
@@ -72,8 +76,13 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
       reset()
       if (onSubmit) onSubmit()
     } catch (err) {
-      const parsedError = err.toJSON()
-      setError(parsedError.message)
+      const { message } = err.response.data
+      const isOverspend = message.toLowerCase().includes('overspend')
+      if (isOverspend) {
+        showErrorModal('Not enough Algo in wallet to upload track')
+      } else {
+        showErrorModal('unable to upload track')
+      }
     }
   }
 

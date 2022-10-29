@@ -4,8 +4,6 @@ import { User } from '@prisma/client'
 import { useQuery } from 'react-query'
 import Loader from 'components/ui/Loader'
 import React from 'react'
-import stdlib from 'lib/reach'
-import axios from 'axios'
 import useWalletBalance from 'hooks/useWalletBalance'
 
 const Container = styled.div`
@@ -24,18 +22,14 @@ const Message = styled.p``
 const Balance = styled.p``
 
 function Wallet() {
-  const {
-    isLoading,
-    error,
-    data: user,
-  } = useQuery<User>(
+  const { data: user } = useQuery<User>(
     'user',
     () => fetch(`/api/user`).then((res) => res.json()),
     {
       refetchInterval: 30000,
     },
   )
-  const { isLoading: isFetchingBalance, balance } = useWalletBalance(user)
+  const { isFetching: isFetchingBalance, balance } = useWalletBalance()
   if (isFetchingBalance)
     return (
       <Container>

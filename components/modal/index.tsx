@@ -1,11 +1,13 @@
+import { useRecoilState } from 'recoil'
+import modalState, { ModalType } from 'atoms/modal'
+import { useUser } from '@auth0/nextjs-auth0'
+
 import UploadModal from './UploadModal'
 import MakeSongAvailableModal from './MakeSongAvailable'
 import PurchaseSharesModal from './PurchaseOwnership'
 import LoginModal from './LoginModal'
 import PleaseWaitModal from './PleaseWait'
-import { useRecoilState } from 'recoil'
-import modalState, { ModalType } from 'atoms/modal'
-import { useUser } from '@auth0/nextjs-auth0'
+import ErrorModal from './ErrorModal'
 
 function Modals() {
   const { user } = useUser()
@@ -37,6 +39,9 @@ function Modals() {
     }
     case ModalType.PLEASE_WAIT: {
       return <PleaseWaitModal onClose={closeModal} />
+    }
+    case ModalType.ERROR: {
+      return <ErrorModal onClose={closeModal} />
     }
     case ModalType.NONE: {
       return null

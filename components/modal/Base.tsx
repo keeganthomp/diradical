@@ -21,7 +21,6 @@ const customStyles = {
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     backdropFilter: 'saturate(180%) blur(20px)',
-    '-webkit-backdrop-filter': 'saturate(180%) blur(20px)',
     zIndex: 10,
   },
 }
