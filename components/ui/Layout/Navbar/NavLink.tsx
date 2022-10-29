@@ -8,14 +8,15 @@ type Props = {
   children: React.ReactNode
 }
 
-const StyledLink = styled.a<{ active?: boolean }>`
+const StyledLink = styled.p<{ active?: boolean }>`
+  color: #fff;
   background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: #fff;
   transition: all 0.1s ease-in-out;
+  margin-left: 1rem;
   &:hover {
     text-decoration: underline;
   }
@@ -23,11 +24,9 @@ const StyledLink = styled.a<{ active?: boolean }>`
 
 export default function NavLink({ href, exact, children }: Props) {
   const { pathname } = useRouter()
-  const isActive = exact ? pathname === href : pathname.startsWith(href)
-
   return (
-    <Link href={href}>
-      <StyledLink active={isActive}>{children}</StyledLink>
-    </Link>
+    <StyledLink>
+      <Link href={href}>{children}</Link>
+    </StyledLink>
   )
 }
