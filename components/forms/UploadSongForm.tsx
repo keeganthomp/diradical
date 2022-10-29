@@ -34,7 +34,7 @@ const Field = styled.div`
 `
 
 const Label = styled.label`
-  font-weight: 100;
+  font-weight: 200;
   text-transform: lowercase;
 `
 
