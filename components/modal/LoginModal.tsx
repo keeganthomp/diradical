@@ -12,12 +12,12 @@ const Container = styled.div`
 
 const SignupButton = styled.a`
   text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
-  background: #fff;
+  background: ${(p) => p.theme.colors.main};
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: #000;
+  color: #fff;
   border-radius: 20px;
   padding: 0 14px;
   z-index: 10;
@@ -28,9 +28,11 @@ const SignupButton = styled.a`
 `
 
 const LoginLink = styled.a`
+  text-decoration: none;
   margin-top: 10px;
-  text-decoration: underline;
   font-size: 14px;
+  color: #fff;
+  font-weight: bold;
   &:visited {
     color: #fff;
   }

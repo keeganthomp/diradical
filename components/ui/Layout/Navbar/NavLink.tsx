@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 import styled from 'styled-components'
 
@@ -16,14 +15,16 @@ const StyledLink = styled.p<{ active?: boolean }>`
   align-items: center;
   cursor: pointer;
   transition: all 0.1s ease-in-out;
-  margin-left: 1rem;
+  font-weight: 200;
+  width: 4rem;
   &:hover {
-    text-decoration: underline;
+    span {
+      font-weight: 300;
+    }
   }
 `
 
 export default function NavLink({ href, exact, children }: Props) {
-  const { pathname } = useRouter()
   return (
     <StyledLink>
       <Link href={href}>{children}</Link>

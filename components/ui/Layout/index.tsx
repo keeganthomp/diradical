@@ -5,7 +5,7 @@ import { devices } from 'styles/theme'
 
 const StyledLayout = styled.div``
 const Content = styled.div`
-  padding: 3rem 2rem 5.5rem 2rem;
+  padding: 3.5rem 2rem 5.5rem 2rem;
   background: ${(p) => p.theme.colors.background};
   height: 100vh;
   overflow-y: scroll;

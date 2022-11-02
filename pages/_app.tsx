@@ -9,10 +9,21 @@ import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Modals from 'components/modal'
 import React from 'react'
+import API from 'api'
+import { CacheKey } from 'types'
 
 const queryClient = new QueryClient()
 
 function App({ Component, pageProps }: AppProps) {
+  const prefetchData = async () => {
+    await queryClient.prefetchQuery([CacheKey.TRACKS], API.fetchTracks)
+    await queryClient.prefetchQuery([CacheKey.USER], API.fetchUser)
+  }
+
+  React.useEffect(() => {
+    prefetchData()
+  }, [])
+
   return (
     <>
       <Head>

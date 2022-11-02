@@ -1,11 +1,10 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
-import { useQuery } from 'react-query'
 import { useSetRecoilState } from 'recoil'
 import modalState, { ModalType } from 'atoms/modal'
 import Button from 'components/ui/Buttons/Base'
-import { TrackWithArtist } from 'types'
 import Loader from 'components/ui/Loader'
+import useMusic from 'hooks/useMusic'
 
 const Message = styled.p`
   text-align: center;
@@ -22,17 +21,7 @@ const Container = styled.div`
 
 export default function UserTacks() {
   const setModal = useSetRecoilState(modalState)
-  const {
-    isLoading,
-    error,
-    data: userTracks,
-  } = useQuery<TrackWithArtist[]>(
-    'userTracks',
-    () => fetch(`/api/tracks/user`).then((res) => res.json()),
-    {
-      refetchInterval: 20000,
-    },
-  )
+  const { isLoading, error, data: userTracks } = useMusic(true)
 
   const openUploadModal = () => {
     setModal({ type: ModalType.UPLOAD, state: null })

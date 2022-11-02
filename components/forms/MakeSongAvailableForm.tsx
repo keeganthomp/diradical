@@ -49,6 +49,7 @@ const SubmitButton = styled(Button)`
 const ModalTitle = styled.h3`
   font-weight: 400;
   margin: 0;
+  text-transform: uppercase;
 `
 
 const Error = styled.p`

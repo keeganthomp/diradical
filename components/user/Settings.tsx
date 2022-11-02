@@ -13,7 +13,7 @@ const Container = styled.div`
     margin-bottom: 0.5rem;
   }
   p {
-    color: white;
+    color: #000;
   }
 `
 

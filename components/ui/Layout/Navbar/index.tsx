@@ -23,13 +23,13 @@ const Title = styled.span`
   font-weight: 200;
 `
 const SignupButton = styled.a`
-  text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
-  background: #fff;
+  background: ${(p) => p.theme.colors.main};
+  text-decoration: none;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  color: #000;
+  color: #fff;
   border-radius: 20px;
   padding: 0 14px;
   transition: opacity 0.1s ease-in-out;
@@ -40,7 +40,7 @@ const SignupButton = styled.a`
 
 const NAV_LINKS: NavLinkType[] = [
   { Icon: MusicIcon, title: 'Music', path: '/' },
-  { Icon: ProfleIcon, title: 'profile', path: '/profile', authRequired: true },
+  { Icon: ProfleIcon, title: 'Profile', path: '/profile', authRequired: true },
 ]
 
 const NavbarWrapper = styled.div`
@@ -55,11 +55,7 @@ const NavbarWrapper = styled.div`
   width: 100%;
   height: 3rem;
   z-index: 10;
-  text-transform: lowercase;
   padding: 0 2rem;
-  a {
-    margin-left: 25px;
-  }
 `
 
 const Balance = styled.div``

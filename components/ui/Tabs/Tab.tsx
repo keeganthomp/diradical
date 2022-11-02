@@ -10,8 +10,8 @@ const TabContainer = styled.div`
 `
 
 const TabTitle = styled.p<TitleProps>`
-  color: white;
-  text-decoration: ${(p) => (p.active ? 'underline' : 'none')};
+  color: #000;
+  border-bottom: ${(p) => (p.active ? `1px solid #000` : 'none')};
   text-transform: lowercase;
   font-weight: 200;
   margin: 0;

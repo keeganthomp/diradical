@@ -8,7 +8,6 @@ import { IoCloseOutline } from 'react-icons/io5'
 import { devices } from 'styles/theme'
 
 const Container = styled.div`
-  box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
   z-index: 9;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);

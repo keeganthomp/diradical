@@ -6,7 +6,7 @@ import { devices } from 'styles/theme'
 
 const StyledButton = styled(Button)<{ audioPlayer?: boolean }>`
   padding: 0;
-  background: black;
+  background: ${(p) => p.theme.colors.main};
   color: white;
   border-radius: 50%;
   z-index: 8;

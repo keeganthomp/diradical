@@ -7,7 +7,7 @@ import { FaPause, FaPlay } from 'react-icons/fa'
 
 const Container = styled.div`
   display: none;
-  box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75);
+  /* box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75); */
   z-index: 9;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);

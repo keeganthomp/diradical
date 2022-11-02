@@ -23,6 +23,7 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-rows: 17rem auto;
   grid-template-columns: 1fr;
+  color: #000;
 `
 
 const ImageContainer = styled.div`
@@ -52,7 +53,6 @@ const Meta = styled.div`
   justify-content: space-between;
   align-items: baseline;
   width: 100%;
-  color: white;
   p {
     font-size: 14px;
   }
@@ -62,7 +62,6 @@ const TitleInfo = styled.p`
   font-weight: bold;
   margin: 0;
   text-align: left;
-  line-height: 13px;
 `
 const Artist = styled.span`
   font-weight: 200;
@@ -81,27 +80,13 @@ const Realesed = styled.p`
 `
 const Tag = styled.p`
   margin: 0;
-  text-transform: lowercase;
   font-weight: 400;
   z-index: 9;
   font-size: 12px;
-  background: #fff;
   color: #000;
-  padding: 0 4px;
-  border-radius: 5px;
 `
 
 const AvailablePercent = styled(Tag)``
-const ArtistPercent = styled(Tag)`
-  position: absolute;
-  top: 3px;
-  right: 2px;
-`
-const NotAvailable = styled(Tag)`
-  position: absolute;
-  top: 3px;
-  right: 2px;
-`
 
 const BuyButton = styled(Button)`
   font-size: 12px;
@@ -109,27 +94,25 @@ const BuyButton = styled(Button)`
   border-radius: 5px;
   width: 5.75rem;
   z-index: 9;
-  background: #7d12ff;
-  border: 1px solid lightgray;
+  background: ${(p) => p.theme.colors.main};
   font-weight: bold;
-  color: #fff;
+  color: white;
   height: 25px;
 `
 const RightCol = styled.div`
   display: flex;
   flex-direction: column;
-  line-height: 13px;
 `
 const ContractAddress = styled.a`
+  text-decoration: none;
   font-size: 12px;
   text-align: right;
   cursor: pointer;
-  text-decoration: underline;
-  color: white;
   justify-self: flex-start;
   font-weight: 200;
+  color: #000;
   &:visited {
-    color: white;
+    color: #000;
   }
 `
 

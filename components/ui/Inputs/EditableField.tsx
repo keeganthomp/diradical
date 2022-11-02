@@ -67,7 +67,7 @@ const FieldInput = styled.div`
 const FieldValue = styled.p`
   margin: 0;
   width: 100%;
-  font-weight: 100;
+  font-weight: 200;
 `
 
 export default function EditableField({

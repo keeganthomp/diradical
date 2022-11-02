@@ -8,3 +8,10 @@ export type Tab = {
   title: string
   active?: boolean
 }
+
+export enum CacheKey {
+  TRACKS = 'tracks',
+  USER_TRACKS = 'userTracks',
+  USER = 'user',
+  WALLET_BALANCE = 'walletBalance',
+}

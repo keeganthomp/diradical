@@ -65,6 +65,7 @@ const Field = styled.div`
 const ModalTitle = styled.h3`
   font-weight: 400;
   margin: 0;
+  text-transform: uppercase;
 `
 
 const Error = styled.p`
@@ -109,7 +110,7 @@ export function PurchaseSharesForm({
   track: TrackWithArtist
   onSubmit?: () => void
 }) {
-  const { isFetching: isFetchingWalletBalance, balance } = useWalletBalance()
+  const { balance, isFetching: isFetchingBalance } = useWalletBalance()
   const { views, isFetching: isFetchingViews } = useContractViews(
     track.contractAddress,
   )
@@ -147,7 +148,7 @@ export function PurchaseSharesForm({
   return (
     <Container>
       <ModalTitle>Purchase Ownership</ModalTitle>
-      {isFetchingViews || isFetchingWalletBalance || !views ? (
+      {isFetchingViews || isFetchingBalance || !views ? (
         <Loader />
       ) : (
         <>
@@ -181,7 +182,7 @@ export function PurchaseSharesForm({
                 })}
                 type='number'
                 min='0'
-                placeholder='0'
+                placeholder={0}
               />
             </Field>
             <HelpText>

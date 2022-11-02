@@ -1,33 +1,18 @@
-import { User } from '@prisma/client'
-import React from 'react'
-import axios from 'axios'
+import useUser from './useUser'
 import { useQuery } from 'react-query'
+import API from 'api'
+import { CacheKey } from 'types'
 
-const useWalletBalance = () => {
-  const [balance, setBal] = React.useState(null as number)
-  const { isLoading: isFetchingUser, data: user } = useQuery<User>(
-    'user',
-    () => fetch(`/api/user`).then((res) => res.json()),
-    {
-      refetchInterval: 30000,
-    },
+export default function useWalletBalance() {
+  const { data: user, error: userFetchError } = useUser()
+  const query = useQuery(
+    CacheKey.WALLET_BALANCE,
+    () => API.fetchWalletBalance(user?.walletAddress),
+    { enabled: Boolean(user) },
   )
-  React.useEffect(() => {
-    if (!user) return
-    const getBal = async () => {
-      try {
-        const { data } = await axios.get(
-          `https://algoindexer.testnet.algoexplorerapi.io/v2/accounts/${user.walletAddress}`,
-        )
-        setBal(data.account.amount)
-      } catch {
-        // the balance wallet balance be 0 on error as the wallet will not exist on Algorand
-        setBal(0)
-      }
-    }
-    getBal()
-  }, [user])
-  return { isFetching: balance === null || isFetchingUser, balance }
+  return {
+    balance: query?.data?.account?.amount || null,
+    isFetching: query?.data?.account?.amount === undefined || !user,
+    error: userFetchError || query.error,
+  }
 }
-
-export default useWalletBalance
