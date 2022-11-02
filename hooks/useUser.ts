@@ -1,4 +1,4 @@
-import API from 'api'
+import API from 'lib/api'
 import { useQuery } from 'react-query'
 import { User } from '@prisma/client'
 

@@ -1,7 +1,7 @@
 import { TrackWithArtist } from 'types'
 import { useQuery } from 'react-query'
 import { CacheKey } from 'types'
-import API from 'api'
+import API from 'lib/api'
 
 export default function useMusic(user?: boolean) {
   return useQuery<TrackWithArtist[]>(

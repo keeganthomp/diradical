@@ -9,7 +9,7 @@ import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Modals from 'components/modal'
 import React from 'react'
-import API from 'api'
+import API from 'lib/api'
 import { CacheKey } from 'types'
 
 const queryClient = new QueryClient()

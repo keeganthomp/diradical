@@ -1,6 +1,6 @@
 import useUser from './useUser'
 import { useQuery } from 'react-query'
-import API from 'api'
+import API from 'lib/api'
 import { CacheKey } from 'types'
 
 export default function useWalletBalance() {
