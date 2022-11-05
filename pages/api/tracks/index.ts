@@ -35,7 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const audioFileBuffer = Buffer.from(audioFileContent, 'utf-8')
         const { path: coverArtIpfsHash } = await ipfs.add(artFileBuffer)
         const { path: audioIpfsHash } = await ipfs.add(audioFileBuffer)
-        const contractAddress = await launchSongCtc({
+        const { contractAddress, tokenId } = await launchSongCtc({
           coverArtIpfsCid: coverArtIpfsHash,
           audioIpfsCid: audioIpfsHash,
           mdk: user.mdk,
@@ -53,6 +53,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 email: authedUser.email,
               },
             },
+          },
+        })
+        await prisma.token.create({
+          data: {
+            id: tokenId,
           },
         })
         res.status(200).json({ track })

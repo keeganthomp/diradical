@@ -37,10 +37,12 @@ export const launchSongCtc = async (props: launchSongCtcProps) => {
     )
     const ctcInfo = await ctc.getInfo()
     const ownershipTok = await ctc.v.ownershipTokId()
-    await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
+    const fmtTokId = stdlib.bigNumberToNumber(ownershipTok[1])
+    await optinToAsset(props.mdk, fmtTokId)
     const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
-    return contractAddress
+    return { tokenId: fmtTokId, contractAddress }
   } catch (err) {
+    console.log('err', err)
     throw new Error(err.message)
   }
 }
