@@ -15,9 +15,8 @@ const Container = styled.div`
     'navbar navbar'
     'sidebar content';
   @media ${devices.mobile} {
-    grid-template-areas:
-      'navbar'
-      'content';
+    display: flex;
+    flex-direction: column;
     grid-template-columns: 1fr;
   }
 `
@@ -29,6 +28,7 @@ const Content = styled.div`
   overflow-y: scroll;
   border-top-left-radius: 4px;
   @media ${devices.mobile} {
+    height: 100vh;
     padding: 3.5rem 0.5rem 5.5rem 0.5rem;
   }
 `

@@ -18,8 +18,8 @@ const Container = styled.div`
     font-size: 15px;
   }
   @media ${devices.mobile} {
-    align-self: end;
-    justify-self: start;
+    position: absolute;
+    bottom: 0;
   }
 `
 
@@ -32,10 +32,7 @@ const Bar = styled.div`
   overflow: hidden;
   background: #3e3e3e;
   @media ${devices.mobile} {
-    position: absolute;
-    bottom: 0;
     margin: 0;
-    width: 18rem;
     border-radius: 0px;
     width: 100vw;
   }

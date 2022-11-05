@@ -42,7 +42,6 @@ export const launchSongCtc = async (props: launchSongCtcProps) => {
     const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
     return { tokenId: fmtTokId, contractAddress }
   } catch (err) {
-    console.log('err', err)
     throw new Error(err.message)
   }
 }

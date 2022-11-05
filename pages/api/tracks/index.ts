@@ -73,7 +73,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           include: { artist: { select: { username: true } } },
         })
         res.status(200).json(tracks)
-      } catch {
+      } catch (err) {
         res.status(500).json({ message: 'unable to fetch tracks' })
       }
       break

@@ -19,12 +19,18 @@ const Overlay = styled.div`
 `
 
 const Container = styled.div`
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   width: 100%;
   justify-content: flex-end;
   align-items: center;
   padding: 0.5rem 1rem;
-  position: relative;
+  top: 0;
+  height: 2.75rem;
+  position: fixed;
   display: none;
+  z-index: 10;
   @media ${devices.mobile} {
     display: flex;
   }
