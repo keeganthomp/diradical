@@ -7,6 +7,7 @@ import Form from './Form'
 import { Track } from '@prisma/client'
 import { BsPercent } from 'react-icons/bs'
 import useContractViews from 'hooks/useCtcViews'
+import Error from 'components/ui/Error'
 
 const Container = styled.div`
   display: flex;
@@ -52,14 +53,6 @@ const ModalTitle = styled.h3`
   text-transform: uppercase;
 `
 
-const Error = styled.p`
-  color: red;
-  font-size: 14px;
-  font-weight: 200;
-  margin: 0;
-  margin-bottom: 1rem;
-`
-
 const PercentIcon = styled(BsPercent)`
   position: absolute;
   bottom: 5px;
@@ -79,7 +72,8 @@ export function MakeSongAvailableForm({
   track: Track
   onSubmit: () => void
 }) {
-  const { views } = useContractViews(track.contractAddress)
+  const [error, setError] = React.useState<string | null>(null)
+  const { views, refetch } = useContractViews(track.contractAddress)
   const { register, handleSubmit, formState } = useForm({
     mode: 'all',
     defaultValues: {
@@ -97,9 +91,10 @@ export function MakeSongAvailableForm({
         amtToRetain,
       }
       await axios.post(`/api/tracks/${track.id}/make-available`, payload)
+      await refetch()
       if (onSubmit) onSubmit()
     } catch (err) {
-      console.error('Error making song available', err)
+      setError('Unable to make song available. Try refreshing the page.')
     }
   }
 
@@ -119,6 +114,7 @@ export function MakeSongAvailableForm({
                 value: 100,
                 message: `Must be less than 100`,
               },
+              disabled: formState.isSubmitting,
             })}
             type='number'
             min='0'
@@ -129,6 +125,7 @@ export function MakeSongAvailableForm({
         {formState.errors.percentToRetain?.message && (
           <Error>{formState.errors.percentToRetain?.message}</Error>
         )}
+        {error && <Error>{error}</Error>}
         <Field>
           <Label>Total Value</Label>
           <AlgoSymbol>Algo</AlgoSymbol>
@@ -140,6 +137,7 @@ export function MakeSongAvailableForm({
                 value: /^\d{0,10}(\.\d{0,2})?$/,
                 message: 'price must be a positive number',
               },
+              disabled: formState.isSubmitting,
             })}
             type='number'
             placeholder='0'

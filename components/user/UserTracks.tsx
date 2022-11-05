@@ -30,6 +30,7 @@ export default function UserTacks() {
   if (isLoading || !userTracks)
     return (
       <Container>
+        <UploadButton onClick={openUploadModal}>upload</UploadButton>
         <Loader />
       </Container>
     )

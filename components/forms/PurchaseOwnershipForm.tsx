@@ -9,6 +9,7 @@ import useContractViews from 'hooks/useCtcViews'
 import Loader from 'components/ui/Loader'
 import stdlib from 'lib/reach'
 import useWalletBalance from 'hooks/useWalletBalance'
+import Error from 'components/ui/Error'
 
 const Container = styled.div`
   display: flex;
@@ -66,14 +67,6 @@ const ModalTitle = styled.h3`
   font-weight: 400;
   margin: 0;
   text-transform: uppercase;
-`
-
-const Error = styled.p`
-  color: red;
-  font-size: 14px;
-  font-weight: 200;
-  margin: 0;
-  margin-bottom: 1rem;
 `
 
 const HelpText = styled.div`
@@ -144,6 +137,7 @@ export function PurchaseSharesForm({
       amtToPurchase
     : 0
   const hasEnoughBalance = isValidAmount ? totalCost < balance : true
+  console.log(hasEnoughBalance)
 
   return (
     <Container>
@@ -186,7 +180,6 @@ export function PurchaseSharesForm({
               />
             </Field>
             <HelpText>
-              {!hasEnoughBalance && <Error>Not Enough Algo</Error>}
               {isValidAmount && (
                 <p>
                   {amtToPurchase} Tokens ={' '}
@@ -202,6 +195,7 @@ export function PurchaseSharesForm({
             {formState.errors.tokenAmtToPurchase?.message && (
               <Error>{formState.errors.tokenAmtToPurchase?.message}</Error>
             )}
+            {!hasEnoughBalance && <Error>Not enough Algo</Error>}
             <SubmitButton
               disabled={
                 !formState.isValid ||

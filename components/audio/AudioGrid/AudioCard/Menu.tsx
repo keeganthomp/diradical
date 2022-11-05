@@ -79,7 +79,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
 
   if (!isProfilePage) return null
 
-  const updateCache = () => {
+  const updateArchiveCache = () => {
     queryClient.setQueryData('userTracks', (old: any[]) => {
       const updatedArray = [...old]
       const findTrackIndex = old.findIndex((t) => t.id === track.id)
@@ -124,7 +124,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
 
   const handleArchive = async () => {
     await axios.post(`/api/tracks/${track.id}/archive`)
-    updateCache()
+    updateArchiveCache()
   }
 
   const openSongModal = () =>
