@@ -17,9 +17,9 @@ const Container = styled.div`
   bottom: 0;
   flex-direction: column;
   width: 100%;
-  height: 4rem;
+  height: 3.5rem;
   @media ${devices.mobile} {
-    display: inherit;
+    display: flex;
     flex-direction: column;
   }
 `
