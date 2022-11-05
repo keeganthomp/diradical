@@ -20,7 +20,6 @@ type MDKOpts = {
 }
 
 const ALGO_DERIVATION_PATH = `m/44'/283'/0'/0`
-
 const MASTER_DEK = AES.decrypt(DEK, KEK).toString(enc.Utf8)
 
 /**
@@ -57,17 +56,6 @@ function compressHDKey(val: HDKey, includePub = false): CondensedHDKey {
   return compressed
 }
 
-/**
- * Generate a master `seed phrase`. Returns a class instance that can
- * be represented as a list of words.
- *
- * The default value is a 24-word mnemonic generated from a 32-character random
- * byte sequence. The number of byte-characters must be a multiple of
- * `4`; the resulting mnemonic will be `length * 0.75` words long (e.g.
- * `randomBytes(64)` will give you `48` words)
- *
- * This value MUST be encrypted in storage.
- */
 function generateMnemonic(bytesLength = 32) {
   return Mnemonic.generate(randomBytes(bytesLength))
 }
@@ -136,7 +124,7 @@ export function deriveChainWallet(epk: string) {
 }
 
 /**
- * returnsan an account with the public Address of said account
+ * returns account with the public Address of said account
  * @param epk extended private key (this can be derived by decrypting the user MDK)
  * @param accountIndex index of the account
  * @returns an account object with the address - we have access to secret key as well, but not returning it for obvious reasons
@@ -159,4 +147,14 @@ export function generateWalletMdk() {
   const mdk = encryptAES(xprv)
   const wall = getWalletFromMdk(mdk)
   return { mdk, walletAddress: wall.addr }
+}
+
+export function generateEncryptionKeys() {
+  const genHexString = () => randomBytes(64).toString('hex').toUpperCase()
+  const KEK = genHexString()
+  const DEK = AES.encrypt(genHexString(), KEK).toString()
+  console.log({
+    KEK,
+    DEK,
+  })
 }

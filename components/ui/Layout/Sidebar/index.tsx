@@ -3,6 +3,7 @@ import { SlMusicToneAlt } from 'react-icons/sl'
 import { BsPerson } from 'react-icons/bs'
 import NavLink from 'components/ui/Layout/Sidebar/NavLink'
 import { devices } from 'styles/theme'
+import Wallet from './Wallet'
 
 type NavLinkType = {
   Icon: any
@@ -28,12 +29,15 @@ const NAV_LINKS: NavLinkType[] = [
 const Container = styled.div`
   grid-area: sidebar;
   background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   @media ${devices.mobile} {
     display: none;
   }
 `
 
-const List = styled.div`
+const NavContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   color: #fff;
@@ -44,13 +48,14 @@ const List = styled.div`
 export default function Sidebar() {
   return (
     <Container>
-      <List>
+      <NavContainer>
         {NAV_LINKS.map((link) => (
           <NavLink key={link.path} href={link.path}>
             {link.title}
           </NavLink>
         ))}
-      </List>
+      </NavContainer>
+      <Wallet />
     </Container>
   )
 }

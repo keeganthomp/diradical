@@ -1,7 +1,13 @@
+import styled from 'styled-components'
+
+const Container = styled.div`
+  text-align: center;
+`
+
 export default function Portfolio() {
   return (
-    <div>
-      <p>Portfolio</p>
-    </div>
+    <Container>
+      <p>Coming Soon</p>
+    </Container>
   )
 }

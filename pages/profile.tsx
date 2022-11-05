@@ -5,7 +5,6 @@ import { Tab } from 'types'
 import UserTacks from 'components/user/MyMusic'
 import Portfolio from 'components/user/Portfolio'
 import UserSettings from 'components/user/Settings'
-import Wallet from 'components/user/Wallet'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0'
 
 const Container = styled.div`
@@ -19,16 +18,12 @@ const Container = styled.div`
 const ProfilePage = () => {
   const ProfileTabs: Tab[] = [
     {
-      title: 'Wallet',
-      Component: Wallet,
+      title: 'Manage Music',
+      Component: UserTacks,
     },
     {
       title: 'Portfolio',
       Component: Portfolio,
-    },
-    {
-      title: 'Manage Music',
-      Component: UserTacks,
     },
     // {
     //   title: 'Account',

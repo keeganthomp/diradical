@@ -12,18 +12,19 @@ const Container = styled.div`
   align-items: center;
   font-size: 15px;
   margin-top: 1.75rem;
-  color: #000;
+  color: #fff;
 `
-const Address = styled.p`
+const Balance = styled.p`
+  font-size: 12px;
   font-weight: 200;
-  font-size: 10px;
+  font-style: italic;
 `
-const Message = styled.p``
-const Balance = styled.p``
 
 function Wallet() {
   const { data: user } = useUser()
   const { balance, isFetching } = useWalletBalance()
+
+  if (user?.error) return null
 
   if (!user)
     return (
@@ -34,10 +35,7 @@ function Wallet() {
 
   return (
     <Container>
-      <QRCode value={`algorand://${user.walletAddress}`} />
-      <Address>{user.walletAddress}</Address>
-      <Message>use the QR code above to fund account with algo</Message>
-      {/* micro algos */}
+      <QRCode size={120} value={`algorand://${user.walletAddress}`} />
       {isFetching ? (
         <Loader />
       ) : (
