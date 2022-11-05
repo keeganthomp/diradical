@@ -49,11 +49,21 @@ const Hamburger = styled(FaBars)`
 const List = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `
 
 const ListItem = styled.span`
   color: #fff;
   margin: 8px 0;
+`
+
+const AuthLink = styled.a`
+  color: white;
+  text-decoration: none;
+  margin: 8px 0;
+  &:visited {
+    color: white;
+  }
 `
 
 const CloseIcon = styled(IoCloseOutline)`
@@ -102,22 +112,14 @@ export default function MobileNavbar() {
               <ListItem onClick={() => handleRouteChange('/profile')}>
                 Profile
               </ListItem>
-              {useUser ? (
+              {user ? (
                 <ListItem onClick={() => handleRouteChange('/api/auth/logout')}>
                   Logout
                 </ListItem>
               ) : (
                 <>
-                  <ListItem
-                    onClick={() => handleRouteChange('/api/auth/login')}
-                  >
-                    Login
-                  </ListItem>
-                  <ListItem
-                    onClick={() => handleRouteChange('/api/auth/signup')}
-                  >
-                    Signup
-                  </ListItem>
+                  <AuthLink href='/api/auth/login'>Login</AuthLink>
+                  <AuthLink href='/api/auth/signup'>Signup</AuthLink>
                 </>
               )}
             </List>
