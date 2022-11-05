@@ -7,7 +7,6 @@ import Form from './Form'
 import { TrackWithArtist } from 'types'
 import useContractViews from 'hooks/useCtcViews'
 import Loader from 'components/ui/Loader'
-import stdlib from 'lib/reach'
 import useWalletBalance from 'hooks/useWalletBalance'
 import Error from 'components/ui/Error'
 
@@ -132,10 +131,7 @@ export function PurchaseSharesForm({
 
   // check that there is an amount and is a valid number
   const isValidAmount = Boolean(amtToPurchase && !isNaN(amtToPurchase))
-  const totalCost = views
-    ? Number(stdlib.formatCurrency(stdlib.bigNumberify(views.tokenPrice), 6)) *
-      amtToPurchase
-    : 0
+  const totalCost = views ? Number(views.tokenPrice * 6) * amtToPurchase : 0 // mAlgo
   const hasEnoughBalance = isValidAmount ? totalCost < balance : true
   console.log(hasEnoughBalance)
 

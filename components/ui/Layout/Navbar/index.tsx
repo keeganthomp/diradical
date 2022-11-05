@@ -1,24 +1,7 @@
 import styled from 'styled-components'
 import { useUser } from '@auth0/nextjs-auth0'
-import { SlMusicToneAlt } from 'react-icons/sl'
-import { BsPerson } from 'react-icons/bs'
-import NavLink from './NavLink'
+import Link from 'next/link'
 
-type NavLinkType = {
-  Icon: any
-  path: string
-  title: string
-  authRequired?: boolean
-}
-
-const MusicIcon = styled(SlMusicToneAlt)`
-  font-size: 22px;
-  padding: 3px;
-`
-const ProfleIcon = styled(BsPerson)`
-  font-size: 22px;
-  padding: 3px;
-`
 const Title = styled.span`
   font-weight: 200;
 `
@@ -30,20 +13,44 @@ const SignupButton = styled.a`
   align-items: center;
   cursor: pointer;
   color: #fff;
-  border-radius: 20px;
+  border-radius: 5px;
   padding: 0 14px;
   transition: opacity 0.1s ease-in-out;
+  margin-left: 1rem;
   &:hover {
     opacity: 0.8;
   }
 `
 
-const NAV_LINKS: NavLinkType[] = [
-  { Icon: MusicIcon, title: 'Music', path: '/' },
-  { Icon: ProfleIcon, title: 'Profile', path: '/profile', authRequired: true },
-]
+const AuthLink = styled.p`
+  color: #fff;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  font-weight: 200;
+  margin: 0;
+  border-radius: 5px;
+  font-weight: 200;
+  width: 4rem;
+  text-align: center;
+  text-transform: lowercase;
+  &:hover {
+    background: rgba(229, 232, 235, 0.2);
+  }
+  a {
+    text-decoration: none;
+    width: 100%;
+    &:visited {
+      color: #fff;
+    }
+  }
+`
 
 const NavbarWrapper = styled.div`
+  grid-area: navbar;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -58,30 +65,19 @@ const NavbarWrapper = styled.div`
   padding: 0 2rem;
 `
 
-const Balance = styled.div``
-
 const Navbar = () => {
   const { user } = useUser()
-
-  const validNavLinks = NAV_LINKS.filter(
-    (link) => (link.authRequired && user) || !link.authRequired,
-  )
   return (
     <NavbarWrapper>
-      {validNavLinks.map((link) => (
-        <NavLink exact key={link.path} href={link.path}>
-          <Title>{link.title}</Title>
-        </NavLink>
-      ))}
       {user ? (
-        <NavLink href='/api/auth/logout'>
-          <Title>Logout</Title>
-        </NavLink>
+        <AuthLink>
+          <Link href='/api/auth/logout'>Logout</Link>
+        </AuthLink>
       ) : (
         <>
-          <NavLink href='/api/auth/login'>
-            <Title>Login</Title>
-          </NavLink>
+          <AuthLink>
+            <Link href='/api/auth/logout'>Login</Link>
+          </AuthLink>
           <SignupButton href='/api/auth/signup'>
             <Title>Signup</Title>
           </SignupButton>
