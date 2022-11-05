@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { SlMusicToneAlt } from 'react-icons/sl'
 import { BsPerson } from 'react-icons/bs'
 import NavLink from 'components/ui/Layout/Sidebar/NavLink'
+import { devices } from 'styles/theme'
 
 type NavLinkType = {
   Icon: any
@@ -27,6 +28,9 @@ const NAV_LINKS: NavLinkType[] = [
 const Container = styled.div`
   grid-area: sidebar;
   background: #000;
+  @media ${devices.mobile} {
+    display: none;
+  }
 `
 
 const List = styled.div`

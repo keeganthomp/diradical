@@ -14,6 +14,12 @@ const Container = styled.div`
   grid-template-areas:
     'navbar navbar'
     'sidebar content';
+  @media ${devices.mobile} {
+    grid-template-areas:
+      'navbar'
+      'content';
+    grid-template-columns: 1fr;
+  }
 `
 const Content = styled.div`
   grid-area: content;
