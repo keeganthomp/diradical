@@ -7,7 +7,7 @@ import { IoCloseOutline } from 'react-icons/io5'
 import { useUser } from '@auth0/nextjs-auth0'
 
 const Overlay = styled.div`
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   position: fixed;
@@ -106,8 +106,10 @@ export default function MobileNavbar() {
   }
 
   return (
-    <Container>
-      <Hamburger onClick={toggle} />
+    <>
+      <Container>
+        <Hamburger onClick={toggle} />
+      </Container>
       {isOpen && (
         <>
           <Overlay />
@@ -132,6 +134,6 @@ export default function MobileNavbar() {
           </Content>
         </>
       )}
-    </Container>
+    </>
   )
 }
