@@ -55,11 +55,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
         })
-        await prisma.token.create({
-          data: {
-            id: tokenId,
-          },
-        })
+        // await prisma.token.create({
+        //   data: {
+        //     id: tokenId,
+        //   },
+        // })
         res.status(200).json({ track })
       } catch (err) {
         res.status(500).json({ message: err.message })

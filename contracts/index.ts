@@ -5,8 +5,8 @@ import * as backend from './index.song.mjs'
 
 const getAccountFromMdk = async (mdk: string) => {
   const wallet = getWalletFromMdk(mdk)
-  const mnemonic = algosdk.secretKeyToMnemonic(wallet.sk)
-  const acc: any = await stdlib.newAccountFromMnemonic(mnemonic)
+  // const mnemonic = algosdk.secretKeyToMnemonic(wallet.sk)
+  const acc: any = await stdlib.newAccountFromSecret(wallet.sk.toString())
   return acc
 }
 
@@ -38,7 +38,7 @@ export const launchSongCtc = async (props: launchSongCtcProps) => {
     const ctcInfo = await ctc.getInfo()
     const ownershipTok = await ctc.v.ownershipTokId()
     const fmtTokId = stdlib.bigNumberToNumber(ownershipTok[1])
-    await optinToAsset(props.mdk, fmtTokId)
+    // await optinToAsset(props.mdk, fmtTokId)
     const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
     return { tokenId: fmtTokId, contractAddress }
   } catch (err) {
@@ -69,7 +69,7 @@ export const purchaseOwnership = async (props: PurchaseSharesProps) => {
   const acc: any = await getAccountFromMdk(props.mdk)
   const ctc = acc.contract(backend, props.ctcAddress)
   const ownershipTok = await ctc.v.ownershipTokId()
-  await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
+  // await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
   const amtToPurchase = stdlib.bigNumberify(props.amtOfTokensToPurchase)
   await ctc.a.purchaseOwnership(amtToPurchase)
 }

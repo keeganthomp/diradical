@@ -49,9 +49,3 @@ model Track {
   contractAddress  Int
   archived         Boolean  @default(false)
 }
-
-model Token {
-  id        Int      @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
