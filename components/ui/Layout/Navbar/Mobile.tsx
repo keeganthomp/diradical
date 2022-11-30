@@ -4,12 +4,11 @@ import React from 'react'
 import { devices } from 'styles/theme'
 import { useRouter } from 'next/router'
 import { IoCloseOutline } from 'react-icons/io5'
-import { useUser } from '@auth0/nextjs-auth0'
 
 const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  -webkitbackdropfilter: saturate(180%) blur(20px);
   position: fixed;
   top: 0;
   left: 0;
@@ -21,7 +20,7 @@ const Overlay = styled.div`
 const Container = styled.div`
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  -webkitbackdropfilter: saturate(180%) blur(20px);
   width: 100%;
   justify-content: flex-end;
   align-items: center;
@@ -89,7 +88,6 @@ const CloseIcon = styled(IoCloseOutline)`
 `
 
 export default function MobileNavbar() {
-  const { user } = useUser()
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
 
@@ -101,7 +99,6 @@ export default function MobileNavbar() {
   }
 
   const handleClose = () => {
-    console.log('errr', isOpen)
     setIsOpen(false)
   }
 
@@ -120,16 +117,8 @@ export default function MobileNavbar() {
               <ListItem onClick={() => handleRouteChange('/profile')}>
                 Profile
               </ListItem>
-              {user ? (
-                <ListItem onClick={() => handleRouteChange('/api/auth/logout')}>
-                  Logout
-                </ListItem>
-              ) : (
-                <>
-                  <AuthLink href='/api/auth/login'>Login</AuthLink>
-                  <AuthLink href='/api/auth/signup'>Signup</AuthLink>
-                </>
-              )}
+              <AuthLink href='/api/auth/login'>Login</AuthLink>
+              <AuthLink href='/api/auth/signup'>Signup</AuthLink>
             </List>
           </Content>
         </>

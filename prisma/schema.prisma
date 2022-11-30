@@ -11,15 +11,13 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  walletAddress String   @unique @db.VarChar(255)
-  email         String   @unique @db.VarChar(255)
-  mdk           String   @unique @db.VarChar(255) // used to access wallet
-  username      String   @unique @db.VarChar(255)
+  wallet        String   @unique @db.VarChar(255)
   singles       Track[]
   albums        Album[]
+  votes         Vote[]
+  membershipExp Int?
 }
 
 model Album {
@@ -28,24 +26,36 @@ model Album {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(100)
   tracks    Track[]
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [wallet])
   userId    String
 }
 
 model Track {
-  id               String   @id @default(uuid())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  title            String   @db.VarChar(30)
-  genre            String?  @db.VarChar(30)
-  source           String   @db.VarChar(255) // S3 URL
-  coverArt         String   @db.VarChar(255) // S3 URL
-  artist           User?    @relation(fields: [userId], references: [id])
-  userId           String
-  album            Album?   @relation(fields: [albumId], references: [id])
-  albumId          String?
-  audioIpfsHash    String   @db.VarChar(46)
-  coverArtIpfsHash String   @db.VarChar(46)
-  contractAddress  Int
-  archived         Boolean  @default(false)
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(30)
+  genre     String?  @db.VarChar(30)
+  source    String   @db.VarChar(255) // S3 URL
+  coverArt  String   @db.VarChar(255) // S3 URL
+  artist    User?    @relation(fields: [userId], references: [wallet])
+  userId    String
+  album     Album?   @relation(fields: [albumId], references: [id])
+  albumId   String?
+  songId    Int
+  archived  Boolean  @default(false)
+  votes     Vote[]
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  period    Int
+  track     Track    @relation(fields: [trackId], references: [id])
+  trackId   String
+  user      User     @relation(fields: [userId], references: [wallet])
+  userId    String
+
+  @@unique([period, trackId, userId]) // user cannot vote for the same song twice in the same period
 }

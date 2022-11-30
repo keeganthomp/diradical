@@ -11,7 +11,6 @@ const Container = styled.div`
 function ErrorModal({ onClose }: { onClose: () => void }) {
   const modal = useRecoilValue(modalState)
   const { error } = modal.state
-  console.log('state', modal.state)
   return (
     <BaseModal onClose={onClose}>
       <Container>

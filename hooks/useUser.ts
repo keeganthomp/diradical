@@ -1,13 +1,13 @@
-import API from 'lib/api'
-import { useQuery } from 'react-query'
+import { useRecoilValue } from 'recoil'
+import reachAccountState from 'atoms/reachAccount'
+import useSWR from 'swr'
 import { User } from '@prisma/client'
 
 export default function useUser() {
-  return useQuery<User & { walletBalance: number | null; error: any }>(
-    'user',
-    API.fetchUser,
-    {
-      refetchInterval: 30000,
-    },
+  const reachAcc = useRecoilValue(reachAccountState)
+  const { data: user, error } = useSWR<User>(
+    reachAcc ? `/api/user/${reachAcc.networkAccount.address}` : null,
   )
+
+  return { user, isFetching: !user && !error }
 }

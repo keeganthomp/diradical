@@ -3,12 +3,7 @@ import React from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
-import Form from './Form'
-import { TrackWithArtist } from 'types'
-import useContractViews from 'hooks/useCtcViews'
-import Loader from 'components/ui/Loader'
-import useWalletBalance from 'hooks/useWalletBalance'
-import Error from 'components/ui/Error'
+import { TrackWithVotes } from 'types'
 
 const Container = styled.div`
   display: flex;
@@ -51,17 +46,6 @@ const SubmitButton = styled(Button)`
   width: 100%;
 `
 
-const Label = styled.p`
-  font-weight: 200;
-  margin: 0;
-`
-
-const Field = styled.div`
-  position: relative;
-  margin-bottom: 0.5rem;
-  text-align: center;
-`
-
 const ModalTitle = styled.h3`
   font-weight: 400;
   margin: 0;
@@ -86,30 +70,17 @@ const CoverArt = styled.img`
   border-radius: 5px;
 `
 
-const Title = styled.p`
-  font-weight: bold;
-`
-const Artist = styled.p`
-  font-weight: 200;
-  position: relative;
-  bottom: 8px;
-`
-
 export function PurchaseSharesForm({
   track,
   onSubmit,
 }: {
-  track: TrackWithArtist
+  track: TrackWithVotes
   onSubmit?: () => void
 }) {
-  const { balance, isFetching: isFetchingBalance } = useWalletBalance()
-  const { views, isFetching: isFetchingViews } = useContractViews(
-    track.contractAddress,
-  )
   const { register, handleSubmit, formState, watch } = useForm({
     mode: 'all',
     defaultValues: {
-      tokenAmtToPurchase: null as number,
+      percentToPurchase: null as number,
     },
   })
 
@@ -122,89 +93,20 @@ export function PurchaseSharesForm({
     }
   }
 
-  const amtToPurchase = watch('tokenAmtToPurchase')
-  const totalAvailablePercent =
-    views &&
-    ((views.tokensAvailable / views.totalTokenAllocation) * 100).toFixed(2)
-  const purchasePercent =
-    views && ((amtToPurchase / views.totalTokenAllocation) * 100).toFixed(2)
-
+  const amtToPurchase = watch('percentToPurchase')
   // check that there is an amount and is a valid number
   const isValidAmount = Boolean(amtToPurchase && !isNaN(amtToPurchase))
-  const totalCost = views ? Number(views.tokenPrice * 6) * amtToPurchase : 0 // mAlgo
-  const hasEnoughBalance = isValidAmount ? totalCost < balance : true
-  console.log(hasEnoughBalance)
 
   return (
     <Container>
       <ModalTitle>Purchase Ownership</ModalTitle>
-      {isFetchingViews || isFetchingBalance || !views ? (
-        <Loader />
-      ) : (
-        <>
-          <Meta>
-            <CoverArt src={track.coverArt} />
-            <div>
-              <Title>{track.title}</Title>
-              <Artist>{track.artist.username || track.artist.email}</Artist>
-              <p>
-                You will spend{' '}
-                {!amtToPurchase
-                  ? 0
-                  : parseFloat(totalCost.toFixed(6).toString())}{' '}
-                Algos
-              </p>
-            </div>
-          </Meta>
-          <Form onSubmit={handleSubmit(purchaseShares)}>
-            <Field>
-              <Label>amount of tokens to purchase</Label>
-              <NumberInput
-                {...register('tokenAmtToPurchase', {
-                  disabled: formState.isSubmitting,
-                  required: true,
-                  valueAsNumber: true,
-                  min: 1,
-                  max: {
-                    value: views.tokensAvailable,
-                    message: `can not purchase more than allocated amount`,
-                  },
-                })}
-                type='number'
-                min='0'
-                placeholder={0}
-              />
-            </Field>
-            <HelpText>
-              {isValidAmount && (
-                <p>
-                  {amtToPurchase} Tokens ={' '}
-                  {purchasePercent === '0.00' ? '<0.01' : purchasePercent}%
-                  ownership
-                </p>
-              )}
-              <p>
-                Max available: {views.tokensAvailable} ({totalAvailablePercent}
-                %)
-              </p>
-            </HelpText>
-            {formState.errors.tokenAmtToPurchase?.message && (
-              <Error>{formState.errors.tokenAmtToPurchase?.message}</Error>
-            )}
-            {!hasEnoughBalance && <Error>Not enough Algo</Error>}
-            <SubmitButton
-              disabled={
-                !formState.isValid ||
-                formState.isSubmitting ||
-                !hasEnoughBalance
-              }
-              type='submit'
-            >
-              Purchase
-            </SubmitButton>
-          </Form>
-        </>
-      )}
+      <CoverArt src={track.coverArt} />
+      <SubmitButton
+        disabled={!formState.isValid || formState.isSubmitting}
+        type='submit'
+      >
+        Purchase
+      </SubmitButton>
     </Container>
   )
 }

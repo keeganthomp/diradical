@@ -5,13 +5,14 @@ import styled from 'styled-components'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import { IoCloseOutline } from 'react-icons/io5'
+import { truncateAddress } from 'lib/reach'
 import { devices } from 'styles/theme'
 
 const Container = styled.div`
   z-index: 9;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  -webkitbackdropfilter: saturate(180%) blur(20px);
   color: white;
   position: fixed;
   bottom: 0;
@@ -108,9 +109,7 @@ export default function DesktopAudioPlayer() {
       <Container>
         <CloseIcon onClick={stop} />
         <SongTitle>{nowPlayingTrack.title}</SongTitle>
-        <Artist>
-          {nowPlayingTrack.artist.username || nowPlayingTrack.artist.email}
-        </Artist>
+        <Artist>{truncateAddress(nowPlayingTrack.artist.wallet)}</Artist>
         <CoverArt src={nowPlayingTrack.coverArt} />
         <ButtonWrapper>
           {isPlaying ? (

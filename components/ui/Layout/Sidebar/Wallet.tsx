@@ -2,8 +2,6 @@ import styled from 'styled-components'
 import QRCode from 'react-qr-code'
 import Loader from 'components/ui/Loader'
 import React from 'react'
-import useWalletBalance from 'hooks/useWalletBalance'
-import useUser from 'hooks/useUser'
 
 const Container = styled.div`
   display: flex;
@@ -13,6 +11,8 @@ const Container = styled.div`
   font-size: 15px;
   margin-top: 1.75rem;
   color: #fff;
+  position: absolute;
+  bottom: 1rem;
 `
 const Balance = styled.p`
   font-size: 12px;
@@ -20,29 +20,20 @@ const Balance = styled.p`
   font-style: italic;
 `
 
-function Wallet() {
-  const { data: user } = useUser()
-  const { balance, isFetching } = useWalletBalance()
-
-  if (user?.error) return null
-
-  if (!user)
-    return (
-      <Container>
-        <Loader />
-      </Container>
-    )
+function CustodialWallet() {
+  const [fetching, setFetching] = React.useState(false)
+  const [bal, setBal] = React.useState<null | number>(null)
 
   return (
     <Container>
-      <QRCode size={120} value={`algorand://${user.walletAddress}`} />
-      {isFetching ? (
+      <QRCode size={120} value={''} />
+      {fetching || bal === null ? (
         <Loader />
       ) : (
-        <Balance>Balance: {balance / 1000000} Algo</Balance>
+        <Balance>Balance: {bal}</Balance>
       )}
     </Container>
   )
 }
 
-export default Wallet
+export default CustodialWallet

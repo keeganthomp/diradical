@@ -61,13 +61,13 @@ const generatePresignedUrl = async ({
 
 const createKey = ({
   fileName,
-  user,
+  walletAddress,
   folder,
 }: {
   fileName: string
-  user: string
+  walletAddress: string
   folder: string
-}) => `${user}/${folder}/${fileName}`
+}) => `${walletAddress}/${folder}/${fileName}`
 
 const S3 = {
   generatePresignedUrl,

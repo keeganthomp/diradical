@@ -1,4 +1,4 @@
-import { TrackWithArtist } from 'types'
+import { TrackWithVotes } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import PlayButton from 'components/ui/Buttons/PlayButton'
@@ -7,15 +7,15 @@ import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
-import useContractViews from 'hooks/useCtcViews'
+import useContract from 'hooks/useCtc'
+import { truncateAddress } from 'lib/reach'
+import useReachAccount from 'hooks/useReachAccount'
 import AudioCardMenu from './Menu'
-import Button from 'components/ui/Buttons/Base'
-import { useRouter } from 'next/router'
-import modalState, { ModalType } from 'atoms/modal'
-import { useSetRecoilState } from 'recoil'
+import useUser from 'hooks/useUser'
+import API from 'lib/api'
 
 type Props = {
-  track: TrackWithArtist
+  track: TrackWithVotes
 }
 
 const Wrapper = styled.div`
@@ -78,53 +78,18 @@ const Realesed = styled.p`
   font-size: 14px;
   text-transform: lowercase;
 `
-const Tag = styled.p`
-  margin: 0;
-  font-weight: 400;
-  z-index: 9;
-  font-size: 12px;
-  color: #000;
-`
-
-const AvailablePercent = styled(Tag)``
-
-const BuyButton = styled(Button)`
-  font-size: 12px;
-  padding: 0 4px;
-  border-radius: 5px;
-  width: 5.75rem;
-  z-index: 9;
-  background: ${(p) => p.theme.colors.main};
-  font-weight: bold;
-  color: white;
-  height: 25px;
-`
 const RightCol = styled.div`
   display: flex;
   flex-direction: column;
 `
-const ContractAddress = styled.a`
-  text-decoration: none;
-  font-size: 12px;
-  text-align: right;
-  cursor: pointer;
-  justify-self: flex-start;
-  font-weight: 200;
-  color: #000;
-  &:visited {
-    color: #000;
-  }
-`
 
 export default function AudioCard({ track }: Props) {
-  const setModal = useSetRecoilState(modalState)
-  const router = useRouter()
-  const isProfilePage = router.pathname === '/profile'
-  const { views, refetch: refetchViews } = useContractViews(
-    track.contractAddress,
-  )
+  const { vote } = useContract()
+  const { reachAcc } = useReachAccount()
+  const { user } = useUser()
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
+  const [isVoting, setIsVoting] = useState(false)
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
@@ -132,12 +97,16 @@ export default function AudioCard({ track }: Props) {
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
-  const openBuySharesModal = () =>
-    setModal({
-      type: ModalType.PURCHASE_SHARES,
-      state: { track },
-      onClose: refetchViews,
-    })
+  const hasVoted = track.votes.some((v) => v.userId === user?.wallet)
+  const shouldShowVoteButton = user && !hasVoted
+
+  const handleVote = async () => {
+    if (!reachAcc) return
+    setIsVoting(true)
+    await vote(reachAcc, track.songId)
+    await API.addVote(reachAcc.networkAccount.address, track.id)
+    setIsVoting(false)
+  }
 
   return (
     <Wrapper>
@@ -146,7 +115,7 @@ export default function AudioCard({ track }: Props) {
         onMouseLeave={handleMouseLeave}
         bgImage={track.coverArt}
       >
-        <AudioCardMenu track={track} isOpenToPublic={views?.isOpenToPublic} />
+        <AudioCardMenu track={track} isOpenToPublic={false} />
         <CoverArt src={track.coverArt} />
         {isHovering &&
           (isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />)}
@@ -155,42 +124,17 @@ export default function AudioCard({ track }: Props) {
         <Meta>
           <TitleInfo>
             {track.title} <br />{' '}
-            <Artist>{track.artist.username || track.artist.email}</Artist>
+            <Artist>{truncateAddress(track.artist.wallet)}</Artist>
           </TitleInfo>
           <RightCol>
             <Realesed>{moment(track.createdAt).calendar()}</Realesed>
-            <ContractAddress
-              target='_blank'
-              href={`https://testnet.algoexplorer.io/application/${track.contractAddress}`}
-            >
-              {track.contractAddress}
-            </ContractAddress>
+            {shouldShowVoteButton && (
+              <button disabled={isVoting} onClick={handleVote}>
+                Vote
+              </button>
+            )}
           </RightCol>
         </Meta>
-        {views && (
-          <Meta>
-            {views.isOpenToPublic ? (
-              <AvailablePercent>
-                ~
-                {(
-                  (views.tokensAvailable / views.totalTokenAllocation) *
-                  100
-                ).toFixed(2)}
-                % Available
-              </AvailablePercent>
-            ) : (
-              <AvailablePercent>Not Available</AvailablePercent>
-            )}
-            {views.isOpenToPublic && !isProfilePage && (
-              <BuyButton
-                onClick={openBuySharesModal}
-                disabled={views.tokensAvailable === 0}
-              >
-                Buy Ownership
-              </BuyButton>
-            )}
-          </Meta>
-        )}
       </MetaData>
     </Wrapper>
   )

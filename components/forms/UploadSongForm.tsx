@@ -1,11 +1,8 @@
 import { useForm } from 'react-hook-form'
-import useS3 from 'hooks/useS3'
-import axios from 'axios'
 import React from 'react'
 import styled from 'styled-components'
 import Button from 'components/ui/Buttons/Base'
-import { useSetRecoilState } from 'recoil'
-import modalState, { ModalType } from 'atoms/modal'
+import useUpload from 'hooks/useUpload'
 import TextInput from '../ui/Inputs/TextInput'
 import Form from './Form'
 
@@ -42,8 +39,7 @@ const Label = styled.label`
 const Error = styled.p``
 
 export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
-  const setModalState = useSetRecoilState(modalState)
-  const { uploadToS3 } = useS3()
+  const { upload } = useUpload()
   const { register, handleSubmit, reset, formState, getValues } = useForm({
     mode: 'all',
     defaultValues: {
@@ -53,38 +49,15 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
     },
   })
 
-  const showWaitModal = () => {
-    setModalState({ type: ModalType.PLEASE_WAIT, state: null, hideClose: true })
-  }
-  const showErrorModal = (error: string) => {
-    setModalState({ type: ModalType.ERROR, state: { error } })
-  }
-
   const uploadTrack = async (data) => {
-    try {
-      showWaitModal()
-      const { title } = getValues()
-      const audioFile = data.audioFiles[0]
-      const artFile = data.artFiles[0]
-      const audioS3Url = await uploadToS3(audioFile, title)
-      const artS3Url = await uploadToS3(artFile, title)
-      const payload = {
-        title,
-        audioS3Url,
-        artS3Url,
-      }
-      await axios.post('/api/tracks', payload)
-      reset()
-      if (onSubmit) onSubmit()
-    } catch (err) {
-      const { message } = err.response.data
-      const isOverspend = message.toLowerCase().includes('overspend')
-      if (isOverspend) {
-        showErrorModal('Not enough Algo in wallet to upload track')
-      } else {
-        showErrorModal('unable to upload track')
-      }
+    const songPayload = {
+      title: data.title,
+      artFile: data.artFiles[0],
+      audioFile: data.audioFiles[0],
     }
+    await upload(songPayload)
+    reset()
+    if (onSubmit) onSubmit()
   }
 
   return (

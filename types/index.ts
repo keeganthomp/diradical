@@ -1,7 +1,7 @@
-import { Track, User } from '@prisma/client'
+import { Track, User, Vote } from '@prisma/client'
 import React from 'react'
 
-export type TrackWithArtist = Track & { artist: Partial<User> }
+export type TrackWithVotes = Track & { artist: Partial<User>; votes: Vote[] }
 
 export type Tab = {
   Component: React.FC

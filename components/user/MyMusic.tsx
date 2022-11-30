@@ -3,12 +3,8 @@ import styled from 'styled-components'
 import { useSetRecoilState } from 'recoil'
 import modalState, { ModalType } from 'atoms/modal'
 import Button from 'components/ui/Buttons/Base'
-import Loader from 'components/ui/Loader'
-import useMusic from 'hooks/useMusic'
-
-const Message = styled.p`
-  text-align: center;
-`
+import useUser from 'hooks/useReachAccount'
+import React from 'react'
 
 const UploadButton = styled(Button)`
   width: 10rem;
@@ -20,43 +16,24 @@ const Container = styled.div`
 `
 
 export default function UserTacks() {
+  const { reachAcc } = useUser()
   const setModal = useSetRecoilState(modalState)
-  const { isLoading, error, data: userTracks } = useMusic(true)
 
   const openUploadModal = () => {
     setModal({ type: ModalType.UPLOAD, state: null })
   }
 
-  if (isLoading || !userTracks)
+  if (!reachAcc)
     return (
       <Container>
-        <UploadButton onClick={openUploadModal}>upload</UploadButton>
-        <Loader />
+        <p>Please Conect</p>
       </Container>
     )
-  if (error)
-    return (
-      <Container>
-        <p>unable to fetch tracks</p>
-      </Container>
-    )
-  const hasNoTracks = userTracks.length === 0
-  if (hasNoTracks)
-    return (
-      <Container>
-        <UploadButton onClick={openUploadModal}>upload</UploadButton>
-        <Message>you have not uploaded any tracks</Message>
-      </Container>
-    )
+
   return (
     <Container>
       <UploadButton onClick={openUploadModal}>upload</UploadButton>
-      <AudioGrid
-        tracks={userTracks.map((t) => ({
-          ...t,
-          artist: t.artist,
-        }))}
-      />
+      <AudioGrid wallet={reachAcc?.networkAccount?.address} />
     </Container>
   )
 }

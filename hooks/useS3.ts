@@ -1,28 +1,22 @@
-import { useState } from 'react'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import S3 from 'lib/aws/s3'
-import { useUser } from '@auth0/nextjs-auth0'
 
-const { NEXT_PUBLIC_BASE_S3_URL } = process.env
+const BASE_S3_URL = 'https://d3e39cq64d4jdw.cloudfront.net'
+const BASE_PRESIGNED_API_URL = '/api/presigned-url'
 
 export type FolderOptions = 'singles' | 'album'
 
-const BASE_PRESIGNED_API_URL = '/api/presigned-url'
-
 export default function useS3() {
-  const [isUploading, setUploading] = useState(false)
-  const { user } = useUser()
-
   const uploadToS3 = async (
     files: any,
     title: string,
+    walletAddress: string,
     parentFolder: FolderOptions = 'singles',
   ): Promise<string | string[]> => {
     const filesToUpload = Array.isArray(files) ? files : [files]
     const results: any[] = []
     try {
-      setUploading(true)
       for await (const fileUpload of filesToUpload) {
         const fileExtension = fileUpload.name.split('.').pop()
         const fileNameWithoutExt = fileUpload.name.replace(/\.[^/.]+$/, '')
@@ -36,24 +30,24 @@ export default function useS3() {
           BASE_PRESIGNED_API_URL +
             '?' +
             `fileName=${fileNameWithUid}` +
-            `&folder=${folder}`,
+            `&folder=${folder}` +
+            `&wallet=${walletAddress}`,
         )
         const { url: presignedUrl } = data
         await axios.put(presignedUrl, fileUpload)
         const key = S3.createKey({
           fileName: fileNameWithUid,
           folder,
-          user: user.sid as string,
+          walletAddress,
         })
-        results.push(`${NEXT_PUBLIC_BASE_S3_URL}/${key}`)
+        results.push(`${BASE_S3_URL}/${key}`)
       }
       return results.length === 1 ? results[0] : results
     } catch {
       throw new Error('Unable to get presigned URL')
     } finally {
-      setUploading(false)
     }
   }
 
-  return { uploadToS3, isUploading }
+  return { uploadToS3 }
 }

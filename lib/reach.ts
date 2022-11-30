@@ -1,10 +1,17 @@
-import { loadStdlib } from '@reach-sh/stdlib'
+import { loadStdlib, unsafeAllowMultipleStdlibs } from '@reach-sh/stdlib'
+import { ethers } from 'ethers'
 
-const POLYGON_TESTNET = 'https://rpc.ankr.com/polygon_mumbai'
-// const POLYGON_MAINNET = 'https://rpc-mainnet.matic.quiknode.pro';
+unsafeAllowMultipleStdlibs()
 
-const stdlib = loadStdlib({
-  ETH_NODE_URI: POLYGON_TESTNET,
-})
+export const POLYGON_TESTNET = 'https://rpc-mumbai.maticvigil.com/'
+export const provider: any = new ethers.providers.JsonRpcProvider(
+  POLYGON_TESTNET,
+)
+
+export const truncateAddress = (address: string) => {
+  return address.slice(0, 6) + '...' + address.slice(-4)
+}
+
+const stdlib = loadStdlib('ETH')
 
 export default stdlib

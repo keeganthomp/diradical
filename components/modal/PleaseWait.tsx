@@ -11,7 +11,6 @@ function PleaseWaitModal({ onClose }: { onClose: () => void }) {
     <BaseModal onClose={onClose}>
       <Container>
         <p>Doing blockchain things right now.</p>
-        <p>Please wait while we get this puppy deployed on Algorand</p>
         <Loader />
       </Container>
     </BaseModal>

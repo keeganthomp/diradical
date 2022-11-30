@@ -1,14 +1,7 @@
-import { TrackWithArtist } from 'types'
-import { useQuery } from 'react-query'
-import { CacheKey } from 'types'
-import API from 'lib/api'
+import useSWR from 'swr'
 
-export default function useMusic(user?: boolean) {
-  return useQuery<TrackWithArtist[]>(
-    user ? CacheKey.USER_TRACKS : CacheKey.TRACKS,
-    user ? API.fetchUserTracks : API.fetchTracks,
-    {
-      refetchInterval: 20000,
-    },
-  )
+export default function useMusic(wallet?: string) {
+  const key = wallet ? `/api/tracks/wallet/${wallet}` : '/api/tracks'
+  const { data: tracks, error } = useSWR(key)
+  return { tracks, isLoading: !error && !tracks }
 }

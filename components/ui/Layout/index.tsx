@@ -11,9 +11,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: ${SIDEBAR_WIDTH} auto;
   grid-template-rows: ${NAVBAR_HEIGHT} 1fr;
-  grid-template-areas:
-    'navbar navbar'
-    'sidebar content';
+  grid-template-areas: 'sidebar content';
   @media ${devices.mobile} {
     display: flex;
     flex-direction: column;

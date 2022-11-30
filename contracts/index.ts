@@ -1,75 +1,102 @@
 import stdlib from 'lib/reach'
-import algosdk from 'algosdk'
-import { getWalletFromMdk } from 'lib/encryption'
-import * as backend from './index.song.mjs'
+import * as backend from 'contracts/index.main.mjs'
 
-const getAccountFromMdk = async (mdk: string) => {
-  const wallet = getWalletFromMdk(mdk)
-  // const mnemonic = algosdk.secretKeyToMnemonic(wallet.sk)
-  const acc: any = await stdlib.newAccountFromSecret(wallet.sk.toString())
-  return acc
+const ROYALTY_CTC_ADDRESS = '0xad013c906911a1116C43aF66dA48F6b29b7dED07'
+const MATIC_DECIMALS = 18
+
+export const fmtNum = (n) => stdlib.bigNumberToNumber(n)
+export const fmtCurrency = (amt) => stdlib.formatCurrency(amt, MATIC_DECIMALS)
+
+type SongFromCtc = {
+  id: number
+  creator: string
+  art: string
+  audio: string
+  votes: number
 }
 
-const optinToAsset = async (mdk: string, tokId: number) => {
-  try {
-    const acc = await getAccountFromMdk(mdk)
-    await acc.tokenAccept(tokId)
-  } catch (err) {
-    console.log('Unable to optin to token:', err)
+type GlobalViews = {
+  contractBalance: string
+  membershipExp: number
+  membershipCost: string
+  votePeriodEndTime: number
+  currentVotingPeriod: number
+}
+
+export type SongViews = {
+  songId: number
+  song: SongFromCtc
+  payout: string
+  hasVoted: boolean
+}
+
+const getGlobalViews = async (acc: any) => {
+  const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
+  const contractBalance = await ctc.v.getContractBalance() // total balance in contract
+  const membershipExp = await ctc.v.getMembershipExp(acc.networkAccount.address) // membership expiration
+  const membershipCost = await ctc.v.getMembershipCost()
+  const votEndTime = await ctc.v.getPeriodEndTime()
+  const currentVotingPeriod = await ctc.v.getCurrentVotingPeriod()
+  const views: GlobalViews = {
+    contractBalance: contractBalance[1] ? fmtCurrency(contractBalance[1]) : '0',
+    membershipCost: membershipCost[1] ? fmtCurrency(membershipCost[1]) : '0',
+    membershipExp: membershipExp[1] ? fmtNum(membershipExp[1]) : 0,
+    votePeriodEndTime: votEndTime[1] ? fmtNum(votEndTime[1]) : 0,
+    currentVotingPeriod: currentVotingPeriod[1]
+      ? fmtNum(currentVotingPeriod[1])
+      : 0,
   }
+  return views
 }
 
-type launchSongCtcProps = {
-  mdk: string
-  audioIpfsCid: string
-  coverArtIpfsCid: string
-}
-export const launchSongCtc = async (props: launchSongCtcProps) => {
-  try {
-    const acc: any = await getAccountFromMdk(props.mdk)
-    const ctc = acc.contract(backend)
-    await stdlib.withDisconnect(() =>
-      ctc.p.Creator({
-        art: props.coverArtIpfsCid,
-        audio: props.audioIpfsCid,
-        ready: stdlib.disconnect,
-      }),
-    )
-    const ctcInfo = await ctc.getInfo()
-    const ownershipTok = await ctc.v.ownershipTokId()
-    const fmtTokId = stdlib.bigNumberToNumber(ownershipTok[1])
-    // await optinToAsset(props.mdk, fmtTokId)
-    const contractAddress = stdlib.bigNumberToNumber(ctcInfo)
-    return { tokenId: fmtTokId, contractAddress }
-  } catch (err) {
-    throw new Error(err.message)
+const getSongViews = async (songId: number, vPeriod: number, user: any) => {
+  const ctc = user.contract(backend, ROYALTY_CTC_ADDRESS)
+  const song = await ctc.v.getSong(songId)
+  const songPayout = await ctc.v.getSongPayout(songId, vPeriod)
+  const hasVoted = await ctc.v.hasVoted(songId, user)
+  const views: SongViews = {
+    songId,
+    song: song[1],
+    payout: songPayout[1] ? fmtCurrency(songPayout[1]) : '0',
+    hasVoted: hasVoted[1],
   }
+  return views
 }
 
-type OpenToPublicProps = {
-  mdk: string
-  ctcAddress: number
-  amtOfTokensToRetain: number // in mAlgo
-  totalValue: number // in mAlgo
+const buyMembership = async (acc: any) => {
+  const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
+  const exp = await ctc.a.buyMembership()
+  return fmtNum(exp)
 }
-export const openToPublic = async (props: OpenToPublicProps) => {
-  const acc: any = await getAccountFromMdk(props.mdk)
-  const ctc = acc.contract(backend, props.ctcAddress)
-  const amtToRetain = stdlib.bigNumberify(props.amtOfTokensToRetain)
-  const totalValue = stdlib.bigNumberify(props.totalValue)
-  await ctc.a.openToPublic(amtToRetain, totalValue)
+const addSong = async (
+  acc: any,
+  audioIPFSHash: string,
+  songIPFSHash: string,
+) => {
+  const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
+  return ctc.a.addSong(audioIPFSHash, songIPFSHash)
+}
+const receivePayout = async (acc: any, songId: number) => {
+  const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
+  return ctc.a.getRoyalties(songId)
+}
+const endVotingPeriod = async (acc: any, songId: number) => {
+  const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
+  return ctc.a.endVotingPeriod(songId)
+}
+const vote = async (acc, songId: number) => {
+  const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
+  await ctc.a.vote(songId)
 }
 
-type PurchaseSharesProps = {
-  mdk: string
-  ctcAddress: number
-  amtOfTokensToPurchase: number // in mAlgo
+const contract = {
+  getGlobalViews,
+  getSongViews,
+  buyMembership,
+  addSong,
+  receivePayout,
+  endVotingPeriod,
+  vote,
 }
-export const purchaseOwnership = async (props: PurchaseSharesProps) => {
-  const acc: any = await getAccountFromMdk(props.mdk)
-  const ctc = acc.contract(backend, props.ctcAddress)
-  const ownershipTok = await ctc.v.ownershipTokId()
-  // await optinToAsset(props.mdk, stdlib.bigNumberToNumber(ownershipTok[1]))
-  const amtToPurchase = stdlib.bigNumberify(props.amtOfTokensToPurchase)
-  await ctc.a.purchaseOwnership(amtToPurchase)
-}
+
+export default contract

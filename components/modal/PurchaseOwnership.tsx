@@ -1,13 +1,13 @@
 import BaseModal from './Base'
 import PurchaseSharesForm from 'components/forms/PurchaseOwnershipForm'
-import { TrackWithArtist } from 'types'
+import { TrackWithVotes } from 'types'
 
-function MakeSongAvailableModal({
+function PurchaseOwnership({
   onClose,
   track,
 }: {
   onClose: () => void
-  track: TrackWithArtist
+  track: TrackWithVotes
 }) {
   return (
     <BaseModal onClose={onClose}>
@@ -16,4 +16,4 @@ function MakeSongAvailableModal({
   )
 }
 
-export default MakeSongAvailableModal
+export default PurchaseOwnership
