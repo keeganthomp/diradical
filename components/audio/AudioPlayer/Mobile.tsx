@@ -101,10 +101,7 @@ export default function MobileAudioPlayer() {
             <CoverArt src={nowPlayingTrack.coverArt} />
             <TitleAndArtist>
               <SongTitle>{nowPlayingTrack.title}</SongTitle>
-              <Artist>
-                {nowPlayingTrack.artist.username ||
-                  nowPlayingTrack.artist.email}
-              </Artist>
+              <Artist>{nowPlayingTrack.artist.wallet}</Artist>
             </TitleAndArtist>
           </ArtAndTitle>
           {isPlaying ? (
