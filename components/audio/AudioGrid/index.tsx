@@ -30,7 +30,7 @@ export default function AudioGrid({ wallet }: { wallet?: string }) {
   if (isLoading && !tracks) {
     return (
       <div>
-        <Loader />
+        <Loader color='#000' />
       </div>
     )
   }

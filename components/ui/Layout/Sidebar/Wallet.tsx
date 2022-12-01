@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import QRCode from 'react-qr-code'
-import Loader from 'components/ui/Loader'
 import React from 'react'
+import useReachAccount from 'hooks/useReachAccount'
+import { truncateAddress } from 'lib/reach'
 
 const Container = styled.div`
   display: flex;
@@ -14,26 +15,20 @@ const Container = styled.div`
   position: absolute;
   bottom: 1rem;
 `
-const Balance = styled.p`
-  font-size: 12px;
-  font-weight: 200;
-  font-style: italic;
-`
 
-function CustodialWallet() {
-  const [fetching, setFetching] = React.useState(false)
-  const [bal, setBal] = React.useState<null | number>(null)
+const WalletAddress = styled.p``
 
+function Wallet() {
+  const { reachAcc } = useReachAccount()
+  if (!reachAcc) return null
   return (
     <Container>
-      <QRCode size={120} value={''} />
-      {fetching || bal === null ? (
-        <Loader />
-      ) : (
-        <Balance>Balance: {bal}</Balance>
-      )}
+      <WalletAddress>
+        {truncateAddress(reachAcc.networkAccount.address)}
+      </WalletAddress>
+      <QRCode size={120} value={reachAcc.networkAccount.address} />
     </Container>
   )
 }
 
-export default CustodialWallet
+export default Wallet

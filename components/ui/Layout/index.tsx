@@ -1,16 +1,16 @@
 import styled from 'styled-components'
-import Navbar from 'components/ui/Layout/Navbar'
+import MobileTopbar from './Topbar/Mobile'
 import Sidebar from './Sidebar'
 import AudioPlayer from 'components/audio/AudioPlayer'
 import { devices } from 'styles/theme'
 
 const SIDEBAR_WIDTH = '15rem'
-const NAVBAR_HEIGHT = '3rem'
+const TOPBAR_HEIGHT = '3rem'
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: ${SIDEBAR_WIDTH} auto;
-  grid-template-rows: ${NAVBAR_HEIGHT} 1fr;
+  grid-template-rows: ${TOPBAR_HEIGHT} 1fr;
   grid-template-areas: 'sidebar content';
   @media ${devices.mobile} {
     display: flex;
@@ -22,7 +22,7 @@ const Content = styled.div`
   grid-area: content;
   padding: 0.5rem 0.5rem 6.75rem 0.5rem;
   background: ${(p) => p.theme.colors.background};
-  height: calc(100vh - ${NAVBAR_HEIGHT});
+  height: calc(100vh - ${TOPBAR_HEIGHT});
   overflow-y: scroll;
   border-top-left-radius: 4px;
   @media ${devices.mobile} {
@@ -34,7 +34,7 @@ const Content = styled.div`
 export default function Layout({ children }) {
   return (
     <Container>
-      <Navbar />
+      <MobileTopbar />
       <Sidebar />
       <Content>{children}</Content>
       <AudioPlayer />

@@ -7,13 +7,12 @@ import useReachAccount from 'hooks/useReachAccount'
 import { fmtNum } from 'contracts'
 import React from 'react'
 import useContract from 'hooks/useCtc'
-import { truncateAddress } from 'lib/reach'
 import useUser from 'hooks/useUser'
 import API from 'lib/api'
 import stdlib from 'lib/reach'
 import { useSWRConfig } from 'swr'
+import Loader from 'components/ui/Loader'
 import Wallet from './Wallet'
-import useMusic from 'hooks/useMusic'
 
 type NavLinkType = {
   Icon: any
@@ -49,6 +48,14 @@ const Container = styled.div`
   }
 `
 
+const WalletAddress = styled.p`
+  margin: 0;
+  margin-left: 1rem;
+  color: white;
+  font-weight: 100;
+  padding: 0.5rem 0;
+`
+
 const Button = styled.button`
   background: ${(p) => p.theme.colors.main};
   text-decoration: none;
@@ -68,11 +75,8 @@ const Button = styled.button`
     opacity: 0.8;
   }
   &:disabled {
-    background: #808080;
-    &:hover {
-      opacity: 1;
-      cursor: not-allowed;
-    }
+    cursor: not-allowed;
+    opacity: 1;
   }
 `
 
@@ -82,17 +86,22 @@ const BuyMembershipButton = styled(Button)`
   &:hover {
     background: rgba(229, 232, 235, 0.15);
   }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+    background: rgba(229, 232, 235, 0.2);
+  }
 `
 const ConnectButton = styled(Button)`
   margin-bottom: 1rem;
 `
 
 export default function Sidebar() {
-  const { tracks, isLoading: isFetchingTracks } = useMusic()
   const { mutate } = useSWRConfig()
   const { connectWallet, reachAcc } = useReachAccount()
   const { user } = useUser()
   const [isConnecting, setConnecting] = React.useState(false)
+  const [isBuyingMembership, setBuyingMembership] = React.useState(false)
   const [currentBlockSecs, setCurrentBlockSecs] = React.useState<null | number>(
     null,
   )
@@ -107,22 +116,14 @@ export default function Sidebar() {
     asyncFetchBlockSecs()
   }, [])
 
-  React.useEffect(() => {
-    const asyncGetSongsState = async () => {
-      const songIds = tracks.map((t) => t.songId)
-      const g = await Promise.all(
-        songIds.map((id) => contract.getSongViews(id, 1, reachAcc)),
-      )
-      console.log('woop', g)
-    }
-    if (reachAcc && !isFetchingTracks) asyncGetSongsState()
-  }, [reachAcc, isFetchingTracks])
-
   const buyMembership = async () => {
     if (!reachAcc) return
+    setBuyingMembership(true)
+    await new Promise((r) => setTimeout(r, 100))
     const exp = await contract.buyMembership(reachAcc)
     await API.updateUser(reachAcc.networkAccount.address, exp)
     mutate(`/api/user/${reachAcc.networkAccount.address}`)
+    setBuyingMembership(false)
   }
 
   const handleConnect = async () => {
@@ -137,18 +138,19 @@ export default function Sidebar() {
 
   return (
     <Container>
-      <ConnectButton disabled={isConnecting} onClick={handleConnect}>
-        {isConnecting
-          ? '...'
-          : reachAcc
-          ? truncateAddress(reachAcc?.networkAccount?.address)
-          : 'Connect Wallet'}
-      </ConnectButton>
-      {showBuyMembButton && (
-        <BuyMembershipButton onClick={buyMembership}>
-          Buy Membership
-        </BuyMembershipButton>
+      {!reachAcc && (
+        <ConnectButton disabled={isConnecting} onClick={handleConnect}>
+          {isConnecting ? <Loader size={15} /> : 'Connect Wallet'}
+        </ConnectButton>
       )}
+      {showBuyMembButton &&
+        (isBuyingMembership ? (
+          <Loader size={15} />
+        ) : (
+          <BuyMembershipButton onClick={buyMembership}>
+            Buy Membership
+          </BuyMembershipButton>
+        ))}
       {NAV_LINKS.map((link) => (
         <NavLink key={link.path} href={link.path}>
           {link.title}

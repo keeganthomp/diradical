@@ -1,19 +1,12 @@
 import stdlib from 'lib/reach'
 import * as backend from 'contracts/index.main.mjs'
+import { Track } from '@prisma/client'
 
-const ROYALTY_CTC_ADDRESS = '0xad013c906911a1116C43aF66dA48F6b29b7dED07'
+const ROYALTY_CTC_ADDRESS = '0x87fC497ebb42d5Ba79783F9788b61B668d1EC2c8'
 const MATIC_DECIMALS = 18
 
 export const fmtNum = (n) => stdlib.bigNumberToNumber(n)
 export const fmtCurrency = (amt) => stdlib.formatCurrency(amt, MATIC_DECIMALS)
-
-type SongFromCtc = {
-  id: number
-  creator: string
-  art: string
-  audio: string
-  votes: number
-}
 
 type GlobalViews = {
   contractBalance: string
@@ -25,7 +18,6 @@ type GlobalViews = {
 
 export type SongViews = {
   songId: number
-  song: SongFromCtc
   payout: string
   hasVoted: boolean
 }
@@ -51,22 +43,28 @@ const getGlobalViews = async (acc: any) => {
 
 const getSongViews = async (songId: number, vPeriod: number, user: any) => {
   const ctc = user.contract(backend, ROYALTY_CTC_ADDRESS)
-  const song = await ctc.v.getSong(songId)
   const songPayout = await ctc.v.getSongPayout(songId, vPeriod)
   const hasVoted = await ctc.v.hasVoted(songId, user)
   const views: SongViews = {
     songId,
-    song: song[1],
     payout: songPayout[1] ? fmtCurrency(songPayout[1]) : '0',
     hasVoted: hasVoted[1],
   }
   return views
 }
 
+const getSongsState = async (reachAcc: any, tracks: Track[]) => {
+  const songIds = tracks.map((t) => t.songId)
+  const songsState = await Promise.all(
+    songIds.map((id) => contract.getSongViews(id, 1, reachAcc)),
+  )
+  return songsState
+}
+
 const buyMembership = async (acc: any) => {
   const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
   const exp = await ctc.a.buyMembership()
-  return fmtNum(exp)
+  return exp
 }
 const addSong = async (
   acc: any,
@@ -97,6 +95,7 @@ const contract = {
   receivePayout,
   endVotingPeriod,
   vote,
+  getSongsState,
 }
 
 export default contract

@@ -1,20 +1,15 @@
-import styled from 'styled-components'
+import { TailSpin } from 'react-loader-spinner'
 
-const Container = styled.div`
-  width: 100%;
-  text-align: center;
-`
-
-function Loader() {
+function Loader({ size = 40, color = '#fff' }) {
   return (
-    <Container>
-      <div className='lds-ring'>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </Container>
+    <TailSpin
+      height={size}
+      width={size}
+      color={color}
+      radius='1'
+      wrapperClass=''
+      visible={true}
+    />
   )
 }
 
