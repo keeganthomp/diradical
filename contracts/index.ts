@@ -63,8 +63,7 @@ const getSongsState = async (reachAcc: any, tracks: Track[]) => {
 
 const buyMembership = async (acc: any) => {
   const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
-  const exp = await ctc.a.buyMembership()
-  return exp
+  return ctc.a.buyMembership()
 }
 const addSong = async (
   acc: any,

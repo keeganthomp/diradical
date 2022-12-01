@@ -119,11 +119,16 @@ export default function Sidebar() {
   const buyMembership = async () => {
     if (!reachAcc) return
     setBuyingMembership(true)
-    await new Promise((r) => setTimeout(r, 100))
-    const exp = await contract.buyMembership(reachAcc)
-    await API.updateUser(reachAcc.networkAccount.address, exp)
-    mutate(`/api/user/${reachAcc.networkAccount.address}`)
-    setBuyingMembership(false)
+    try {
+      await new Promise((r) => setTimeout(r, 100)) // needed to how loader immediately
+      const exp = await contract.buyMembership(reachAcc)
+      await API.updateUser(reachAcc.networkAccount.address, exp)
+      mutate(`/api/user/${reachAcc.networkAccount.address}`)
+    } catch (e) {
+      console.log('err buying membership', e)
+    } finally {
+      setBuyingMembership(false)
+    }
   }
 
   const handleConnect = async () => {
