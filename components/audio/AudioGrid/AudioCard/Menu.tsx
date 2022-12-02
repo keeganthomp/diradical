@@ -5,9 +5,7 @@ import { TrackWithVotes } from 'types'
 import activeMenuState from 'atoms/audioMenu'
 import { useRecoilState } from 'recoil'
 import { useRef, useEffect } from 'react'
-import { useSetRecoilState } from 'recoil'
 import axios from 'axios'
-import modalState, { ModalType } from 'atoms/modal'
 
 type Props = {
   track: TrackWithVotes
@@ -67,7 +65,6 @@ const MenuItem = styled.p<{ color?: string; disabled?: boolean }>`
 `
 
 export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
-  const setModal = useSetRecoilState(modalState)
   const menuRef = useRef<HTMLDivElement>(null)
   const [activeMenu, setActiveMenu] = useRecoilState(activeMenuState)
   const router = useRouter()
@@ -125,9 +122,6 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
     updateArchiveCache()
   }
 
-  const openSongModal = () =>
-    setModal({ type: ModalType.MAKE_SONG_AVAILABLE, state: { track } })
-
   return (
     <>
       <MenuIconWrapper onClick={handleMenuToggle}>
@@ -135,11 +129,6 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
       </MenuIconWrapper>
       {isOpen && (
         <MenuWrapper ref={menuRef}>
-          {!isOpenToPublic && (
-            <MenuItem onClick={openSongModal} className={MENU_ITEM_CLASS}>
-              Open to investors
-            </MenuItem>
-          )}
           <MenuItem
             onClick={handleArchive}
             color={!track.archived ? 'red' : '#000'}

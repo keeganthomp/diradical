@@ -8,6 +8,9 @@ function Loader({ size = 40, color = '#fff' }) {
       color={color}
       radius='1'
       wrapperClass=''
+      wrapperStyle={{
+        justifyContent: 'center',
+      }}
       visible={true}
     />
   )

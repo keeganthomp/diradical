@@ -3,7 +3,10 @@ import AudioCard from './AudioCard'
 import { TrackWithVotes } from 'types'
 import { devices } from 'styles/theme'
 import useMusic from 'hooks/useMusic'
+import useContract from 'hooks/useCtc'
 import Loader from 'components/ui/Loader'
+import React from 'react'
+import useReachAccount from 'hooks/useReachAccount'
 
 const DEF_NUM_OF_COLUMNS = 5
 
@@ -27,12 +30,19 @@ const Grid = styled.div`
 
 export default function AudioGrid({ wallet }: { wallet?: string }) {
   const { tracks, isLoading } = useMusic(wallet)
+  const { reachAcc } = useReachAccount()
+  const contract = useContract()
+
+  React.useEffect(() => {
+    const fetchSongsState = async () => {
+      const songsState = await contract.getSongsState(reachAcc, tracks)
+      console.log('weeee', songsState)
+    }
+    if (reachAcc && tracks) fetchSongsState()
+  }, [reachAcc, tracks])
+
   if (isLoading && !tracks) {
-    return (
-      <div>
-        <Loader color='#000' />
-      </div>
-    )
+    return <Loader color='#000' />
   }
   if (tracks.length === 0) {
     return <div>no tracks</div>

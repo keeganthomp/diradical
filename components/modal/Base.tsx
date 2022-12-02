@@ -2,8 +2,7 @@ import React from 'react'
 import Modal from 'react-modal'
 import { IoCloseOutline } from 'react-icons/io5'
 import styled from 'styled-components'
-import modalState from 'atoms/modal'
-import { useRecoilValue } from 'recoil'
+import useModal from 'hooks/useModal'
 
 const customStyles = {
   content: {
@@ -36,17 +35,11 @@ const CloseIcon = styled(IoCloseOutline)`
   cursor: pointer;
 `
 
-function BaseModal({
-  onClose,
-  children,
-}: {
-  onClose: () => void
-  children: React.ReactNode
-}) {
-  const modal = useRecoilValue(modalState)
+function BaseModal({ children }: { children: React.ReactNode }) {
+  const { currentModal, closeModal } = useModal()
   return (
     <Modal isOpen style={customStyles} contentLabel='Example Modal'>
-      {!modal.hideClose && <CloseIcon onClick={onClose} />}
+      {!currentModal.hideClose && <CloseIcon onClick={closeModal} />}
       {children}
     </Modal>
   )

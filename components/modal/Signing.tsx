@@ -1,21 +1,22 @@
 import BaseModal from './Base'
 import styled from 'styled-components'
-import useModal from 'hooks/useModal'
 
 const Container = styled.div`
   text-align: center;
-  color: white;
+`
+const Image = styled.img`
+  width: 20rem;
 `
 
-function ErrorModal() {
-  const { error } = useModal()
+function SigningModal() {
   return (
     <BaseModal>
       <Container>
-        <p>{error}</p>
+        <Image src='/images/signing.svg' />
+        <p>You will be prompted for a signing momentarily</p>
       </Container>
     </BaseModal>
   )
 }
 
-export default ErrorModal
+export default SigningModal

@@ -10,9 +10,8 @@ import useContract from 'hooks/useCtc'
 import useUser from 'hooks/useUser'
 import API from 'lib/api'
 import stdlib from 'lib/reach'
-import { useSWRConfig } from 'swr'
 import Loader from 'components/ui/Loader'
-import Wallet from './Wallet'
+import useModal from 'hooks/useModal'
 
 type NavLinkType = {
   Icon: any
@@ -97,37 +96,38 @@ const ConnectButton = styled(Button)`
 `
 
 export default function Sidebar() {
-  const { mutate } = useSWRConfig()
+  const { openModal, ModalType, closeModal } = useModal()
   const { connectWallet, reachAcc } = useReachAccount()
-  const { user } = useUser()
+  const { user, mutate } = useUser()
   const [isConnecting, setConnecting] = React.useState(false)
-  const [isBuyingMembership, setBuyingMembership] = React.useState(false)
   const [currentBlockSecs, setCurrentBlockSecs] = React.useState<null | number>(
     null,
   )
   const contract = useContract()
 
+  const asyncFetchBlockSecs = async () => {
+    const rawTime = await stdlib.getNetworkSecs()
+    const fmtTime = fmtNum(rawTime)
+    setCurrentBlockSecs(fmtTime)
+  }
+
   React.useEffect(() => {
-    const asyncFetchBlockSecs = async () => {
-      const rawTime = await stdlib.getNetworkSecs()
-      const fmtTime = fmtNum(rawTime)
-      setCurrentBlockSecs(fmtTime)
-    }
     asyncFetchBlockSecs()
   }, [])
 
   const buyMembership = async () => {
     if (!reachAcc) return
-    setBuyingMembership(true)
     try {
+      openModal(ModalType.SIGNING)
       await new Promise((r) => setTimeout(r, 100)) // needed to how loader immediately
       const exp = await contract.buyMembership(reachAcc)
       await API.updateUser(reachAcc.networkAccount.address, exp)
-      mutate(`/api/user/${reachAcc.networkAccount.address}`)
+      await asyncFetchBlockSecs()
+      mutate({ ...user, membershipExp: exp })
+      closeModal()
     } catch (e) {
       console.log('err buying membership', e)
-    } finally {
-      setBuyingMembership(false)
+      openModal(ModalType.ERROR, 'Error buying membership')
     }
   }
 
@@ -148,20 +148,21 @@ export default function Sidebar() {
           {isConnecting ? <Loader size={15} /> : 'Connect Wallet'}
         </ConnectButton>
       )}
-      {showBuyMembButton &&
-        (isBuyingMembership ? (
-          <Loader size={15} />
-        ) : (
-          <BuyMembershipButton onClick={buyMembership}>
-            Buy Membership
-          </BuyMembershipButton>
-        ))}
+      {reachAcc && (
+        <WalletAddress>
+          {reachAcc.networkAccount.address.slice(0, 6)}
+        </WalletAddress>
+      )}
+      {showBuyMembButton && (
+        <BuyMembershipButton onClick={buyMembership}>
+          Buy Membership
+        </BuyMembershipButton>
+      )}
       {NAV_LINKS.map((link) => (
         <NavLink key={link.path} href={link.path}>
           {link.title}
         </NavLink>
       ))}
-      <Wallet />
     </Container>
   )
 }

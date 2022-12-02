@@ -36,8 +36,6 @@ const Label = styled.label`
   text-transform: lowercase;
 `
 
-const Error = styled.p``
-
 export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
   const { upload } = useUpload()
   const { register, handleSubmit, reset, formState, getValues } = useForm({

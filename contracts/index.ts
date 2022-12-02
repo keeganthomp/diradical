@@ -2,7 +2,7 @@ import stdlib from 'lib/reach'
 import * as backend from 'contracts/index.main.mjs'
 import { Track } from '@prisma/client'
 
-const ROYALTY_CTC_ADDRESS = '0x87fC497ebb42d5Ba79783F9788b61B668d1EC2c8'
+const ROYALTY_CTC_ADDRESS = '0xaAe8892F6DA8EecF3507F38ECbf252F1d3979E32'
 const MATIC_DECIMALS = 18
 
 export const fmtNum = (n) => stdlib.bigNumberToNumber(n)
@@ -58,12 +58,20 @@ const getSongsState = async (reachAcc: any, tracks: Track[]) => {
   const songsState = await Promise.all(
     songIds.map((id) => contract.getSongViews(id, 1, reachAcc)),
   )
-  return songsState
+  const fmtState = songsState.reduce((acc, song) => {
+    acc[song.songId] = {
+      payout: song.payout,
+      hasVoted: song.hasVoted,
+    }
+    return acc
+  }, {})
+  return fmtState
 }
 
 const buyMembership = async (acc: any) => {
   const ctc = acc.contract(backend, ROYALTY_CTC_ADDRESS)
-  return ctc.a.buyMembership()
+  const exp = await ctc.a.buyMembership()
+  return fmtNum(exp)
 }
 const addSong = async (
   acc: any,

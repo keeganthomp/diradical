@@ -5,9 +5,13 @@ import { User } from '@prisma/client'
 
 export default function useUser() {
   const reachAcc = useRecoilValue(reachAccountState)
-  const { data: user, error } = useSWR<User>(
+  const {
+    data: user,
+    error,
+    mutate,
+  } = useSWR<User>(
     reachAcc ? `/api/user/${reachAcc.networkAccount.address}` : null,
   )
 
-  return { user, isFetching: !user && !error }
+  return { user, isFetching: !user && !error, mutate }
 }

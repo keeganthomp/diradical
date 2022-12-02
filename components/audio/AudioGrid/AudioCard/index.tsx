@@ -9,7 +9,9 @@ import mobile from 'is-mobile'
 import moment from 'moment'
 import useContract from 'hooks/useCtc'
 import { truncateAddress } from 'lib/reach'
+import useModal from 'hooks/useModal'
 import useReachAccount from 'hooks/useReachAccount'
+import { useSWRConfig } from 'swr'
 import AudioCardMenu from './Menu'
 import useUser from 'hooks/useUser'
 import API from 'lib/api'
@@ -84,15 +86,34 @@ const RightCol = styled.div`
 `
 
 export default function AudioCard({ track }: Props) {
+  const { mutate } = useSWRConfig()
+  const { openModal, ModalType, closeModal } = useModal()
   const { vote } = useContract()
   const { reachAcc } = useReachAccount()
   const { user } = useUser()
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
-  const [isVoting, setIsVoting] = useState(false)
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
+
+  const updatetracksCache = () => {
+    mutate(
+      '/api/tracks',
+      async (tracks) => {
+        const indexOfTrack = tracks.findIndex((t) => t.id === track.id)
+        const resp = await fetch(`/api/tracks/${track.id}`)
+        const updatedTrack = await resp.json()
+        const updatedTracks = [
+          ...tracks.slice(0, indexOfTrack),
+          updatedTrack,
+          ...tracks.slice(indexOfTrack + 1),
+        ]
+        return updatedTracks
+      },
+      { revalidate: false },
+    )
+  }
 
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
@@ -102,10 +123,16 @@ export default function AudioCard({ track }: Props) {
 
   const handleVote = async () => {
     if (!reachAcc) return
-    setIsVoting(true)
-    await vote(reachAcc, track.songId)
-    await API.addVote(reachAcc.networkAccount.address, track.id)
-    setIsVoting(false)
+    try {
+      openModal(ModalType.SIGNING)
+      await new Promise((r) => setTimeout(r, 100)) // needed to show modal immediately
+      await vote(reachAcc, track.songId)
+      await API.addVote(reachAcc.networkAccount.address, track.id)
+      updatetracksCache()
+      closeModal()
+    } catch {
+      openModal(ModalType.ERROR, 'Error voting for track')
+    }
   }
 
   return (
@@ -128,11 +155,7 @@ export default function AudioCard({ track }: Props) {
           </TitleInfo>
           <RightCol>
             <Realesed>{moment(track.createdAt).calendar()}</Realesed>
-            {shouldShowVoteButton && (
-              <button disabled={isVoting} onClick={handleVote}>
-                Vote
-              </button>
-            )}
+            {shouldShowVoteButton && <button onClick={handleVote}>Vote</button>}
           </RightCol>
         </Meta>
       </MetaData>

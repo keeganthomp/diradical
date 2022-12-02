@@ -1,6 +1,5 @@
 import useS3 from 'hooks/useS3'
-import { useSetRecoilState } from 'recoil'
-import modalState, { ModalType } from 'atoms/modal'
+import useModal from 'hooks/useModal'
 import useUser from 'hooks/useReachAccount'
 import useContract from 'hooks/useCtc'
 import axios from 'axios'
@@ -16,20 +15,20 @@ export default function useUpload() {
   const contract = useContract()
   const { reachAcc } = useUser()
   const { uploadToS3 } = useS3()
-  const setModalState = useSetRecoilState(modalState)
+  const { openModal, ModalType, closeModal } = useModal()
 
-  const showWaitModal = () => {
-    setModalState({ type: ModalType.PLEASE_WAIT, state: null, hideClose: true })
+  const showSignModal = () => {
+    openModal(ModalType.SIGNING)
   }
   const showErrorModal = (error: string) => {
-    setModalState({ type: ModalType.ERROR, state: { error } })
+    openModal(ModalType.ERROR, error)
   }
 
   const upload = async ({ title, artFile, audioFile }: UploadProps) => {
     if (!reachAcc) return
     const { address: walletAddress } = reachAcc.networkAccount
     try {
-      showWaitModal()
+      showSignModal()
       // upload to S3
       const audioS3Url = await uploadToS3(audioFile, title, walletAddress)
       const artS3Url = await uploadToS3(artFile, title, walletAddress)
@@ -49,19 +48,20 @@ export default function useUpload() {
         artIPFSHash,
       )
       // add to remote database
-      await axios.post('/api/tracks', {
+      const track = await axios.post('/api/tracks', {
         title,
         songId: fmtNum(songId),
         audioS3Url,
         artS3Url,
         wallet: walletAddress,
       })
+      closeModal()
     } catch (err) {
       console.log('err uploading track', err)
       const { message } = err.response.data
       const isOverspend = message.toLowerCase().includes('overspend')
       if (isOverspend) {
-        showErrorModal('Not enough Algo in wallet to upload track')
+        showErrorModal('Not enough Matic in wallet to upload track')
       } else {
         showErrorModal('unable to upload track')
       }

@@ -1,7 +1,6 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
-import { useSetRecoilState } from 'recoil'
-import modalState, { ModalType } from 'atoms/modal'
+import useModal from 'hooks/useModal'
 import Button from 'components/ui/Buttons/Base'
 import useUser from 'hooks/useReachAccount'
 import React from 'react'
@@ -17,10 +16,10 @@ const Container = styled.div`
 
 export default function UserTacks() {
   const { reachAcc } = useUser()
-  const setModal = useSetRecoilState(modalState)
+  const { openModal, ModalType } = useModal()
 
   const openUploadModal = () => {
-    setModal({ type: ModalType.UPLOAD, state: null })
+    openModal(ModalType.UPLOAD)
   }
 
   if (!reachAcc)

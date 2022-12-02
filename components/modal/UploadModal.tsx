@@ -1,10 +1,12 @@
 import BaseModal from './Base'
 import UploadForm from 'components/forms/UploadSongForm'
+import useModal from 'hooks/useModal'
 
-function UploadModal({ onClose }: { onClose: () => void }) {
+function UploadModal() {
+  const { closeModal } = useModal()
   return (
-    <BaseModal onClose={onClose}>
-      <UploadForm onSubmit={onClose} />
+    <BaseModal>
+      <UploadForm onSubmit={closeModal} />
     </BaseModal>
   )
 }
