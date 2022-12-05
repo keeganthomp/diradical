@@ -1,9 +1,8 @@
 import useS3 from 'hooks/useS3'
 import useModal from 'hooks/useModal'
-import useUser from 'hooks/useReachAccount'
-import useContract from 'hooks/useCtc'
 import axios from 'axios'
-import { fmtNum } from 'contracts'
+import useContract from './useContract'
+import useMagicWallet from './useMagicWallet'
 
 type UploadProps = {
   title: string
@@ -12,8 +11,8 @@ type UploadProps = {
 }
 
 export default function useUpload() {
-  const contract = useContract()
-  const { reachAcc } = useUser()
+  const { addSong } = useContract()
+  const { walletAddress } = useMagicWallet()
   const { uploadToS3 } = useS3()
   const { openModal, ModalType, closeModal } = useModal()
 
@@ -25,8 +24,7 @@ export default function useUpload() {
   }
 
   const upload = async ({ title, artFile, audioFile }: UploadProps) => {
-    if (!reachAcc) return
-    const { address: walletAddress } = reachAcc.networkAccount
+    if (!walletAddress) return
     try {
       showSignModal()
       // upload to S3
@@ -41,16 +39,17 @@ export default function useUpload() {
       const {
         data: { audioIPFSHash, artIPFSHash },
       } = await axios.post('/api/ipfs', payload)
-      // add to royalty contract
-      const songId = await contract.addSong(
-        reachAcc,
+      console.log({
         audioIPFSHash,
         artIPFSHash,
-      )
+      })
+      // add to royalty contract
+      const songId = await addSong(artIPFSHash, audioIPFSHash)
+      console.log('songId', songId)
       // add to remote database
-      const track = await axios.post('/api/tracks', {
+      await axios.post('/api/tracks', {
         title,
-        songId: fmtNum(songId),
+        songId,
         audioS3Url,
         artS3Url,
         wallet: walletAddress,
@@ -58,13 +57,6 @@ export default function useUpload() {
       closeModal()
     } catch (err) {
       console.log('err uploading track', err)
-      const { message } = err.response.data
-      const isOverspend = message.toLowerCase().includes('overspend')
-      if (isOverspend) {
-        showErrorModal('Not enough Matic in wallet to upload track')
-      } else {
-        showErrorModal('unable to upload track')
-      }
     }
   }
 

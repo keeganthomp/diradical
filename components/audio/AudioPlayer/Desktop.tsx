@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import { IoCloseOutline } from 'react-icons/io5'
-import { truncateAddress } from 'lib/reach'
+import { truncateWalletAddress } from 'utils'
 import { devices } from 'styles/theme'
 
 const Container = styled.div`
@@ -109,7 +109,7 @@ export default function DesktopAudioPlayer() {
       <Container>
         <CloseIcon onClick={stop} />
         <SongTitle>{nowPlayingTrack.title}</SongTitle>
-        <Artist>{truncateAddress(nowPlayingTrack.artist.wallet)}</Artist>
+        <Artist>{truncateWalletAddress(nowPlayingTrack.artist.wallet)}</Artist>
         <CoverArt src={nowPlayingTrack.coverArt} />
         <ButtonWrapper>
           {isPlaying ? (

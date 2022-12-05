@@ -3,15 +3,13 @@ import { SlMusicToneAlt } from 'react-icons/sl'
 import { BsPerson } from 'react-icons/bs'
 import NavLink from 'components/ui/Layout/Sidebar/NavLink'
 import { devices } from 'styles/theme'
-import useReachAccount from 'hooks/useReachAccount'
-import { fmtNum } from 'contracts'
 import React from 'react'
-import useContract from 'hooks/useCtc'
+import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import API from 'lib/api'
-import stdlib from 'lib/reach'
 import Loader from 'components/ui/Loader'
 import useModal from 'hooks/useModal'
+import useMagicWallet from 'hooks/useMagicWallet'
 
 type NavLinkType = {
   Icon: any
@@ -96,45 +94,47 @@ const ConnectButton = styled(Button)`
 `
 
 export default function Sidebar() {
+  const { isInitializing, authenticate, logout, walletAddress } =
+    useMagicWallet()
+  const ctc = useContract()
   const { openModal, ModalType, closeModal } = useModal()
-  const { connectWallet, reachAcc } = useReachAccount()
   const { user, mutate } = useUser()
-  const [isConnecting, setConnecting] = React.useState(false)
   const [currentBlockSecs, setCurrentBlockSecs] = React.useState<null | number>(
     null,
   )
-  const contract = useContract()
+
+  React.useEffect(() => {
+    if (!walletAddress) return
+    const asyncCheckMemmbership = async () => {
+      // const membExp = await callContract('getMembershipExp', walletAddress)
+      // const rawTime = await reach.getNetworkSecs()
+      // const currentTime = fmtNum(rawTime)
+      // const expiration = Number(membExp || 0)
+      // console.log('currentTime', currentTime)
+      // console.log('expiration', expiration)
+      // const isValid = expiration > currentTime
+      // console.log('is Valid', isValid)
+    }
+    asyncCheckMemmbership()
+  }, [walletAddress])
 
   const asyncFetchBlockSecs = async () => {
-    const rawTime = await stdlib.getNetworkSecs()
-    const fmtTime = fmtNum(rawTime)
-    setCurrentBlockSecs(fmtTime)
+    // const rawTime = await stdlib.getNetworkSecs()
+    // const fmtTime = fmtNum(rawTime)
+    // setCurrentBlockSecs(fmtTime)
   }
 
   React.useEffect(() => {
     asyncFetchBlockSecs()
   }, [])
 
-  const buyMembership = async () => {
-    if (!reachAcc) return
+  const handleBuyMembership = async () => {
     try {
-      openModal(ModalType.SIGNING)
-      await new Promise((r) => setTimeout(r, 100)) // needed to how loader immediately
-      const exp = await contract.buyMembership(reachAcc)
-      await API.updateUser(reachAcc.networkAccount.address, exp)
-      await asyncFetchBlockSecs()
-      mutate({ ...user, membershipExp: exp })
-      closeModal()
+      await ctc.buyMembership()
     } catch (e) {
       console.log('err buying membership', e)
       openModal(ModalType.ERROR, 'Error buying membership')
     }
-  }
-
-  const handleConnect = async () => {
-    setConnecting(true)
-    await connectWallet()
-    setConnecting(false)
   }
 
   const hasCurrentMembership = Boolean(user?.membershipExp)
@@ -143,21 +143,18 @@ export default function Sidebar() {
 
   return (
     <Container>
-      {!reachAcc && (
-        <ConnectButton disabled={isConnecting} onClick={handleConnect}>
-          {isConnecting ? <Loader size={15} /> : 'Connect Wallet'}
-        </ConnectButton>
+      {walletAddress && <WalletAddress>{walletAddress}</WalletAddress>}
+      {!walletAddress && (
+        <>
+          <button onClick={authenticate}>login</button>
+          <button onClick={authenticate}>signup</button>
+        </>
       )}
-      {reachAcc && (
-        <WalletAddress>
-          {reachAcc.networkAccount.address.slice(0, 6)}
-        </WalletAddress>
-      )}
-      {showBuyMembButton && (
-        <BuyMembershipButton onClick={buyMembership}>
-          Buy Membership
-        </BuyMembershipButton>
-      )}
+      {walletAddress && <button onClick={logout}>logout</button>}
+      <BuyMembershipButton onClick={handleBuyMembership}>
+        Buy Membership
+      </BuyMembershipButton>
+
       {NAV_LINKS.map((link) => (
         <NavLink key={link.path} href={link.path}>
           {link.title}

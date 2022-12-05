@@ -2,8 +2,8 @@ import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
 import useModal from 'hooks/useModal'
 import Button from 'components/ui/Buttons/Base'
-import useUser from 'hooks/useReachAccount'
 import React from 'react'
+import useMagicWallet from 'hooks/useMagicWallet'
 
 const UploadButton = styled(Button)`
   width: 10rem;
@@ -15,14 +15,14 @@ const Container = styled.div`
 `
 
 export default function UserTacks() {
-  const { reachAcc } = useUser()
   const { openModal, ModalType } = useModal()
+  const { walletAddress } = useMagicWallet()
 
   const openUploadModal = () => {
     openModal(ModalType.UPLOAD)
   }
 
-  if (!reachAcc)
+  if (!walletAddress)
     return (
       <Container>
         <p>Please Conect</p>
@@ -32,7 +32,7 @@ export default function UserTacks() {
   return (
     <Container>
       <UploadButton onClick={openUploadModal}>upload</UploadButton>
-      <AudioGrid wallet={reachAcc?.networkAccount?.address} />
+      <AudioGrid wallet={walletAddress} />
     </Container>
   )
 }
