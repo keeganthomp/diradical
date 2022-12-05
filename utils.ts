@@ -1,18 +1,4 @@
-// disable tslint for this file
-/* tslint:disable */
-// @ts-ignore
-
-import { ethers } from 'ethers'
-import { encode, decode } from 'bs58'
-import contentHash from 'content-hash'
-
-export const numberToBigNumber = (arg: number) => {
-  ethers.BigNumber.from(arg)
-}
-
-export const encodeString = (arg: string) => {
-  return ethers.utils.formatBytes32String(arg)
-}
+import { decode } from 'bs58'
 
 /**
  * Converts IPFS CID version 0 (Base58) to a 32 bytes hex string and adds initial 0x.
@@ -20,10 +6,7 @@ export const encodeString = (arg: string) => {
  * @returns string
  */
 export function convertIpfsCidV0ToByte32(cid: string) {
-  const g = '0x' + Buffer.from(decode(cid).slice(2)).toString('hex')
-  console.log('ggg', g)
-  const cidV1 = contentHash.helpers.cidV0ToV1Base32(cid).toString('hex')
-  return g
+  return '0x' + Buffer.from(decode(cid).slice(2)).toString('hex')
 }
 
 //truncate wallet address to 6 characters
