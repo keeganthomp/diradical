@@ -7,7 +7,7 @@ import theme from 'styles/theme'
 import Head from 'next/head'
 import Modals from 'components/modal'
 import React from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { SWRConfig } from 'swr'
 
 function App({ Component, pageProps }: AppProps) {
   return (

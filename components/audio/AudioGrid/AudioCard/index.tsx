@@ -34,7 +34,7 @@ const ImageContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 5px;
+  border-radius: ${(p) => p.theme.borderRadius};
   overflow: hidden;
   color: white;
   @media ${devices.mobile} {

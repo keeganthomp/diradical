@@ -17,17 +17,18 @@ const MENU_ITEM_CLASS = 'menu-item'
 const MenuIconWrapper = styled.div`
   position: absolute;
   top: 3px;
-  right: 3px;
+  right: 8px;
   z-index: 9;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
   opacity: 0.6;
   transition: opacity 0.1s ease-in-out;
   border: 1px solid white;
-  border-radius: 5px;
   background: rgba(0, 0, 0, 0.4);
   &:hover {
     opacity: 0.8;

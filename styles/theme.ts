@@ -4,7 +4,9 @@ const theme: DefaultTheme = {
   colors: {
     background: 'white',
     main: '#e01aef',
+    border: 'lightgray',
   },
+  borderRadius: '20px',
 }
 
 const sizes = {

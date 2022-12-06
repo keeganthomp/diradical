@@ -5,13 +5,14 @@ import AudioPlayer from 'components/audio/AudioPlayer'
 import { devices } from 'styles/theme'
 
 const SIDEBAR_WIDTH = '15rem'
-const TOPBAR_HEIGHT = '3rem'
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: ${SIDEBAR_WIDTH} auto;
-  grid-template-rows: ${TOPBAR_HEIGHT} 1fr;
   grid-template-areas: 'sidebar content';
+  height: 100vh;
+  padding: 10px;
+  column-gap: 10px;
   @media ${devices.mobile} {
     display: flex;
     flex-direction: column;
@@ -22,9 +23,9 @@ const Content = styled.div`
   grid-area: content;
   padding: 0.5rem 0.5rem 6.75rem 0.5rem;
   background: ${(p) => p.theme.colors.background};
-  height: calc(100vh - ${TOPBAR_HEIGHT});
   overflow-y: scroll;
-  border-top-left-radius: 4px;
+  border-radius: ${(p) => p.theme.borderRadius};
+  border: 1px solid ${(p) => p.theme.colors.border};
   @media ${devices.mobile} {
     height: 100vh;
     padding: 3.5rem 0.5rem 5.5rem 0.5rem;

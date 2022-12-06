@@ -9,28 +9,27 @@ type Props = {
 }
 
 const StyledLink = styled.p<{ active?: boolean }>`
-  background: transparent;
+  background: #dadada;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   transition: all 0.1s ease-in-out;
-  font-weight: 200;
-  margin: 0;
-  border-radius: 5px;
-  font-weight: ${(p) => (p.active ? 400 : 200)};
-  width: 100%;
+  border-radius: 30px;
+  width: 75%;
   text-align: center;
-  padding: 0.5rem 0;
+  font-size: 14px;
+  padding: 5px 0;
+  margin: 3px 0;
   &:hover {
-    background: rgba(88, 88, 88, 0.2);
+    background: rgba(88, 88, 88, 0.133);
   }
   a {
-    color: #fff;
+    color: #000;
     text-decoration: none;
     width: 100%;
     &:visited {
-      color: #fff;
+      color: #000;
     }
   }
 `

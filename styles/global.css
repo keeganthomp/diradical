@@ -7,8 +7,8 @@ body {
   line-height: 1.6;
   font-size: 18px;
   font-family: Jost;
-  background: #000;
   height: 100%;
+  background: rgb(231, 230, 230);
 }
 
 * {

@@ -10,6 +10,8 @@ import API from 'lib/api'
 import Loader from 'components/ui/Loader'
 import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
+import ActionButton from 'components/ui/Buttons/ActionButton'
+import { truncateWalletAddress } from 'utils'
 
 type NavLinkType = {
   Icon: any
@@ -33,53 +35,38 @@ const NAV_LINKS: NavLinkType[] = [
 ]
 
 const Container = styled.div`
+  position: relative;
   grid-area: sidebar;
-  background: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  background: white;
+  align-items: start;
+  justify-content: center;
   padding: 1rem 0;
+  border-radius: ${(p) => p.theme.borderRadius};
+  border: 1px solid ${(p) => p.theme.colors.border};
   @media ${devices.mobile} {
     display: none;
+  }
+`
+
+const Section = styled.div`
+  width: 100%;
+  p {
+    width: 100%;
   }
 `
 
 const WalletAddress = styled.p`
   margin: 0;
   margin-left: 1rem;
-  color: white;
+  color: #000;
   font-weight: 100;
   padding: 0.5rem 0;
 `
 
-const Button = styled.button`
-  background: ${(p) => p.theme.colors.main};
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 5px;
-  padding: 0.5rem 0;
-  transition: opacity 0.1s ease-in-out;
-  margin-left: 1rem;
-  width: 8rem;
-  font-weight: 300;
-  border: none;
-  &:hover {
-    opacity: 0.8;
-  }
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 1;
-  }
-`
-
-const BuyMembershipButton = styled(Button)`
-  color: #fff;
-  background: rgba(229, 232, 235, 0.2);
+const SidebarButton = styled(ActionButton)`
+  color: #000;
+  background: rgba(180, 180, 180, 0.2);
   &:hover {
     background: rgba(229, 232, 235, 0.15);
   }
@@ -89,7 +76,38 @@ const BuyMembershipButton = styled(Button)`
     background: rgba(229, 232, 235, 0.2);
   }
 `
-const ConnectButton = styled(Button)`
+
+const AuthButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+const SignupButton = styled(ActionButton)`
+  width: 4rem;
+  padding: 1px;
+`
+const LoginButton = styled(ActionButton)`
+  width: 4rem;
+  background: transparent;
+  color: #000;
+  &:hover {
+    text-decoration: underline;
+  }
+`
+const LogoutButton = styled(ActionButton)`
+  width: 4rem;
+  background: transparent;
+  color: red;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+const ConnectButton = styled(ActionButton)`
   margin-bottom: 1rem;
 `
 
@@ -143,23 +161,30 @@ export default function Sidebar() {
 
   return (
     <Container>
-      {walletAddress && <WalletAddress>{walletAddress}</WalletAddress>}
-      {!walletAddress && (
-        <>
-          <button onClick={authenticate}>login</button>
-          <button onClick={authenticate}>signup</button>
-        </>
-      )}
-      {walletAddress && <button onClick={logout}>logout</button>}
-      <BuyMembershipButton onClick={handleBuyMembership}>
-        Buy Membership
-      </BuyMembershipButton>
-
-      {NAV_LINKS.map((link) => (
-        <NavLink key={link.path} href={link.path}>
-          {link.title}
-        </NavLink>
-      ))}
+      <Section>
+        {walletAddress && (
+          <WalletAddress>{truncateWalletAddress(walletAddress)}</WalletAddress>
+        )}
+        {!walletAddress && (
+          <AuthButtonContainer>
+            <LoginButton onClick={authenticate}>Login</LoginButton>
+            <SignupButton onClick={authenticate}>Signup</SignupButton>
+          </AuthButtonContainer>
+        )}
+        {showBuyMembButton && (
+          <SidebarButton onClick={handleBuyMembership}>
+            Buy Membership
+          </SidebarButton>
+        )}
+      </Section>
+      <Section>
+        {NAV_LINKS.map((link) => (
+          <NavLink key={link.path} href={link.path}>
+            {link.title}
+          </NavLink>
+        ))}
+      </Section>
+      {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}
     </Container>
   )
 }

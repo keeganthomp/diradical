@@ -50,6 +50,12 @@ export default function AudioGrid({ wallet }: { wallet?: string }) {
       {tracks.map((track: TrackWithVotes) => (
         <AudioCard key={track.id} track={track} />
       ))}
+      {tracks.map((track: TrackWithVotes) => (
+        <AudioCard key={track.id} track={track} />
+      ))}
+      {tracks.map((track: TrackWithVotes) => (
+        <AudioCard key={track.id} track={track} />
+      ))}
     </Grid>
   )
 }
