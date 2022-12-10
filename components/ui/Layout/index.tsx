@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 import MobileTopbar from './Topbar/Mobile'
 import Sidebar from './Sidebar'
-import AudioPlayer from 'components/audio/AudioPlayer'
 import { devices } from 'styles/theme'
+import AudioPlayer from 'components/audio/AudioPlayer'
 
 const SIDEBAR_WIDTH = '15rem'
 
@@ -20,8 +20,9 @@ const Container = styled.div`
   }
 `
 const Content = styled.div`
+  position: relative;
   grid-area: content;
-  padding: 0.5rem 0.5rem 6.75rem 0.5rem;
+  padding: 0.5rem 0.5rem 5.5rem 0.5rem;
   background: ${(p) => p.theme.colors.background};
   overflow-y: scroll;
   border-radius: ${(p) => p.theme.borderRadius};
@@ -37,8 +38,10 @@ export default function Layout({ children }) {
     <Container>
       <MobileTopbar />
       <Sidebar />
-      <Content>{children}</Content>
-      <AudioPlayer />
+      <Content>
+        {children}
+        <AudioPlayer />
+      </Content>
     </Container>
   )
 }

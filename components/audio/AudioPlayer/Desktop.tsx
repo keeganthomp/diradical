@@ -14,7 +14,7 @@ const Container = styled.div`
   backdrop-filter: saturate(180%) blur(20px);
   -webkitbackdropfilter: saturate(180%) blur(20px);
   color: white;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
