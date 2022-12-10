@@ -27,6 +27,7 @@ const Content = styled.div`
   overflow-y: scroll;
   border-radius: ${(p) => p.theme.borderRadius};
   border: 1px solid ${(p) => p.theme.colors.border};
+  overflow: hidden;
   @media ${devices.mobile} {
     height: 100vh;
     padding: 3.5rem 0.5rem 5.5rem 0.5rem;
