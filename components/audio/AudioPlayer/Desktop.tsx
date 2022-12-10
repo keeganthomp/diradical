@@ -16,6 +16,7 @@ const Container = styled.div`
   color: white;
   position: fixed;
   bottom: 0;
+  left: 0;
   width: 100%;
   padding: 0.75rem;
   display: grid;

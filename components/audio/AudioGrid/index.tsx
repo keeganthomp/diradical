@@ -29,15 +29,6 @@ const Grid = styled.div`
 
 export default function AudioGrid({ wallet }: { wallet?: string }) {
   const { tracks, isLoading } = useMusic(wallet)
-  const contract = useContract()
-
-  // React.useEffect(() => {
-  //   const fetchSongsState = async () => {
-  //     const songsState = await contract.getSongsState(reachAcc, tracks)
-  //     console.log('weeee', songsState)
-  //   }
-  //   if (reachAcc && tracks) fetchSongsState()
-  // }, [reachAcc, tracks])
 
   if (isLoading && !tracks) {
     return <Loader color='#000' />
@@ -47,12 +38,6 @@ export default function AudioGrid({ wallet }: { wallet?: string }) {
   }
   return (
     <Grid>
-      {tracks.map((track: TrackWithVotes) => (
-        <AudioCard key={track.id} track={track} />
-      ))}
-      {tracks.map((track: TrackWithVotes) => (
-        <AudioCard key={track.id} track={track} />
-      ))}
       {tracks.map((track: TrackWithVotes) => (
         <AudioCard key={track.id} track={track} />
       ))}

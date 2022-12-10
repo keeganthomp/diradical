@@ -39,21 +39,14 @@ export default function useUpload() {
       const {
         data: { audioIPFSHash, artIPFSHash },
       } = await axios.post('/api/ipfs', payload)
-      console.log({
-        audioIPFSHash,
-        artIPFSHash,
-      })
       // add to royalty contract
-      const songId = await addSong(artIPFSHash, audioIPFSHash)
-      console.log('songId', songId)
-      // add to remote database
-      await axios.post('/api/tracks', {
-        title,
-        songId,
-        audioS3Url,
-        artS3Url,
-        wallet: walletAddress,
-      })
+      await addSong(artIPFSHash, audioIPFSHash, (songId) =>
+        axios.post('/api/tracks', {
+          ...payload,
+          songId,
+          wallet: walletAddress,
+        }),
+      )
       closeModal()
     } catch (err) {
       console.log('err uploading track', err)

@@ -3,6 +3,7 @@ import Web3 from 'web3'
 import { ConnectExtension } from '@magic-ext/connect'
 import magicWalletState from 'atoms/magicWallet'
 import { useRecoilState } from 'recoil'
+import { useState } from 'react'
 
 /**
  * Configure Polygon Connection
@@ -13,6 +14,7 @@ const polygonNodeOptions = {
 }
 
 const useMagicWallet = () => {
+  const [isAuthenticating, setAuthenticating] = useState(false)
   if (typeof window === 'undefined') return { isInitializing: true } // ensure code is client side
 
   const [magicWallet, setMagicWallet] = useRecoilState(magicWalletState)
@@ -28,10 +30,12 @@ const useMagicWallet = () => {
 
   const authenticate = async () => {
     try {
+      setAuthenticating(true)
       const accounts = await maticWeb3.eth.getAccounts()
       setMagicWallet({
         walletAddress: accounts[0],
       })
+      setAuthenticating(false)
     } catch (err) {
       console.log('err authenticating with magic', err)
     }
@@ -66,6 +70,7 @@ const useMagicWallet = () => {
     isInitializing: false,
     walletAddress: magicWallet.walletAddress,
     web3: maticWeb3,
+    isAuthenticating,
   }
 }
 

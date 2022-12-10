@@ -4,6 +4,7 @@ import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
 import { FaPause, FaPlay } from 'react-icons/fa'
+import { truncateWalletAddress } from 'utils'
 
 const Container = styled.div`
   display: none;
@@ -15,6 +16,7 @@ const Container = styled.div`
   color: white;
   position: fixed;
   bottom: 0;
+  left: 0;
   flex-direction: column;
   width: 100%;
   height: 3.5rem;
@@ -101,7 +103,9 @@ export default function MobileAudioPlayer() {
             <CoverArt src={nowPlayingTrack.coverArt} />
             <TitleAndArtist>
               <SongTitle>{nowPlayingTrack.title}</SongTitle>
-              <Artist>{nowPlayingTrack.artist.wallet}</Artist>
+              <Artist>
+                {truncateWalletAddress(nowPlayingTrack.artist.wallet)}
+              </Artist>
             </TitleAndArtist>
           </ArtAndTitle>
           {isPlaying ? (

@@ -4,6 +4,7 @@ import React from 'react'
 import { devices } from 'styles/theme'
 import { useRouter } from 'next/router'
 import { IoCloseOutline } from 'react-icons/io5'
+import useMagicWallet from 'hooks/useMagicWallet'
 
 const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -26,6 +27,7 @@ const Container = styled.div`
   align-items: center;
   padding: 0.5rem 1rem;
   top: 0;
+  left: 0;
   height: 2.75rem;
   position: fixed;
   display: none;
@@ -62,15 +64,6 @@ const ListItem = styled.span`
   margin: 8px 0;
 `
 
-const AuthLink = styled.a`
-  color: white;
-  text-decoration: none;
-  margin: 8px 0;
-  &:visited {
-    color: white;
-  }
-`
-
 const CloseIcon = styled(IoCloseOutline)`
   position: absolute;
   margin: 0;
@@ -90,6 +83,7 @@ const CloseIcon = styled(IoCloseOutline)`
 export default function MobileNavbar() {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
+  const { authenticate, isLoggedIn } = useMagicWallet()
 
   const toggle = () => setIsOpen(!isOpen)
 
@@ -113,12 +107,16 @@ export default function MobileNavbar() {
           <CloseIcon onClick={handleClose} />
           <Content>
             <List>
+              {!isLoggedIn && (
+                <>
+                  <ListItem onClick={authenticate}>Login</ListItem>
+                  <ListItem onClick={authenticate}>Signup</ListItem>
+                </>
+              )}
               <ListItem onClick={() => handleRouteChange('/')}>Music</ListItem>
               <ListItem onClick={() => handleRouteChange('/profile')}>
                 Profile
               </ListItem>
-              <AuthLink href='/api/auth/login'>Login</AuthLink>
-              <AuthLink href='/api/auth/signup'>Signup</AuthLink>
             </List>
           </Content>
         </>

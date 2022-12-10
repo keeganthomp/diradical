@@ -9,11 +9,10 @@ import mobile from 'is-mobile'
 import moment from 'moment'
 import useContract from 'hooks/useContract'
 import { truncateWalletAddress } from 'utils'
-import useModal from 'hooks/useModal'
 import { useSWRConfig } from 'swr'
 import AudioCardMenu from './Menu'
 import useUser from 'hooks/useUser'
-import API from 'lib/api'
+import useApi from 'hooks/useApi'
 
 type Props = {
   track: TrackWithVotes
@@ -85,8 +84,9 @@ const RightCol = styled.div`
 `
 
 export default function AudioCard({ track }: Props) {
+  const { addVote } = useApi()
   const { mutate } = useSWRConfig()
-  const { openModal, ModalType, closeModal } = useModal()
+  const ctc = useContract()
   const { user } = useUser()
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
@@ -119,17 +119,10 @@ export default function AudioCard({ track }: Props) {
   const shouldShowVoteButton = user && !hasVoted
 
   const handleVote = async () => {
-    // if (!reachAcc) return
-    // try {
-    //   openModal(ModalType.SIGNING)
-    //   await new Promise((r) => setTimeout(r, 100)) // needed to show modal immediately
-    //   await vote(reachAcc, track.songId)
-    //   await API.addVote(reachAcc.networkAccount.address, track.id)
-    //   updatetracksCache()
-    //   closeModal()
-    // } catch {
-    //   openModal(ModalType.ERROR, 'Error voting for track')
-    // }
+    await ctc.vote(track.songId, (wallet, votingPeriod) =>
+      addVote(wallet, track.id, votingPeriod),
+    )
+    console.log('done voting')
   }
 
   return (

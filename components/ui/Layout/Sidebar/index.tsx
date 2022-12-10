@@ -3,15 +3,14 @@ import { SlMusicToneAlt } from 'react-icons/sl'
 import { BsPerson } from 'react-icons/bs'
 import NavLink from 'components/ui/Layout/Sidebar/NavLink'
 import { devices } from 'styles/theme'
-import React from 'react'
+import React, { useEffect } from 'react'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
-import API from 'lib/api'
-import Loader from 'components/ui/Loader'
 import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
 import ActionButton from 'components/ui/Buttons/ActionButton'
-import { truncateWalletAddress } from 'utils'
+import { truncateWalletAddress, getNetworkSecs } from 'utils'
+import Loader from 'components/ui/Loader'
 
 type NavLinkType = {
   Icon: any
@@ -107,57 +106,49 @@ const LogoutButton = styled(ActionButton)`
   }
 `
 
-const ConnectButton = styled(ActionButton)`
-  margin-bottom: 1rem;
-`
-
 export default function Sidebar() {
-  const { isInitializing, authenticate, logout, walletAddress } =
+  const { authenticate, logout, walletAddress, isAuthenticating, isLoggedIn } =
     useMagicWallet()
   const ctc = useContract()
-  const { openModal, ModalType, closeModal } = useModal()
+  const { openModal, ModalType } = useModal()
   const { user, mutate } = useUser()
-  const [currentBlockSecs, setCurrentBlockSecs] = React.useState<null | number>(
+  const [currentBlockTime, setCurrentBlockSecs] = React.useState<null | number>(
     null,
   )
 
-  React.useEffect(() => {
-    if (!walletAddress) return
-    const asyncCheckMemmbership = async () => {
-      // const membExp = await callContract('getMembershipExp', walletAddress)
-      // const rawTime = await reach.getNetworkSecs()
-      // const currentTime = fmtNum(rawTime)
-      // const expiration = Number(membExp || 0)
-      // console.log('currentTime', currentTime)
-      // console.log('expiration', expiration)
-      // const isValid = expiration > currentTime
-      // console.log('is Valid', isValid)
+  useEffect(() => {
+    const setNetworkTime = async () => {
+      const networkSecs = await getNetworkSecs()
+      setCurrentBlockSecs(networkSecs)
     }
-    asyncCheckMemmbership()
-  }, [walletAddress])
-
-  const asyncFetchBlockSecs = async () => {
-    // const rawTime = await stdlib.getNetworkSecs()
-    // const fmtTime = fmtNum(rawTime)
-    // setCurrentBlockSecs(fmtTime)
-  }
-
-  React.useEffect(() => {
-    asyncFetchBlockSecs()
+    setNetworkTime()
   }, [])
 
   const handleBuyMembership = async () => {
     try {
       await ctc.buyMembership()
-    } catch (e) {
-      console.log('err buying membership', e)
+    } catch {
       openModal(ModalType.ERROR, 'Error buying membership')
     }
   }
 
-  const hasCurrentMembership = Boolean(user?.membershipExp)
-  const membershipExpired = user?.membershipExp > currentBlockSecs
-  const showBuyMembButton = (user && !hasCurrentMembership) || membershipExpired
+  const handleEndVotingPeriod = async () => {
+    try {
+      await ctc.endVotingPeriod()
+    } catch {
+      openModal(ModalType.ERROR, 'Error ending voting period')
+    }
+  }
+
+  const isMembershipValid = user && user.membershipExp > currentBlockTime
+  const showBuyMembButton = isLoggedIn && !isMembershipValid
+
+  if (isAuthenticating)
+    return (
+      <Container>
+        <Loader color='#000' />
+      </Container>
+    )
 
   return (
     <Container>
@@ -183,6 +174,11 @@ export default function Sidebar() {
             {link.title}
           </NavLink>
         ))}
+      </Section>
+      <Section>
+        <SidebarButton onClick={handleEndVotingPeriod}>
+          End Voting Period
+        </SidebarButton>
       </Section>
       {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}
     </Container>

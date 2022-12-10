@@ -6,11 +6,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(405).send({ message: 'Only GET requests allowed' })
     return
   }
-  const { walletAddress } = req.query
+  const { wallet } = req.query
   try {
     const tracks = await prisma.track.findMany({
       where: {
-        artist: { wallet: walletAddress as string },
+        artist: { wallet: wallet as string },
       },
       include: { artist: { select: { wallet: true } }, votes: true },
     })

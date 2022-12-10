@@ -14,10 +14,10 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   wallet        String   @unique @db.VarChar(255)
+  membershipExp Int
   singles       Track[]
   albums        Album[]
   votes         Vote[]
-  membershipExp Int?
 }
 
 model Album {
@@ -42,7 +42,7 @@ model Track {
   userId    String
   album     Album?   @relation(fields: [albumId], references: [id])
   albumId   String?
-  songId    Int
+  songId    Int // song id in contract
   archived  Boolean  @default(false)
   votes     Vote[]
 }
