@@ -12,8 +12,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ message: 'missing wallet or membership expiration' })
   }
   try {
-    await prisma.user.create({
-      data: { wallet, membershipExp },
+    await prisma.user.upsert({
+      where: { wallet },
+      update: { membershipExp },
+      create: { wallet, membershipExp },
     })
     res.status(200).json({ sucess: true })
   } catch (err) {

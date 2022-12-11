@@ -3,13 +3,13 @@ import { SlMusicToneAlt } from 'react-icons/sl'
 import { BsPerson } from 'react-icons/bs'
 import NavLink from 'components/ui/Layout/Sidebar/NavLink'
 import { devices } from 'styles/theme'
-import React, { useEffect } from 'react'
+import React from 'react'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
 import ActionButton from 'components/ui/Buttons/ActionButton'
-import { truncateWalletAddress, getNetworkSecs } from 'utils'
+import { truncateWalletAddress } from 'utils'
 import Loader from 'components/ui/Loader'
 
 type NavLinkType = {
@@ -111,18 +111,9 @@ export default function Sidebar() {
     useMagicWallet()
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
-  const { user, mutate } = useUser()
-  const [currentBlockTime, setCurrentBlockSecs] = React.useState<null | number>(
-    null,
-  )
+  const { user } = useUser()
 
-  useEffect(() => {
-    const setNetworkTime = async () => {
-      const networkSecs = await getNetworkSecs()
-      setCurrentBlockSecs(networkSecs)
-    }
-    setNetworkTime()
-  }, [])
+  console.log('ctc', ctc)
 
   const handleBuyMembership = async () => {
     try {
@@ -140,7 +131,8 @@ export default function Sidebar() {
     }
   }
 
-  const isMembershipValid = user && user.membershipExp > currentBlockTime
+  const isMembershipValid =
+    ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
   const showBuyMembButton = isLoggedIn && !isMembershipValid
 
   if (isAuthenticating)
@@ -179,6 +171,14 @@ export default function Sidebar() {
         <SidebarButton onClick={handleEndVotingPeriod}>
           End Voting Period
         </SidebarButton>
+        {!ctc || ctc.isFetchingViews ? (
+          <Loader color='#000' />
+        ) : (
+          <>
+            <p>Membership Cost: {ctc.membershipCost}</p>
+            <p>Current Voting Period: {ctc.votingPeriod}</p>
+          </>
+        )}
       </Section>
       {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}
     </Container>

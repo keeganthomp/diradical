@@ -1,36 +1,27 @@
 import * as backend from 'contracts/index.main.mjs'
 import { convertIpfsCidV0ToByte32 } from 'utils'
+import { useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
+import contractViewState from 'atoms/contract'
+import { getNetworkSecs, getCurrentBlock } from 'utils'
 import useApi from './useApi'
 import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
-const ROYALTY_CTC_ADDRESS = '0xc5bb297d845F366933Cf2463896B744E53D0bafb'
 
-type ContractViews =
-  | 'getSong'
-  | 'getPeriodEndTime'
-  | 'getContractBalance'
-  | 'getSongPayout'
-  | 'getMembershipExp'
-  | 'getCurrentVotingPeriod'
-  | 'getMembershipCost'
-  | 'hasVoted'
+const ROYALTY_CTC_ADDRESS = '0xf7f697553f928A43887602dB33434478fF5092D0'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
 const useContract = () => {
-  const { register, addVote } = useApi()
+  const [isFetchingViews, setFetching] = useState(false)
   const { web3, walletAddress } = useMagicWallet()
-  if (!web3) return
-  const contract = new web3.eth.Contract(abi, ROYALTY_CTC_ADDRESS)
+  const [views, setContractData] = useRecoilState(contractViewState)
+  const { register } = useApi()
 
-  const getContractView = async (method: ContractViews) => {
-    if (!walletAddress) return
-    const viewMethod = contract.methods[method]
-    const result = await viewMethod().call()
-    console.log('view result', result)
-    return result
-  }
+  if (!web3) return null
+
+  const contract = new web3.eth.Contract(abi, ROYALTY_CTC_ADDRESS)
 
   const {
     addSong: ctcAddSong,
@@ -38,7 +29,33 @@ const useContract = () => {
     vote: ctcVote,
     endVotingPeriod: ctcEndVotingPeriod,
     receivePayout: ctcReceivePayout,
+    getCurrentVotingPeriod,
+    getContractBalance,
+    getMembershipCost,
+    getPeriodEndTime,
+    getMembershipExp,
   } = contract.methods
+
+  // fetch global views
+  useEffect(() => {
+    const asyncGetCtcData = async () => {
+      setFetching(true)
+      const votingPeriod = await getCurrentVotingPeriod().call()
+      const ctcBal = await getContractBalance().call()
+      const membershipCost = await getMembershipCost().call()
+      const endPeriodTime = await getPeriodEndTime().call()
+      setContractData({
+        currentBlock: await getCurrentBlock(),
+        currentSecs: await getNetworkSecs(),
+        votingPeriod: Number(votingPeriod),
+        contractBalance: Number(ctcBal),
+        membershipCost: Number(membershipCost),
+        endPeriodTime: Number(endPeriodTime),
+      })
+      setFetching(false)
+    }
+    asyncGetCtcData()
+  }, [])
 
   const addSong = async (
     artIPFSHash: string,
@@ -135,7 +152,15 @@ const useContract = () => {
         gasPrice: await web3.eth.getGasPrice(),
       })
       .on('receipt', async (receipt) => {
-        console.log('Ended voting period!', receipt)
+        const {
+          events: {
+            endedVotingPeriod: { returnValues },
+          },
+        } = receipt
+        setContractData({
+          ...views,
+          votingPeriod: Number(returnValues[0]) + 1,
+        })
       })
       .on('error', function (error) {
         console.log('Error ending voting period:', error)
@@ -163,11 +188,12 @@ const useContract = () => {
 
   return {
     addSong,
-    getContractView,
     buyMembership,
     endVotingPeriod,
     vote,
     receivePayout,
+    isFetchingViews,
+    ...views,
   }
 }
 

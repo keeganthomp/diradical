@@ -22,3 +22,9 @@ export const getNetworkSecs = async () => {
   const fmtTime = stdlib.bigNumberToNumber(rawTime)
   return fmtTime
 }
+
+export const getCurrentBlock = async () => {
+  const rawBlock = await stdlib.getNetworkTime()
+  const fmtBlock = stdlib.bigNumberToNumber(rawBlock)
+  return fmtBlock
+}
