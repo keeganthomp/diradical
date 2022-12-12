@@ -3,13 +3,18 @@ import { convertIpfsCidV0ToByte32 } from 'utils'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import contractViewState from 'atoms/contract'
-import { getNetworkSecs, getCurrentBlock } from 'utils'
+import {
+  getNetworkSecs,
+  getCurrentBlock,
+  formatCurrency,
+  parseCurrency,
+} from 'utils'
 import useApi from './useApi'
 import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0xf7f697553f928A43887602dB33434478fF5092D0'
+const ROYALTY_CTC_ADDRESS = '0x9b04c9341a38d8D9283c653280FcD30716E07961'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
@@ -33,6 +38,8 @@ const useContract = () => {
     getContractBalance,
     getMembershipCost,
     getPeriodEndTime,
+    getSongPayout: ctcGetSongPayout,
+    getSong: ctcGetSong,
     getMembershipExp,
   } = contract.methods
 
@@ -48,14 +55,27 @@ const useContract = () => {
         currentBlock: await getCurrentBlock(),
         currentSecs: await getNetworkSecs(),
         votingPeriod: Number(votingPeriod),
-        contractBalance: Number(ctcBal),
-        membershipCost: Number(membershipCost),
+        contractBalance: formatCurrency(ctcBal),
+        membershipCost: formatCurrency(membershipCost),
         endPeriodTime: Number(endPeriodTime),
       })
       setFetching(false)
     }
     asyncGetCtcData()
   }, [])
+
+  const getSongInfo = async (songId: number, vPeriod: number) => {
+    try {
+      const songFromCtc = await ctcGetSong(songId).call()
+      const songPayout = await ctcGetSongPayout(songId, 1).call()
+      return {
+        songFromCtc,
+        payout: Number(songPayout),
+      }
+    } catch (err) {
+      console.log('Error getting song info', err)
+    }
+  }
 
   const addSong = async (
     artIPFSHash: string,
@@ -93,6 +113,7 @@ const useContract = () => {
     const method = () => ctcBuyMembership()
     await method()
       .send({
+        value: parseCurrency(views.membershipCost),
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
         gasPrice: await web3.eth.getGasPrice(),
@@ -157,9 +178,13 @@ const useContract = () => {
             endedVotingPeriod: { returnValues },
           },
         } = receipt
+        const endPeriodTime = await getPeriodEndTime().call()
+        const currentTime = await getNetworkSecs()
         setContractData({
           ...views,
           votingPeriod: Number(returnValues[0]) + 1,
+          endPeriodTime: Number(endPeriodTime),
+          currentSecs: currentTime,
         })
       })
       .on('error', function (error) {
@@ -192,6 +217,7 @@ const useContract = () => {
     endVotingPeriod,
     vote,
     receivePayout,
+    getSongInfo,
     isFetchingViews,
     ...views,
   }

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
 import useContract from 'hooks/useContract'
@@ -93,6 +93,14 @@ export default function AudioCard({ track }: Props) {
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
+
+  useEffect(() => {
+    const getSongInfoFromCtc = async () => {
+      const { payout } = await ctc.getSongInfo(track.songId, 1)
+      console.log('payout', payout)
+    }
+    getSongInfoFromCtc()
+  }, [])
 
   const updatetracksCache = () => {
     mutate(

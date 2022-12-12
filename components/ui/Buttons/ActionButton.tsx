@@ -11,7 +11,7 @@ const ActionButton = styled.button`
   border-radius: ${(p) => p.theme.borderRadius};
   padding: 0.5rem 0;
   transition: opacity 0.1s ease-in-out;
-  width: 8rem;
+  width: 100%;
   font-weight: 300;
   border: none;
   &:hover {

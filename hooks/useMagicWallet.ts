@@ -28,6 +28,14 @@ const useMagicWallet = () => {
   const rpcProvider = magicMatic.rpcProvider
   const maticWeb3 = new Web3(rpcProvider as any)
 
+  const showWallet = async () => {
+    try {
+      await magicMatic.connect.showWallet()
+    } catch (error) {
+      console.log('error showing wallet', error)
+    }
+  }
+
   const authenticate = async () => {
     try {
       setAuthenticating(true)
@@ -71,6 +79,7 @@ const useMagicWallet = () => {
     walletAddress: magicWallet.walletAddress,
     web3: maticWeb3,
     isAuthenticating,
+    showWallet,
   }
 }
 

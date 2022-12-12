@@ -28,3 +28,11 @@ export const getCurrentBlock = async () => {
   const fmtBlock = stdlib.bigNumberToNumber(rawBlock)
   return fmtBlock
 }
+
+export const formatCurrency = (amount: number | string) => {
+  return stdlib.formatWithDecimals(stdlib.bigNumberify(amount), 18)
+}
+
+export const parseCurrency = (amount: number | string) => {
+  return stdlib.parseCurrency(amount)
+}

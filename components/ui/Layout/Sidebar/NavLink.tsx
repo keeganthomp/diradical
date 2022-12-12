@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 type Props = {
   href: string
-  exact?: boolean
   children: React.ReactNode
 }
 
@@ -34,7 +33,7 @@ const StyledLink = styled.p<{ active?: boolean }>`
   }
 `
 
-export default function NavLink({ href, exact, children }: Props) {
+export default function NavLink({ href, children }: Props) {
   const router = useRouter()
   const active = router.pathname === href
   return (

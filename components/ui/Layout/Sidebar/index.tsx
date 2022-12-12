@@ -1,6 +1,4 @@
 import styled from 'styled-components'
-import { SlMusicToneAlt } from 'react-icons/sl'
-import { BsPerson } from 'react-icons/bs'
 import NavLink from 'components/ui/Layout/Sidebar/NavLink'
 import { devices } from 'styles/theme'
 import React from 'react'
@@ -13,25 +11,9 @@ import { truncateWalletAddress } from 'utils'
 import Loader from 'components/ui/Loader'
 
 type NavLinkType = {
-  Icon: any
-  path: string
+  path?: string
   title: string
-  authRequired?: boolean
 }
-
-const MusicIcon = styled(SlMusicToneAlt)`
-  font-size: 22px;
-  padding: 3px;
-`
-const ProfleIcon = styled(BsPerson)`
-  font-size: 22px;
-  padding: 3px;
-`
-
-const NAV_LINKS: NavLinkType[] = [
-  { Icon: MusicIcon, title: 'Music', path: '/' },
-  { Icon: ProfleIcon, title: 'Profile', path: '/profile', authRequired: true },
-]
 
 const Container = styled.div`
   position: relative;
@@ -57,15 +39,16 @@ const Section = styled.div`
 
 const WalletAddress = styled.p`
   margin: 0;
-  margin-left: 1rem;
   color: #000;
   font-weight: 100;
   padding: 0.5rem 0;
+  text-align: center;
 `
 
 const SidebarButton = styled(ActionButton)`
   color: #000;
   background: rgba(180, 180, 180, 0.2);
+  margin-bottom: 3px;
   &:hover {
     background: rgba(229, 232, 235, 0.15);
   }
@@ -107,13 +90,25 @@ const LogoutButton = styled(ActionButton)`
 `
 
 export default function Sidebar() {
-  const { authenticate, logout, walletAddress, isAuthenticating, isLoggedIn } =
-    useMagicWallet()
+  const {
+    authenticate,
+    logout,
+    walletAddress,
+    isAuthenticating,
+    isLoggedIn,
+    showWallet,
+  } = useMagicWallet()
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
   const { user } = useUser()
 
-  console.log('ctc', ctc)
+  const NAV_LINKS: NavLinkType[] = [
+    { title: 'Music', path: '/' },
+    {
+      title: 'Profile',
+      path: '/profile',
+    },
+  ]
 
   const handleBuyMembership = async () => {
     try {
@@ -130,6 +125,8 @@ export default function Sidebar() {
       openModal(ModalType.ERROR, 'Error ending voting period')
     }
   }
+
+  console.log('wee', ctc)
 
   const isMembershipValid =
     ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
@@ -154,6 +151,9 @@ export default function Sidebar() {
             <SignupButton onClick={authenticate}>Signup</SignupButton>
           </AuthButtonContainer>
         )}
+        {walletAddress && (
+          <SidebarButton onClick={showWallet}>Wallet</SidebarButton>
+        )}
         {showBuyMembButton && (
           <SidebarButton onClick={handleBuyMembership}>
             Buy Membership
@@ -162,21 +162,26 @@ export default function Sidebar() {
       </Section>
       <Section>
         {NAV_LINKS.map((link) => (
-          <NavLink key={link.path} href={link.path}>
+          <NavLink key={link.title} href={link.path}>
             {link.title}
           </NavLink>
         ))}
       </Section>
       <Section>
-        <SidebarButton onClick={handleEndVotingPeriod}>
-          End Voting Period
-        </SidebarButton>
         {!ctc || ctc.isFetchingViews ? (
           <Loader color='#000' />
         ) : (
           <>
+            <p>Contract Balance: {ctc.contractBalance}</p>
             <p>Membership Cost: {ctc.membershipCost}</p>
             <p>Current Voting Period: {ctc.votingPeriod}</p>
+            <p>End Period Time: {ctc.endPeriodTime}</p>
+            <p>Current Time: {ctc.currentSecs}</p>
+            {ctc.currentSecs > ctc.endPeriodTime && (
+              <SidebarButton onClick={handleEndVotingPeriod}>
+                End Voting Period
+              </SidebarButton>
+            )}
           </>
         )}
       </Section>
