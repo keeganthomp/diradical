@@ -8,8 +8,8 @@ import React, { useEffect, useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
 import useContract from 'hooks/useContract'
-import { truncateWalletAddress } from 'utils'
-import { useSWRConfig } from 'swr'
+import { truncateWalletAddress, formatCurrency } from 'utils'
+import { useRouter } from 'next/router'
 import AudioCardMenu from './Menu'
 import useUser from 'hooks/useUser'
 import useApi from 'hooks/useApi'
@@ -84,8 +84,9 @@ const RightCol = styled.div`
 `
 
 export default function AudioCard({ track }: Props) {
+  const router = useRouter()
+  const [payouts, setPayouts] = useState(0)
   const { addVote } = useApi()
-  const { mutate } = useSWRConfig()
   const ctc = useContract()
   const { user } = useUser()
   const isMobile = mobile()
@@ -94,30 +95,25 @@ export default function AudioCard({ track }: Props) {
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
 
+  const isProfilePage = router.pathname === '/profile'
+
   useEffect(() => {
     const getSongInfoFromCtc = async () => {
-      const { payout } = await ctc.getSongInfo(track.songId, 1)
-      console.log('payout', payout)
+      if (!isProfilePage) return
+      const currentPeriod = await ctc.votingPeriod
+      if (currentPeriod === 1) return
+      const arr = [...Array(currentPeriod - 1).keys()].map((_, i) =>
+        ctc.getSongInfo(track.songId, i + 1),
+      )
+      const pms = await Promise.all(arr)
+      const totalPayouts = pms.reduce((acc, cur) => acc + cur?.payout || 0, 0)
+      setPayouts(totalPayouts)
     }
-    getSongInfoFromCtc()
-  }, [])
+    if (ctc?.votingPeriod) getSongInfoFromCtc()
+  }, [ctc?.votingPeriod])
 
-  const updatetracksCache = () => {
-    mutate(
-      '/api/tracks',
-      async (tracks) => {
-        const indexOfTrack = tracks.findIndex((t) => t.id === track.id)
-        const resp = await fetch(`/api/tracks/${track.id}`)
-        const updatedTrack = await resp.json()
-        const updatedTracks = [
-          ...tracks.slice(0, indexOfTrack),
-          updatedTrack,
-          ...tracks.slice(indexOfTrack + 1),
-        ]
-        return updatedTracks
-      },
-      { revalidate: false },
-    )
+  const handleReceivePayouts = async () => {
+    await ctc.receivePayout(track.songId, 1)
   }
 
   const handleMouseEnter = () => !isMobile && setHovering(true)
@@ -156,6 +152,12 @@ export default function AudioCard({ track }: Props) {
             {shouldShowVoteButton && <button onClick={handleVote}>Vote</button>}
           </RightCol>
         </Meta>
+        {isProfilePage && (
+          <p>Payouts: {Number(formatCurrency(payouts)).toFixed(5)}</p>
+        )}
+        {isProfilePage && (
+          <button onClick={handleReceivePayouts}>ReceivePayout</button>
+        )}
       </MetaData>
     </Wrapper>
   )

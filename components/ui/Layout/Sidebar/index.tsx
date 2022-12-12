@@ -9,6 +9,7 @@ import useMagicWallet from 'hooks/useMagicWallet'
 import ActionButton from 'components/ui/Buttons/ActionButton'
 import { truncateWalletAddress } from 'utils'
 import Loader from 'components/ui/Loader'
+import moment from 'moment'
 
 type NavLinkType = {
   path?: string
@@ -32,6 +33,7 @@ const Container = styled.div`
 
 const Section = styled.div`
   width: 100%;
+  text-align: center;
   p {
     width: 100%;
   }
@@ -169,20 +171,30 @@ export default function Sidebar() {
         {!ctc || ctc.isFetchingViews ? (
           <Loader color='#000' />
         ) : (
-          <div>
-            {user && <p>Membership Exp: {user.membershipExp}</p>}
+          <>
+            {user && (
+              <p>
+                {ctc.currentSecs > user.membershipExp
+                  ? 'Membership Expired'
+                  : `Membership Exp: ${moment(
+                      user.membershipExp * 1000,
+                    ).fromNow()}`}
+              </p>
+            )}
             <p>Contract Balance: {ctc.contractBalance}</p>
-            <p>Total Payout: {ctc.periodPayouts}</p>
             <p>Membership Cost: {ctc.membershipCost}</p>
             <p>Current Voting Period: {ctc.votingPeriod}</p>
-            <p>End Period Time: {ctc.endPeriodTime}</p>
-            <p>Current Time: {ctc.currentSecs}</p>
+            <p>
+              {ctc.currentSecs > ctc.endPeriodTime
+                ? `Period ${ctc.votingPeriod} Ended`
+                : `Period Ends: ${moment(ctc.endPeriodTime * 1000).fromNow()}`}
+            </p>
             {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
               <SidebarButton onClick={handleEndVotingPeriod}>
                 End Voting Period
               </SidebarButton>
             )}
-          </div>
+          </>
         )}
       </Section>
       {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}

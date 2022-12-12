@@ -9,7 +9,6 @@ const contractViewState = atom({
     contractBalance: null as null | number | string,
     membershipCost: null as null | number | string,
     endPeriodTime: null as null | number,
-    periodPayouts: null as null | number | string,
   },
 })
 

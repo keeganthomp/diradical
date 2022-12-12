@@ -14,7 +14,7 @@ import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0xC9c52457434C6fEb73502FE2E9f8a083d8b5B178'
+const ROYALTY_CTC_ADDRESS = '0xB6b6Cc37EDD96152624657EC3E938f1B70F5ce50'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
@@ -40,8 +40,6 @@ const useContract = () => {
     getPeriodEndTime,
     getSongPayout: ctcGetSongPayout,
     getSong: ctcGetSong,
-    getPeriodPayouts: ctcGetPeriodPayouts,
-    getMembershipExp,
   } = contract.methods
 
   // fetch global views
@@ -52,7 +50,6 @@ const useContract = () => {
       const ctcBal = await getContractBalance().call()
       const membershipCost = await getMembershipCost().call()
       const endPeriodTime = await getPeriodEndTime().call()
-      const periodPayouts = await ctcGetPeriodPayouts(1).call()
       setContractData({
         currentBlock: await getCurrentBlock(),
         currentSecs: await getNetworkSecs(),
@@ -60,7 +57,6 @@ const useContract = () => {
         contractBalance: formatCurrency(ctcBal),
         membershipCost: formatCurrency(membershipCost),
         endPeriodTime: Number(endPeriodTime),
-        periodPayouts: Number(formatCurrency(periodPayouts)).toFixed(5),
       })
       setFetching(false)
     }
@@ -106,8 +102,8 @@ const useContract = () => {
         const songId = Number(returnValues[0])
         await cb(songId)
       })
-      .on('error', (err) => {
-        console.log('Error Adding Song:', err)
+      .on('error', (_, receipt) => {
+        console.log('Error Adding Song:', receipt)
       })
   }
 
@@ -161,8 +157,8 @@ const useContract = () => {
         })
         await cb(walletAddress, votedPeriod)
       })
-      .on('error', function (error) {
-        console.log('Error voting:', error)
+      .on('error', function (_, receipt) {
+        console.log('Error voting:', receipt)
       })
   }
 
@@ -190,27 +186,25 @@ const useContract = () => {
           currentSecs: currentTime,
         })
       })
-      .on('error', function (error) {
-        console.log('Error ending voting period:', error)
+      .on('error', function (_, receipt) {
+        console.log('Error ending voting period:', receipt)
       })
   }
 
   const receivePayout = async (songId: number, vPeriod: number) => {
     if (!walletAddress) return
     const method = () => ctcReceivePayout(songId, vPeriod)
-    const gasLimit = await method().estimateGas({})
-    console.log('dynamic gas limit', gasLimit)
     await method()
       .send({
         from: walletAddress,
-        gas: gasLimit,
+        gas: DEFAULT_GAS_LIMIT,
         gasPrice: await web3.eth.getGasPrice(),
       })
       .on('receipt', async (receipt) => {
         console.log('Received payout!', receipt)
       })
-      .on('error', function (error) {
-        console.log('Error receiving payout:', error)
+      .on('error', function (_, receipt) {
+        console.log('Error receiving payout:', receipt)
       })
   }
 
