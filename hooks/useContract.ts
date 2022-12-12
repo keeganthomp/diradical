@@ -14,7 +14,7 @@ import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0x9b04c9341a38d8D9283c653280FcD30716E07961'
+const ROYALTY_CTC_ADDRESS = '0xC9c52457434C6fEb73502FE2E9f8a083d8b5B178'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
@@ -40,6 +40,7 @@ const useContract = () => {
     getPeriodEndTime,
     getSongPayout: ctcGetSongPayout,
     getSong: ctcGetSong,
+    getPeriodPayouts: ctcGetPeriodPayouts,
     getMembershipExp,
   } = contract.methods
 
@@ -51,6 +52,7 @@ const useContract = () => {
       const ctcBal = await getContractBalance().call()
       const membershipCost = await getMembershipCost().call()
       const endPeriodTime = await getPeriodEndTime().call()
+      const periodPayouts = await ctcGetPeriodPayouts(1).call()
       setContractData({
         currentBlock: await getCurrentBlock(),
         currentSecs: await getNetworkSecs(),
@@ -58,6 +60,7 @@ const useContract = () => {
         contractBalance: formatCurrency(ctcBal),
         membershipCost: formatCurrency(membershipCost),
         endPeriodTime: Number(endPeriodTime),
+        periodPayouts: Number(formatCurrency(periodPayouts)).toFixed(5),
       })
       setFetching(false)
     }
@@ -67,7 +70,7 @@ const useContract = () => {
   const getSongInfo = async (songId: number, vPeriod: number) => {
     try {
       const songFromCtc = await ctcGetSong(songId).call()
-      const songPayout = await ctcGetSongPayout(songId, 1).call()
+      const songPayout = await ctcGetSongPayout(songId, vPeriod).call()
       return {
         songFromCtc,
         payout: Number(songPayout),
@@ -127,8 +130,8 @@ const useContract = () => {
         const membershipExp = Number(returnValues[1])
         await register(walletAddress, membershipExp)
       })
-      .on('error', function (error) {
-        console.log('Error Buying Membership:', error)
+      .on('error', function (_, receipt) {
+        console.log('Error Buying Membership:', receipt)
       })
   }
 

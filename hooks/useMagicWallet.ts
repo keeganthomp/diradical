@@ -29,6 +29,7 @@ const useMagicWallet = () => {
   const maticWeb3 = new Web3(rpcProvider as any)
 
   const showWallet = async () => {
+    // TODO: check if wallet type is 'magic'
     try {
       await magicMatic.connect.showWallet()
     } catch (error) {

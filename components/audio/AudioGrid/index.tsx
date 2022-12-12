@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import AudioCard from './AudioCard'
 import { TrackWithVotes } from 'types'
 import { devices } from 'styles/theme'
-import useMusic from 'hooks/useMusic'
 import Loader from 'components/ui/Loader'
 import React from 'react'
 
@@ -28,12 +27,7 @@ const Grid = styled.div`
   }
 `
 
-export default function AudioGrid({ wallet }: { wallet?: string }) {
-  const { tracks, isLoading } = useMusic(wallet)
-
-  if (isLoading && !tracks) {
-    return <Loader color='#000' />
-  }
+export default function AudioGrid({ tracks }: { tracks: TrackWithVotes[] }) {
   if (tracks.length === 0) {
     return <div>no tracks</div>
   }

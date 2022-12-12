@@ -126,8 +126,6 @@ export default function Sidebar() {
     }
   }
 
-  console.log('wee', ctc)
-
   const isMembershipValid =
     ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
   const showBuyMembButton = isLoggedIn && !isMembershipValid
@@ -171,18 +169,20 @@ export default function Sidebar() {
         {!ctc || ctc.isFetchingViews ? (
           <Loader color='#000' />
         ) : (
-          <>
+          <div>
+            {user && <p>Membership Exp: {user.membershipExp}</p>}
             <p>Contract Balance: {ctc.contractBalance}</p>
+            <p>Total Payout: {ctc.periodPayouts}</p>
             <p>Membership Cost: {ctc.membershipCost}</p>
             <p>Current Voting Period: {ctc.votingPeriod}</p>
             <p>End Period Time: {ctc.endPeriodTime}</p>
             <p>Current Time: {ctc.currentSecs}</p>
-            {ctc.currentSecs > ctc.endPeriodTime && (
+            {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
               <SidebarButton onClick={handleEndVotingPeriod}>
                 End Voting Period
               </SidebarButton>
             )}
-          </>
+          </div>
         )}
       </Section>
       {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}

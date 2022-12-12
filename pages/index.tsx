@@ -9,10 +9,21 @@ const Container = styled.div`
   align-items: center;
 `
 
-export default function HomePage() {
+export default function HomePage({ tracks }) {
   return (
     <Container>
-      <AudioGrid />
+      <AudioGrid tracks={tracks} />
     </Container>
   )
+}
+
+export async function getStaticProps() {
+  const { API_URL } = process.env
+  const res = await fetch(`${API_URL}/tracks`)
+  const tracks = await res.json()
+  return {
+    props: {
+      tracks,
+    },
+  }
 }
