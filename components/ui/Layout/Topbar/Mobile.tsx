@@ -5,6 +5,11 @@ import { devices } from 'styles/theme'
 import { useRouter } from 'next/router'
 import { IoCloseOutline } from 'react-icons/io5'
 import useMagicWallet from 'hooks/useMagicWallet'
+import useContract from 'hooks/useContract'
+import useUser from 'hooks/useUser'
+import Loader from 'components/ui/Loader'
+import moment from 'moment'
+import useModal from 'hooks/useModal'
 
 const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -46,6 +51,7 @@ const Content = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 `
 
 const Hamburger = styled(FaBars)`
@@ -80,10 +86,21 @@ const CloseIcon = styled(IoCloseOutline)`
   }
 `
 
+const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  text-align: center;
+`
+
 export default function MobileNavbar() {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
-  const { authenticate, isLoggedIn } = useMagicWallet()
+  const { authenticate, logout, walletAddress, isLoggedIn, showWallet } =
+    useMagicWallet()
+  const ctc = useContract()
+  const { user } = useUser()
+  const { openModal, ModalType } = useModal()
 
   const toggle = () => setIsOpen(!isOpen)
 
@@ -94,6 +111,14 @@ export default function MobileNavbar() {
 
   const handleClose = () => {
     setIsOpen(false)
+  }
+
+  const handleEndVotingPeriod = async () => {
+    try {
+      await ctc.endVotingPeriod()
+    } catch {
+      openModal(ModalType.ERROR, 'Error ending voting period')
+    }
   }
 
   return (
@@ -117,7 +142,45 @@ export default function MobileNavbar() {
               <ListItem onClick={() => handleRouteChange('/profile')}>
                 Profile
               </ListItem>
+              {isLoggedIn && (
+                <>
+                  <ListItem onClick={logout}>Logout</ListItem>
+                  <ListItem onClick={showWallet}>Wallet</ListItem>
+                </>
+              )}
             </List>
+            <Info>
+              {!ctc || ctc.isFetchingViews ? (
+                <Loader color='#fff' />
+              ) : (
+                <>
+                  {user && (
+                    <p>
+                      {ctc.currentSecs > user.membershipExp
+                        ? 'Membership Expired'
+                        : `Membership Exp: ${moment(
+                            user.membershipExp * 1000,
+                          ).fromNow()}`}
+                    </p>
+                  )}
+                  <p>Contract Balance: {ctc.contractBalance}</p>
+                  <p>Membership Cost: {ctc.membershipCost}</p>
+                  <p>Current Voting Period: {ctc.votingPeriod}</p>
+                  <p>
+                    {ctc.currentSecs > ctc.endPeriodTime
+                      ? `Period ${ctc.votingPeriod} Ended`
+                      : `Period Ends: ${moment(
+                          ctc.endPeriodTime * 1000,
+                        ).fromNow()}`}
+                  </p>
+                  {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
+                    <button onClick={handleEndVotingPeriod}>
+                      End Voting Period
+                    </button>
+                  )}
+                </>
+              )}
+            </Info>
           </Content>
         </>
       )}
