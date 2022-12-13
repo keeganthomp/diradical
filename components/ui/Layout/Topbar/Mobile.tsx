@@ -139,9 +139,6 @@ export default function MobileNavbar() {
                 </>
               )}
               <ListItem onClick={() => handleRouteChange('/')}>Music</ListItem>
-              <ListItem onClick={() => handleRouteChange('/profile')}>
-                Profile
-              </ListItem>
               {isLoggedIn && (
                 <>
                   <ListItem onClick={logout}>Logout</ListItem>
@@ -149,8 +146,8 @@ export default function MobileNavbar() {
                 </>
               )}
             </List>
-            <Info>
-              {!ctc || ctc.isFetchingViews ? (
+            {/* <Info>
+              {ctc.isFetchingViews ? (
                 <Loader color='#fff' />
               ) : (
                 <>
@@ -180,7 +177,7 @@ export default function MobileNavbar() {
                   )}
                 </>
               )}
-            </Info>
+            </Info> */}
           </Content>
         </>
       )}
