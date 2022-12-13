@@ -1,7 +1,11 @@
 import { decode } from 'bs58'
-import { loadStdlib } from '@reach-sh/stdlib'
+import { ethers } from 'ethers'
 
-const stdlib = loadStdlib('ETH')
+const provider = new ethers.providers.JsonRpcProvider(
+  'https://rpc-mumbai.maticvigil.com/',
+)
+
+const MATIC_DECIMALS = 18
 
 /**
  * Converts IPFS CID version 0 (Base58) to a 32 bytes hex string and adds initial 0x.
@@ -17,22 +21,21 @@ export const truncateWalletAddress = (address: string) => {
   return address.slice(0, 6) + '...' + address.slice(-4)
 }
 
-export const getNetworkSecs = async () => {
-  const rawTime = await stdlib.getNetworkSecs()
-  const fmtTime = stdlib.bigNumberToNumber(rawTime)
-  return fmtTime
+export const getCurrentBlock = async () => {
+  const currentBlock = await provider.getBlockNumber()
+  return currentBlock
 }
 
-export const getCurrentBlock = async () => {
-  const rawBlock = await stdlib.getNetworkTime()
-  const fmtBlock = stdlib.bigNumberToNumber(rawBlock)
-  return fmtBlock
+export const getNetworkSecs = async () => {
+  const currentBlock = await getCurrentBlock()
+  const block = await provider.getBlock(currentBlock)
+  return block.timestamp
 }
 
 export const formatCurrency = (amount: number | string) => {
-  return stdlib.formatWithDecimals(stdlib.bigNumberify(amount), 18)
+  return Number(amount) / 10 ** MATIC_DECIMALS
 }
 
 export const parseCurrency = (amount: number | string) => {
-  return stdlib.parseCurrency(amount)
+  return Number(amount) * 10 ** MATIC_DECIMALS
 }

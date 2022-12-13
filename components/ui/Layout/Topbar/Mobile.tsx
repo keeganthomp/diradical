@@ -146,8 +146,8 @@ export default function MobileNavbar() {
                 </>
               )}
             </List>
-            {/* <Info>
-              {ctc.isFetchingViews ? (
+            <Info>
+              {!ctc || ctc.isFetchingViews ? (
                 <Loader color='#fff' />
               ) : (
                 <>
@@ -177,7 +177,7 @@ export default function MobileNavbar() {
                   )}
                 </>
               )}
-            </Info> */}
+            </Info>
           </Content>
         </>
       )}
