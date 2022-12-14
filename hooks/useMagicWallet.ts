@@ -48,7 +48,8 @@ const useMagicWallet = () => {
       })
       setAuthenticating(false)
     } catch (err) {
-      console.log('err authenticating with magic', err)
+      setAuthenticating(false)
+      console.log('Error authenticating with magic:', err)
     }
   }
 
