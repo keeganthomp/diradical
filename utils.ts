@@ -1,4 +1,4 @@
-import { decode } from 'bs58'
+import { decode, encode } from 'bs58'
 import { ethers } from 'ethers'
 
 const provider = new ethers.providers.JsonRpcProvider(
@@ -14,6 +14,13 @@ const MATIC_DECIMALS = 18
  */
 export function convertIpfsCidV0ToByte32(cid: string) {
   return '0x' + Buffer.from(decode(cid).slice(2)).toString('hex')
+}
+
+export function convertByte32ToIpfsCidV0(str) {
+  if (str.indexOf('0x') === 0) {
+    str = str.slice(2)
+  }
+  return encode(Buffer.from(`1220${str}`, 'hex'))
 }
 
 //truncate wallet address to 6 characters

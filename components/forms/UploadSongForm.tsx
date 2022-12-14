@@ -50,7 +50,7 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
   const uploadTrack = async (data) => {
     const songPayload = {
       title: data.title,
-      artFile: data.artFiles[0],
+      coverArtFile: data.artFiles[0],
       audioFile: data.audioFiles[0],
     }
     await upload(songPayload)

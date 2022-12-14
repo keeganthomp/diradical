@@ -11,38 +11,24 @@ datasource db {
 }
 
 model User {
+  wallet        String   @unique @db.VarChar(255)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  wallet        String   @unique @db.VarChar(255)
   membershipExp Int
+  username      String?  @db.VarChar(30)
   singles       Track[]
-  albums        Album[]
   votes         Vote[]
 }
 
-model Album {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(100)
-  tracks    Track[]
-  user      User     @relation(fields: [userId], references: [wallet])
-  userId    String
-}
-
 model Track {
-  id        String   @id @default(uuid())
+  id        Int      @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(30)
-  genre     String?  @db.VarChar(30)
-  source    String   @db.VarChar(255) // S3 URL
-  coverArt  String   @db.VarChar(255) // S3 URL
+  audio     String   @db.VarChar(46) // IPFS hash
+  coverArt  String   @db.VarChar(46) // IPFS hash
   artist    User?    @relation(fields: [userId], references: [wallet])
   userId    String
-  album     Album?   @relation(fields: [albumId], references: [id])
-  albumId   String?
-  songId    Int // song id in contract
   archived  Boolean  @default(false)
   votes     Vote[]
 }
@@ -53,7 +39,7 @@ model Vote {
   updatedAt DateTime @updatedAt
   period    Int
   track     Track    @relation(fields: [trackId], references: [id])
-  trackId   String
+  trackId   Int
   user      User     @relation(fields: [userId], references: [wallet])
   userId    String
 

@@ -97,7 +97,7 @@ export default function DesktopAudioPlayer() {
       audioRef.current.pause()
     }
     if (!nowPlayingTrack) return
-    const isCurrentTrack = audioRef?.current.src === nowPlayingTrack.source
+    const isCurrentTrack = audioRef?.current.src.includes(nowPlayingTrack.audio)
     if (isCurrentTrack && !isPlaying) return
     if (isPlaying) {
       audioRef.current.play()
@@ -111,7 +111,9 @@ export default function DesktopAudioPlayer() {
         <CloseIcon onClick={stop} />
         <SongTitle>{nowPlayingTrack.title}</SongTitle>
         <Artist>{truncateWalletAddress(nowPlayingTrack.artist.wallet)}</Artist>
-        <CoverArt src={nowPlayingTrack.coverArt} />
+        <CoverArt
+          src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${nowPlayingTrack.coverArt}`}
+        />
         <ButtonWrapper>
           {isPlaying ? (
             <PauseButton audioPlayer />
@@ -125,7 +127,7 @@ export default function DesktopAudioPlayer() {
       <audio
         hidden
         ref={audioRef}
-        src={nowPlayingTrack.source}
+        src={`https://diradical.infura-ipfs.io/ipfs/${nowPlayingTrack.audio}`}
         onTimeUpdate={handleProgressChange}
         onLoadedMetadata={() => setDuration(audioRef.current.duration)}
       />

@@ -20,7 +20,7 @@ const useApi = () => {
       },
       body: JSON.stringify({ wallet, membershipExp }),
     })
-  const addVote = (wallet: string, trackId: string, period: number) =>
+  const addVote = (wallet: string, trackId: number, period: number) =>
     callApi('/api/vote', {
       method: 'POST',
       headers: {

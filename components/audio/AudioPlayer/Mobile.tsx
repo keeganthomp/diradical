@@ -81,7 +81,7 @@ export default function MobileAudioPlayer() {
       audioRef.current.pause()
     }
     if (!nowPlayingTrack) return
-    const isCurrentTrack = audioRef?.current.src === nowPlayingTrack.source
+    const isCurrentTrack = audioRef?.current.src.includes(nowPlayingTrack.audio)
     if (isCurrentTrack && !isPlaying) return
     if (isPlaying) {
       audioRef.current.play()
@@ -100,7 +100,9 @@ export default function MobileAudioPlayer() {
       <Container>
         <TopBar>
           <ArtAndTitle>
-            <CoverArt src={nowPlayingTrack.coverArt} />
+            <CoverArt
+              src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${nowPlayingTrack.coverArt}`}
+            />
             <TitleAndArtist>
               <SongTitle>{nowPlayingTrack.title}</SongTitle>
               <Artist>
@@ -120,7 +122,7 @@ export default function MobileAudioPlayer() {
       <audio
         hidden
         ref={audioRef}
-        src={nowPlayingTrack.source}
+        src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${nowPlayingTrack.audio}`}
         onTimeUpdate={handleProgressChange}
         onLoadedMetadata={() => setDuration(audioRef.current.duration)}
       />

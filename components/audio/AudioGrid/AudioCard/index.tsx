@@ -8,7 +8,11 @@ import React, { useEffect, useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
 import useContract from 'hooks/useContract'
-import { truncateWalletAddress, formatCurrency } from 'utils'
+import {
+  truncateWalletAddress,
+  formatCurrency,
+  convertByte32ToIpfsCidV0,
+} from 'utils'
 import { useRouter } from 'next/router'
 import AudioCardMenu from './Menu'
 import useUser from 'hooks/useUser'
@@ -103,7 +107,7 @@ export default function AudioCard({ track }: Props) {
       const currentPeriod = await ctc.votingPeriod
       if (currentPeriod === 1) return
       const arr = [...Array(currentPeriod - 1).keys()].map((_, i) =>
-        ctc.getSongInfo(track.songId, i + 1),
+        ctc.getSongInfo(track.id, i + 1),
       )
       const pms = await Promise.all(arr)
       const totalPayouts = pms.reduce((acc, cur) => acc + cur?.payout || 0, 0)
@@ -113,7 +117,7 @@ export default function AudioCard({ track }: Props) {
   }, [ctc?.votingPeriod])
 
   const handleReceivePayouts = async () => {
-    await ctc.receivePayout(track.songId, 1)
+    await ctc.receivePayout(track.id, 1)
   }
 
   const handleMouseEnter = () => !isMobile && setHovering(true)
@@ -123,7 +127,7 @@ export default function AudioCard({ track }: Props) {
   const shouldShowVoteButton = user && !hasVoted
 
   const handleVote = async () => {
-    await ctc.vote(track.songId, (wallet, votingPeriod) =>
+    await ctc.vote(track.id, (wallet, votingPeriod) =>
       addVote(wallet, track.id, votingPeriod),
     )
     console.log('done voting')
@@ -137,7 +141,9 @@ export default function AudioCard({ track }: Props) {
         bgImage={track.coverArt}
       >
         <AudioCardMenu track={track} isOpenToPublic={false} />
-        <CoverArt src={track.coverArt} />
+        <CoverArt
+          src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${track.coverArt}`}
+        />
         {isHovering &&
           (isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />)}
       </ImageContainer>

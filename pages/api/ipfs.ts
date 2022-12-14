@@ -1,37 +1,43 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import ipfs from 'lib/IPFS'
-import axios from 'axios'
+import formidable from 'formidable'
+import { readFile, unlink } from 'node:fs/promises'
 
-type SongPayload = {
-  title: string
-  audioS3Url: string
-  artS3Url: string
+export const config = {
+  api: {
+    bodyParser: false,
+  },
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST': {
-      const payload: SongPayload = req.body
-      if (!payload.title || !payload.audioS3Url || !payload.artS3Url) {
-        res.status(400).send({ message: 'Missing required fields' })
-      }
-      try {
-        const { data: artFileContent } = await axios.get(payload.artS3Url, {
-          responseType: 'arraybuffer',
-        })
-        const { data: audioFileContent } = await axios.get(payload.audioS3Url, {
-          responseType: 'arraybuffer',
-        })
-        const artFileBuffer = Buffer.from(artFileContent, 'utf-8')
-        const audioFileBuffer = Buffer.from(audioFileContent, 'utf-8')
-        const { path: coverArtIpfsHash } = await ipfs.add(artFileBuffer)
-        const { path: audioIpfsHash } = await ipfs.add(audioFileBuffer)
-        res
-          .status(200)
-          .json({ artIPFSHash: coverArtIpfsHash, audioIPFSHash: audioIpfsHash })
-      } catch (err) {
-        res.status(500).json({ message: err.message })
-      }
+      const form = formidable()
+      form.parse(req, async function (err, fields, files) {
+        const { audioFile, coverArtFile } = files
+        if (!audioFile[0] || !coverArtFile[0]) {
+          res.status(400).send({ message: 'Missing required fields' })
+        }
+        try {
+          const audioFileObj = audioFile[0].toJSON()
+          const coverArtFileObj = coverArtFile[0].toJSON()
+          // get file buffer for IPFS
+          const audioBuffer = await readFile(audioFileObj.filepath)
+          const coverArtBuffer = await readFile(coverArtFileObj.filepath)
+          // upload to IPFS
+          const { path: audioIPFSCid } = await ipfs.add(audioBuffer)
+          const { path: coverArtIPFSCid } = await ipfs.add(coverArtBuffer)
+          // remove from tmp folder
+          await unlink(audioFileObj.filepath)
+          await unlink(coverArtFileObj.filepath)
+          res.status(200).json({
+            audioIPFSCid,
+            coverArtIPFSCid,
+          })
+        } catch (err) {
+          res.status(500).json({ message: err.message })
+        }
+      })
       break
     }
     default: {
