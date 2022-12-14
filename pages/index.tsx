@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
 `
 
-export default function HomePage({ tracks }) {
+export default function HomePage({ tracks = [] }) {
   return (
     <Container>
       <AudioGrid tracks={tracks} />
