@@ -5,7 +5,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST': {
       try {
-        const trackId = req.query.trackId as string
+        const trackId = Number(req.query.trackId)
         const track = await prisma.track.findFirst({
           where: { id: trackId },
           include: {

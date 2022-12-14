@@ -102,7 +102,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
       !menuRef?.current?.contains(e.target) &&
       !e.target.classList.value.includes(MENU_ITEM_CLASS)
     ) {
-      setActiveMenu({ id: '' })
+      setActiveMenu({ id: null })
     }
   }
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
 
   const handleMenuToggle = () => {
     if (isOpen) {
-      setActiveMenu({ id: '' })
+      setActiveMenu({ id: null })
     } else {
       setActiveMenu({ id: track.id })
     }

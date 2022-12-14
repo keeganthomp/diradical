@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     wallet,
     trackId,
     period,
-  }: { wallet: string; trackId: string; period: number } = req.body
+  }: { wallet: string; trackId: number; period: number } = req.body
   if (!wallet || !trackId) {
     res.status(500).json({ message: 'missing wallet or songId' })
   }

@@ -5,7 +5,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET': {
       try {
-        const trackId = req.query.trackId as string
+        const trackId = Number(req.query.trackId)
         const track = await prisma.track.findUnique({
           where: { id: trackId },
           include: {
