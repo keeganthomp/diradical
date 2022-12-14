@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import AudioGrid from 'components/audio/AudioGrid'
+import prisma from 'lib/prisma'
 
 const Container = styled.div`
   display: flex;
@@ -18,12 +19,13 @@ export default function HomePage({ tracks = [] }) {
 }
 
 export async function getStaticProps() {
-  const { API_URL } = process.env
-  const res = await fetch(`${API_URL}/tracks`)
-  const tracks = await res.json()
+  const tracks = await prisma.track.findMany({
+    where: { archived: false },
+    include: { artist: { select: { wallet: true } }, votes: true },
+  })
   return {
     props: {
-      tracks,
+      tracks: JSON.parse(JSON.stringify(tracks)),
     },
   }
 }
