@@ -4,16 +4,11 @@ import styled from 'styled-components'
 import PlayButton from 'components/ui/Buttons/PlayButton'
 import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
 import useContract from 'hooks/useContract'
-import {
-  truncateWalletAddress,
-  formatCurrency,
-  convertByte32ToIpfsCidV0,
-} from 'utils'
-import { useRouter } from 'next/router'
+import { truncateWalletAddress } from 'utils'
 import AudioCardMenu from './Menu'
 import useUser from 'hooks/useUser'
 import useApi from 'hooks/useApi'
@@ -88,8 +83,6 @@ const RightCol = styled.div`
 `
 
 export default function AudioCard({ track }: Props) {
-  const router = useRouter()
-  const [payouts, setPayouts] = useState(0)
   const { addVote } = useApi()
   const ctc = useContract()
   const { user } = useUser()
@@ -99,35 +92,16 @@ export default function AudioCard({ track }: Props) {
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
 
-  const isProfilePage = router.pathname === '/profile'
-
-  useEffect(() => {
-    const getSongInfoFromCtc = async () => {
-      if (!isProfilePage) return
-      const currentPeriod = await ctc.votingPeriod
-      if (currentPeriod === 1) return
-      const arr = [...Array(currentPeriod - 1).keys()].map((_, i) =>
-        ctc.getSongInfo(track.id, i + 1),
-      )
-      const pms = await Promise.all(arr)
-      const totalPayouts = pms.reduce((acc, cur) => acc + cur?.payout || 0, 0)
-      setPayouts(totalPayouts)
-    }
-    if (ctc?.votingPeriod) getSongInfoFromCtc()
-  }, [ctc?.votingPeriod])
-
-  const handleReceivePayouts = async () => {
-    await ctc.receivePayout(track.id, 1)
-  }
-
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
-  const hasVoted = track.votes.some((v) => v.userId === user?.wallet)
+  const hasVoted = track.votes.some(
+    (v) => v.wallet === user?.wallet && v.period === ctc.votingPeriod,
+  )
   const shouldShowVoteButton = user && !hasVoted
 
   const handleVote = async () => {
-    await ctc.vote(track.id, (wallet, votingPeriod) =>
+    await ctc.vote(track.artist.wallet, (wallet, votingPeriod) =>
       addVote(wallet, track.id, votingPeriod),
     )
     console.log('done voting')
@@ -158,12 +132,6 @@ export default function AudioCard({ track }: Props) {
             {shouldShowVoteButton && <button onClick={handleVote}>Vote</button>}
           </RightCol>
         </Meta>
-        {isProfilePage && (
-          <p>Payouts: {Number(formatCurrency(payouts)).toFixed(5)}</p>
-        )}
-        {isProfilePage && (
-          <button onClick={handleReceivePayouts}>ReceivePayout</button>
-        )}
       </MetaData>
     </Wrapper>
   )

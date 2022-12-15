@@ -7,7 +7,7 @@ import useUser from 'hooks/useUser'
 import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
 import ActionButton from 'components/ui/Buttons/ActionButton'
-import { truncateWalletAddress } from 'utils'
+import { truncateWalletAddress, formatCurrency } from 'utils'
 import Loader from 'components/ui/Loader'
 import moment from 'moment'
 
@@ -91,6 +91,14 @@ const LogoutButton = styled(ActionButton)`
   }
 `
 
+const NAV_LINKS: NavLinkType[] = [
+  { title: 'Music', path: '/' },
+  {
+    title: 'Profile',
+    path: '/profile',
+  },
+]
+
 export default function Sidebar() {
   const {
     authenticate,
@@ -103,14 +111,26 @@ export default function Sidebar() {
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
   const { user } = useUser()
+  const [payout, setPayout] = React.useState(0)
 
-  const NAV_LINKS: NavLinkType[] = [
-    { title: 'Music', path: '/' },
-    {
-      title: 'Profile',
-      path: '/profile',
-    },
-  ]
+  React.useEffect(() => {
+    const getSongInfoFromCtc = async () => {
+      console.log('fetching payouts...')
+      const currentPeriod = await ctc.votingPeriod
+      if (currentPeriod === 1) return
+      const arr = [...Array(currentPeriod - 1).keys()].map((_, i) =>
+        ctc.getSongInfo(walletAddress, i + 1),
+      )
+      const pms = await Promise.all(arr)
+      const totalPayouts = pms.reduce((acc, cur) => acc + cur?.payout || 0, 0)
+      setPayout(totalPayouts)
+    }
+    if (isLoggedIn && ctc?.votingPeriod) getSongInfoFromCtc()
+  }, [isLoggedIn])
+
+  const handleReceivePayouts = async (votingPeriod = 5) => {
+    await ctc.receivePayout(votingPeriod)
+  }
 
   const handleBuyMembership = async () => {
     try {
@@ -181,7 +201,14 @@ export default function Sidebar() {
                     ).fromNow()}`}
               </p>
             )}
-            <p>Contract Balance: {ctc.contractBalance}</p>
+            {isLoggedIn && (
+              <>
+                <p>Payout: {formatCurrency(payout)}</p>
+                <button onClick={() => handleReceivePayouts()}>
+                  Receive Payout
+                </button>
+              </>
+            )}
             <p>Membership Cost: {ctc.membershipCost}</p>
             <p>Current Voting Period: {ctc.votingPeriod}</p>
             <p>

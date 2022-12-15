@@ -16,7 +16,7 @@ model User {
   updatedAt     DateTime @updatedAt
   membershipExp Int
   username      String?  @db.VarChar(30)
-  singles       Track[]
+  tracks        Track[]
   votes         Vote[]
 }
 
@@ -27,8 +27,8 @@ model Track {
   title     String   @db.VarChar(30)
   audio     String   @db.VarChar(46) // IPFS hash
   coverArt  String   @db.VarChar(46) // IPFS hash
-  artist    User?    @relation(fields: [userId], references: [wallet])
-  userId    String
+  artist    User?    @relation(fields: [wallet], references: [wallet])
+  wallet    String
   archived  Boolean  @default(false)
   votes     Vote[]
 }
@@ -40,8 +40,8 @@ model Vote {
   period    Int
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   Int
-  user      User     @relation(fields: [userId], references: [wallet])
-  userId    String
+  user      User     @relation(fields: [wallet], references: [wallet])
+  wallet    String
 
-  @@unique([period, trackId, userId]) // user cannot vote for the same song twice in the same period
+  @@unique([period, trackId, wallet]) // user cannot vote for the same song twice in the same period
 }

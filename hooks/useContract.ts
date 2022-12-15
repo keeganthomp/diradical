@@ -14,7 +14,7 @@ import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0xB6b6Cc37EDD96152624657EC3E938f1B70F5ce50'
+const ROYALTY_CTC_ADDRESS = '0xB75C2cb08D1fFf1F09f2Ac88487000797fEDDeA9'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
@@ -35,10 +35,9 @@ const useContract = () => {
     endVotingPeriod: ctcEndVotingPeriod,
     receivePayout: ctcReceivePayout,
     getCurrentVotingPeriod,
-    getContractBalance,
     getMembershipCost,
     getPeriodEndTime,
-    getSongPayout: ctcGetSongPayout,
+    getOwnerPayout: ctcGetOwnerPayout,
     getSong: ctcGetSong,
   } = contract.methods
 
@@ -47,14 +46,12 @@ const useContract = () => {
     const asyncGetCtcData = async () => {
       setFetching(true)
       const votingPeriod = await getCurrentVotingPeriod().call()
-      const ctcBal = await getContractBalance().call()
       const membershipCost = await getMembershipCost().call()
       const endPeriodTime = await getPeriodEndTime().call()
       setContractData({
         currentBlock: await getCurrentBlock(),
         currentSecs: await getNetworkSecs(),
         votingPeriod: Number(votingPeriod),
-        contractBalance: formatCurrency(ctcBal),
         membershipCost: formatCurrency(membershipCost),
         endPeriodTime: Number(endPeriodTime),
       })
@@ -63,12 +60,10 @@ const useContract = () => {
     asyncGetCtcData()
   }, [])
 
-  const getSongInfo = async (songId: number, vPeriod: number) => {
+  const getSongInfo = async (owner: string, vPeriod: number) => {
     try {
-      const songFromCtc = await ctcGetSong(songId).call()
-      const songPayout = await ctcGetSongPayout(songId, vPeriod).call()
+      const songPayout = await ctcGetOwnerPayout(owner, vPeriod).call()
       return {
-        songFromCtc,
         payout: Number(songPayout),
       }
     } catch (err) {
@@ -132,11 +127,11 @@ const useContract = () => {
   }
 
   const vote = async (
-    songId: number,
+    artist: string,
     cb: (wallet: string, votedPeriod: number) => void,
   ) => {
     if (!walletAddress) return
-    const method = () => ctcVote(songId)
+    const method = () => ctcVote(artist)
     await method()
       .send({
         from: walletAddress,
@@ -149,12 +144,7 @@ const useContract = () => {
             voted: { returnValues },
           },
         } = receipt
-        const songId = Number(returnValues[1])
-        const votedPeriod = Number(returnValues[2])
-        console.log({
-          songId,
-          votedPeriod,
-        })
+        const votedPeriod = Number(returnValues[1])
         await cb(walletAddress, votedPeriod)
       })
       .on('error', function (_, receipt) {
@@ -191,9 +181,9 @@ const useContract = () => {
       })
   }
 
-  const receivePayout = async (songId: number, vPeriod: number) => {
+  const receivePayout = async (vPeriod: number) => {
     if (!walletAddress) return
-    const method = () => ctcReceivePayout(songId, vPeriod)
+    const method = () => ctcReceivePayout(vPeriod)
     await method()
       .send({
         from: walletAddress,
