@@ -1,4 +1,4 @@
-import { TrackWithVotes } from 'types'
+import { TrackWithArtist } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import PlayButton from 'components/ui/Buttons/PlayButton'
@@ -7,14 +7,13 @@ import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
 import moment from 'moment'
-import useContract from 'hooks/useContract'
 import { truncateWalletAddress } from 'utils'
 import AudioCardMenu from './Menu'
-import useUser from 'hooks/useUser'
-import useApi from 'hooks/useApi'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 type Props = {
-  track: TrackWithVotes
+  track: TrackWithArtist
 }
 
 const Wrapper = styled.div`
@@ -56,14 +55,23 @@ const Meta = styled.div`
     font-size: 14px;
   }
 `
-const TitleInfo = styled.p`
-  font-weight: bold;
-  font-weight: bold;
+const TitleInfo = styled.div`
   margin: 0;
   text-align: left;
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
 `
-const Artist = styled.span`
+const Artist = styled.p`
   font-weight: 200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  text-decoration: underline;
 `
 const CoverArt = styled.img`
   position: absolute;
@@ -83,9 +91,7 @@ const RightCol = styled.div`
 `
 
 export default function AudioCard({ track }: Props) {
-  const { addVote } = useApi()
-  const ctc = useContract()
-  const { user } = useUser()
+  const router = useRouter()
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
   const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
@@ -95,17 +101,7 @@ export default function AudioCard({ track }: Props) {
   const handleMouseEnter = () => !isMobile && setHovering(true)
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
-  const hasVoted = track.votes.some(
-    (v) => v.wallet === user?.wallet && v.period === ctc.votingPeriod,
-  )
-  const shouldShowVoteButton = user && !hasVoted
-
-  const handleVote = async () => {
-    await ctc.vote(track.artist.wallet, (wallet, votingPeriod) =>
-      addVote(wallet, track.id, votingPeriod),
-    )
-    console.log('done voting')
-  }
+  const isArtistPage = router.pathname.includes('/artist/')
 
   return (
     <Wrapper>
@@ -124,12 +120,15 @@ export default function AudioCard({ track }: Props) {
       <MetaData>
         <Meta>
           <TitleInfo>
-            {track.title} <br />{' '}
-            <Artist>{truncateWalletAddress(track.artist.wallet)}</Artist>
+            <p>{track.title}</p>
+            {!isArtistPage && (
+              <Link href={`/artist/${track.artist.wallet}`}>
+                <Artist>{truncateWalletAddress(track.artist.wallet)}</Artist>
+              </Link>
+            )}
           </TitleInfo>
           <RightCol>
             <Realesed>{moment(track.createdAt).calendar()}</Realesed>
-            {shouldShowVoteButton && <button onClick={handleVote}>Vote</button>}
           </RightCol>
         </Meta>
       </MetaData>

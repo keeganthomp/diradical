@@ -21,7 +21,7 @@ export default function HomePage({ tracks = [] }) {
 export async function getStaticProps() {
   const tracks = await prisma.track.findMany({
     where: { archived: false },
-    include: { artist: { select: { wallet: true } }, votes: true },
+    include: { artist: { select: { wallet: true } } },
   })
   return {
     props: {

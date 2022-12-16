@@ -160,7 +160,6 @@ export default function MobileNavbar() {
                           ).fromNow()}`}
                     </p>
                   )}
-                  <p>Contract Balance: {ctc.contractBalance}</p>
                   <p>Membership Cost: {ctc.membershipCost}</p>
                   <p>Current Voting Period: {ctc.votingPeriod}</p>
                   <p>

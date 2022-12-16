@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       where: {
         artist: { wallet: wallet as string },
       },
-      include: { artist: { select: { wallet: true } }, votes: true },
+      include: { artist: { select: { wallet: true } } },
     })
     res.status(200).json(tracks)
   } catch (err) {

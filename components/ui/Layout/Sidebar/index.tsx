@@ -25,7 +25,7 @@ const Container = styled.div`
   justify-content: center;
   padding: 1rem 0;
   border-radius: ${(p) => p.theme.borderRadius};
-  border: 1px solid ${(p) => p.theme.colors.border};
+  box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
   @media ${devices.mobile} {
     display: none;
   }

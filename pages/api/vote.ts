@@ -7,19 +7,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
   const {
-    wallet,
-    trackId,
+    voterWallet,
+    artist,
     period,
-  }: { wallet: string; trackId: number; period: number } = req.body
-  if (!wallet || !trackId) {
+  }: { voterWallet: string; artist: string; period: number } = req.body
+  if (!voterWallet || !artist || !period) {
     res.status(500).json({ message: 'missing wallet or songId' })
   }
   try {
     await prisma.vote.create({
       data: {
         period: period,
-        user: { connect: { wallet } },
-        track: { connect: { id: trackId } },
+        voter: { connect: { wallet: voterWallet } },
+        artist: { connect: { wallet: artist } },
       },
     })
     res.status(200).json({ sucess: true })

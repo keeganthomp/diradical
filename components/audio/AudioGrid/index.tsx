@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 import AudioCard from './AudioCard'
-import { TrackWithVotes } from 'types'
+import { TrackWithArtist } from 'types'
 import { devices } from 'styles/theme'
-import Loader from 'components/ui/Loader'
 import React from 'react'
 
 const DEF_NUM_OF_COLUMNS = 5
@@ -27,13 +26,13 @@ const Grid = styled.div`
   }
 `
 
-export default function AudioGrid({ tracks }: { tracks: TrackWithVotes[] }) {
+export default function AudioGrid({ tracks }: { tracks: TrackWithArtist[] }) {
   if (tracks.length === 0) {
     return <div>no tracks</div>
   }
   return (
     <Grid>
-      {tracks.map((track: TrackWithVotes) => (
+      {tracks.map((track: TrackWithArtist) => (
         <AudioCard key={track.id} track={track} />
       ))}
     </Grid>

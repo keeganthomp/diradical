@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const tracks = await prisma.track.findMany({
           where: { archived: false },
-          include: { artist: { select: { wallet: true } }, votes: true },
+          include: { artist: { select: { wallet: true } } },
         })
         res.status(200).json(tracks)
       } catch (err) {

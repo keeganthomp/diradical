@@ -12,7 +12,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             artist: {
               select: { wallet: true },
             },
-            votes: true,
           },
         })
         res.status(200).json(track)

@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil'
 import nowPlayingState, { defaultNowPlayingState } from 'atoms/nowPlaying'
-import { TrackWithVotes } from 'types'
+import { TrackWithArtist } from 'types'
 
 const useNowPlaying = () => {
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingState)
@@ -12,7 +12,7 @@ const useNowPlaying = () => {
     }))
   }
 
-  const play = (track: TrackWithVotes) => {
+  const play = (track: TrackWithArtist) => {
     setNowPlaying((prev) => ({
       ...prev,
       isPlaying: true,

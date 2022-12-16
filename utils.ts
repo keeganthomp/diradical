@@ -40,7 +40,7 @@ export const getNetworkSecs = async () => {
 }
 
 export const formatCurrency = (amount: number | string) => {
-  return Number(amount) / 10 ** MATIC_DECIMALS
+  return (Number(amount) / 10 ** MATIC_DECIMALS).toFixed(4)
 }
 
 export const parseCurrency = (amount: number | string) => {

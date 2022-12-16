@@ -11,8 +11,8 @@ const Container = styled.div`
   grid-template-columns: ${SIDEBAR_WIDTH} auto;
   grid-template-areas: 'sidebar content';
   height: 100vh;
-  padding: 10px;
-  column-gap: 10px;
+  padding: 1.5rem;
+  column-gap: 1.5rem;
   @media ${devices.mobile} {
     display: flex;
     flex-direction: column;
@@ -26,8 +26,8 @@ const Content = styled.div`
   background: ${(p) => p.theme.colors.background};
   overflow-y: scroll;
   border-radius: ${(p) => p.theme.borderRadius};
-  border: 1px solid ${(p) => p.theme.colors.border};
   overflow: hidden;
+  box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
   @media ${devices.mobile} {
     height: 100vh;
     padding: 3.5rem 0.5rem 5.5rem 0.5rem;

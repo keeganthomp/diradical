@@ -1,14 +1,14 @@
 import styled from 'styled-components'
 import { HiDotsVertical } from 'react-icons/hi'
 import { useRouter } from 'next/router'
-import { TrackWithVotes } from 'types'
+import { TrackWithArtist } from 'types'
 import activeMenuState from 'atoms/audioMenu'
 import { useRecoilState } from 'recoil'
 import { useRef, useEffect } from 'react'
 import axios from 'axios'
 
 type Props = {
-  track: TrackWithVotes
+  track: TrackWithArtist
   isOpenToPublic: boolean
 }
 

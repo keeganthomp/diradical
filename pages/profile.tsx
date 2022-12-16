@@ -1,15 +1,48 @@
-import React from 'react'
+import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
-import UserTacks from 'components/user/MyMusic'
+import useModal from 'hooks/useModal'
+import Button from 'components/ui/Buttons/Base'
+import React from 'react'
+import useMagicWallet from 'hooks/useMagicWallet'
+import useMusic from 'hooks/useMusic'
+import Loader from 'components/ui/Loader'
 
-const Container = styled.div``
+const UploadButton = styled(Button)`
+  width: 10rem;
+  margin: 1rem 0;
+`
 
-const ProfilePage = () => {
+const Container = styled.div`
+  text-align: center;
+`
+
+export default function ProfilePage() {
+  const { openModal, ModalType } = useModal()
+  const { walletAddress } = useMagicWallet()
+  const { tracks, isLoading } = useMusic(walletAddress)
+
+  const openUploadModal = () => {
+    openModal(ModalType.UPLOAD)
+  }
+
+  if (!walletAddress)
+    return (
+      <Container>
+        <p>Please Conect</p>
+      </Container>
+    )
+
+  if (isLoading)
+    return (
+      <Container>
+        <Loader color='#000' />
+      </Container>
+    )
+
   return (
     <Container>
-      <UserTacks />
+      <UploadButton onClick={openUploadModal}>upload</UploadButton>
+      <AudioGrid tracks={tracks} />
     </Container>
   )
 }
-
-export default ProfilePage
