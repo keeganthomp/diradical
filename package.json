@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma migrate deploy && npx prisma generate && next build",
+    "build": "next build",
     "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
     "migrate:dev": "npx prisma migrate dev"
   },
