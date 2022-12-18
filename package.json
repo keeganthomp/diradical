@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx prisma generate && npx prisma migrate deploy && next build",
     "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
     "migrate:dev": "npx prisma migrate dev",
     "vercel-build": "npx prisma generate && npx prisma migrate deploy && next build"
