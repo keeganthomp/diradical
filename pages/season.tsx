@@ -43,15 +43,17 @@ export default function Sidebar() {
   return (
     <Container>
       <p>Membership Cost: {ctc.membershipCost}</p>
-      <p>Current Voting Period: {ctc.votingPeriod}</p>
+      <p>Current Season: {ctc.votingPeriod}</p>
       <p>
         {ctc.currentSecs > ctc.endPeriodTime
-          ? `Period ${ctc.votingPeriod} Ended`
-          : `Period Ends: ${moment(ctc.endPeriodTime * 1000).fromNow()}`}
+          ? `Season ${ctc.votingPeriod} Ended`
+          : `Season ${ctc.votingPeriod} Ends: ${moment(
+              ctc.endPeriodTime * 1000,
+            ).fromNow()}`}
       </p>
       {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
         <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
-          End Voting Period
+          Start Season {ctc.votingPeriod + 1}
         </EndVotingPeriodButton>
       )}
     </Container>

@@ -28,12 +28,24 @@ const useApi = () => {
       },
       body: JSON.stringify({ voterWallet, artist, period }),
     })
+  const addPayout = (wallet: string, amount: number, period: number) =>
+    callApi('/api/payout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ wallet, amount, period }),
+    })
+  const fetchPayouts = (wallet: string) =>
+    callApi(`/api/user/${wallet}/payouts`)
 
   return {
     fetchAllTracks,
     fetchUserTracks,
     register,
     addVote,
+    addPayout,
+    fetchPayouts,
   }
 }
 

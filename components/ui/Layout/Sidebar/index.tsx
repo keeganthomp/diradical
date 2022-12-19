@@ -70,6 +70,10 @@ const LogoutButton = styled.p`
   }
 `
 
+const WalleButton = styled(SidebarButton)`
+  padding: 8px 0;
+`
+
 const MembershipExpired = styled.p`
   color: red;
   font-weight: bold;
@@ -120,13 +124,13 @@ export default function Sidebar() {
           </AuthButtonContainer>
         )}
         {walletAddress && (
-          <SidebarButton onClick={showWallet}>Wallet</SidebarButton>
+          <WalleButton onClick={showWallet}>Wallet</WalleButton>
         )}
         {showBuyMembButton && (
           <>
-            <SidebarButton onClick={handleBuyMembership}>
+            <WalleButton onClick={handleBuyMembership}>
               Buy Membership
-            </SidebarButton>
+            </WalleButton>
             <MembershipExpired>Membership Expired</MembershipExpired>
           </>
         )}

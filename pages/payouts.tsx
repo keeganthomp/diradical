@@ -72,13 +72,16 @@ export default function Sidebar() {
 
   return (
     <Container>
-      {payouts.map((p) => (
-        <PayoutCard
-          key={p.period}
-          payout={p}
-          onClick={() => receivePayouts(p.period)}
-        />
-      ))}
+      {payouts.map(
+        (p) =>
+          !p.received && (
+            <PayoutCard
+              key={p.period}
+              payout={p}
+              onClick={() => receivePayouts(p.period)}
+            />
+          ),
+      )}
     </Container>
   )
 }

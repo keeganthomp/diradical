@@ -14,7 +14,7 @@ import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0x530FC97D1e0b7EA8AAdE1ACCfe26870CbCB4FB08'
+const ROYALTY_CTC_ADDRESS = '0x64c9e7abff10A07B03cA9372b8551481700c401F'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
@@ -22,7 +22,7 @@ const useContract = () => {
   const [isFetchingViews, setFetching] = useState(false)
   const { web3, walletAddress } = useMagicWallet()
   const [views, setContractData] = useRecoilState(contractViewState)
-  const { register } = useApi()
+  const { register, addPayout } = useApi()
 
   if (!web3) return null
 
@@ -191,7 +191,15 @@ const useContract = () => {
         gasPrice: await web3.eth.getGasPrice(),
       })
       .on('receipt', async (receipt) => {
-        console.log('Received payout!', receipt)
+        const {
+          events: {
+            payoutReceived: { returnValues },
+          },
+        } = receipt
+        const receiver = returnValues[0]
+        const season = Number(returnValues[1])
+        const amount = Number(returnValues[2])
+        await addPayout(receiver, amount, season)
       })
       .on('error', function (_, receipt) {
         console.log('Error receiving payout:', receipt)

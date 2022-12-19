@@ -11,7 +11,6 @@ const StyledButton = styled.button<{ active?: boolean }>`
   width: 100%;
   text-align: center;
   font-size: 14px;
-  padding: 8px 0;
   margin: 3px 0;
   border: none;
   margin-bottom: 10px;
@@ -23,6 +22,8 @@ const StyledButton = styled.button<{ active?: boolean }>`
     color: #000;
     text-decoration: none;
     width: 100%;
+    height: 100%;
+    padding: 8px 0;
     &:visited {
       color: #000;
     }
