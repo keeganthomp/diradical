@@ -11,8 +11,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     amount,
     period,
   }: { wallet: string; amount: number; period: number } = req.body
-  if (!wallet || !amount || !period) {
+  if (!wallet || !amount || !period || isNaN(amount) || isNaN(period)) {
     res.status(500).json({ message: 'missing required fields' })
+  }
+  if (isNaN(amount) || isNaN(period)) {
+    res.status(500).json({ message: 'amount and period must be numbers' })
   }
   try {
     await prisma.payout.create({
