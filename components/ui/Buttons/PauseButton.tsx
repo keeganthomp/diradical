@@ -1,4 +1,4 @@
-import Button from './Base'
+import { Button } from '.'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import { FaPause } from 'react-icons/fa'

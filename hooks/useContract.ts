@@ -14,7 +14,7 @@ import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0xB75C2cb08D1fFf1F09f2Ac88487000797fEDDeA9'
+const ROYALTY_CTC_ADDRESS = '0x530FC97D1e0b7EA8AAdE1ACCfe26870CbCB4FB08'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 

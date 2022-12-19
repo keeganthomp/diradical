@@ -1,7 +1,7 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
 import useModal from 'hooks/useModal'
-import Button from 'components/ui/Buttons/Base'
+import { Button } from 'components/ui/Buttons'
 import React from 'react'
 import useMagicWallet from 'hooks/useMagicWallet'
 import useMusic from 'hooks/useMusic'
@@ -13,7 +13,9 @@ const UploadButton = styled(Button)`
 `
 
 const Container = styled.div`
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 export default function ProfilePage() {

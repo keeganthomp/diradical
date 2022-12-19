@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import React from 'react'
 import styled from 'styled-components'
-import Button from 'components/ui/Buttons/Base'
+import { Button } from 'components/ui/Buttons'
 import useUpload from 'hooks/useUpload'
 import TextInput from '../ui/Inputs/TextInput'
 import Form from './Form'

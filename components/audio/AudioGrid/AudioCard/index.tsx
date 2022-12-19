@@ -102,6 +102,7 @@ export default function AudioCard({ track }: Props) {
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
   const isArtistPage = router.pathname.includes('/artist/')
+  const isMyMusicPage = router.pathname.includes('/my-music')
 
   return (
     <Wrapper>
@@ -121,7 +122,7 @@ export default function AudioCard({ track }: Props) {
         <Meta>
           <TitleInfo>
             <p>{track.title}</p>
-            {!isArtistPage && (
+            {!isArtistPage && !isMyMusicPage && (
               <Link href={`/artist/${track.artist.wallet}`}>
                 <Artist>{truncateWalletAddress(track.artist.wallet)}</Artist>
               </Link>

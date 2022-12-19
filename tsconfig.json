@@ -29,7 +29,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/api/user/[wallet]"  ],
+, "pages/api/user/[wallet]", "components/ui/Buttons/SidebarButton.tsx", "components/ui/Buttons/SidebarButton.tsx"  ],
   "exclude": [
     "node_modules"
   ]

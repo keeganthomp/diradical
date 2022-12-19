@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const StyledButton = styled.button`
+const BaseButton = styled.button`
   background: ${(p) => p.theme.colors.main};
   color: #fff;
   border: none;
@@ -9,6 +9,10 @@ const StyledButton = styled.button`
   width: 4rem;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &:hover {
     opacity: 0.8;
   }
@@ -22,5 +26,5 @@ const StyledButton = styled.button`
 `
 
 export default function Button({ children, ...props }) {
-  return <StyledButton {...props}>{children}</StyledButton>
+  return <BaseButton {...props}>{children}</BaseButton>
 }

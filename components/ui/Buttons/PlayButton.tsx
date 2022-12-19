@@ -1,4 +1,4 @@
-import Button from './Base'
+import { Button } from '.'
 import useNowPlaying from 'hooks/useNowPlaying'
 import { TrackWithArtist } from 'types'
 import { FaPlay } from 'react-icons/fa'

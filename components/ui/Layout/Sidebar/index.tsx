@@ -6,26 +6,23 @@ import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
-import ActionButton from 'components/ui/Buttons/ActionButton'
-import { truncateWalletAddress, formatCurrency } from 'utils'
+import { Button, SidebarButton } from 'components/ui/Buttons'
+import { truncateWalletAddress } from 'utils'
 import Loader from 'components/ui/Loader'
-import moment from 'moment'
-
-type NavLinkType = {
-  path?: string
-  title: string
-}
+import { NAV_LINKS } from 'const'
 
 const Container = styled.div`
   position: relative;
   grid-area: sidebar;
   display: grid;
+  grid-template-columns: 1fr;
   background: white;
   align-items: start;
   justify-content: center;
   padding: 1rem 0;
   border-radius: ${(p) => p.theme.borderRadius};
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
+  padding: 10px;
   @media ${devices.mobile} {
     display: none;
   }
@@ -34,9 +31,6 @@ const Container = styled.div`
 const Section = styled.div`
   width: 100%;
   text-align: center;
-  p {
-    width: 100%;
-  }
 `
 
 const WalletAddress = styled.p`
@@ -47,38 +41,20 @@ const WalletAddress = styled.p`
   text-align: center;
 `
 
-const SidebarButton = styled(ActionButton)`
-  color: #000;
-  background: rgba(180, 180, 180, 0.2);
-  margin-bottom: 3px;
-  &:hover {
-    background: rgba(229, 232, 235, 0.15);
-  }
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 1;
-    background: rgba(229, 232, 235, 0.2);
-  }
-`
-
 const AuthButtonContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
 `
 
-const SignupButton = styled(ActionButton)`
-  width: 4rem;
-  padding: 1px;
-`
-const LoginButton = styled(ActionButton)`
-  width: 4rem;
-  background: transparent;
+const LoginButton = styled.p`
   color: #000;
-  &:hover {
-    text-decoration: underline;
-  }
+  font-size: 14px;
+  text-decoration: underline;
+  width: 50%;
+  cursor: pointer;
 `
-const LogoutButton = styled(ActionButton)`
+const LogoutButton = styled.p`
   width: 4rem;
   background: transparent;
   color: red;
@@ -86,18 +62,18 @@ const LogoutButton = styled(ActionButton)`
   bottom: 0.5rem;
   left: 50%;
   transform: translate(-50%, -50%);
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
   &:hover {
     text-decoration: underline;
   }
 `
 
-const NAV_LINKS: NavLinkType[] = [
-  { title: 'Music', path: '/' },
-  {
-    title: 'Profile',
-    path: '/profile',
-  },
-]
+const MembershipExpired = styled.p`
+  color: red;
+  font-weight: bold;
+`
 
 export default function Sidebar() {
   const {
@@ -111,40 +87,12 @@ export default function Sidebar() {
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
   const { user } = useUser()
-  const [payout, setPayout] = React.useState(0)
-
-  React.useEffect(() => {
-    const getSongInfoFromCtc = async () => {
-      console.log('fetching payouts...')
-      const currentPeriod = await ctc.votingPeriod
-      if (currentPeriod === 1) return
-      const arr = [...Array(currentPeriod - 1).keys()].map((_, i) =>
-        ctc.getSongInfo(walletAddress, i + 1),
-      )
-      const pms = await Promise.all(arr)
-      const totalPayouts = pms.reduce((acc, cur) => acc + cur?.payout || 0, 0)
-      setPayout(totalPayouts)
-    }
-    if (isLoggedIn && ctc?.votingPeriod) getSongInfoFromCtc()
-  }, [isLoggedIn])
-
-  const handleReceivePayouts = async (votingPeriod = 5) => {
-    await ctc.receivePayout(votingPeriod)
-  }
 
   const handleBuyMembership = async () => {
     try {
       await ctc.buyMembership()
     } catch {
       openModal(ModalType.ERROR, 'Error buying membership')
-    }
-  }
-
-  const handleEndVotingPeriod = async () => {
-    try {
-      await ctc.endVotingPeriod()
-    } catch {
-      openModal(ModalType.ERROR, 'Error ending voting period')
     }
   }
 
@@ -168,16 +116,19 @@ export default function Sidebar() {
         {!walletAddress && (
           <AuthButtonContainer>
             <LoginButton onClick={authenticate}>Login</LoginButton>
-            <SignupButton onClick={authenticate}>Signup</SignupButton>
+            <Button onClick={authenticate}>Signup</Button>
           </AuthButtonContainer>
         )}
         {walletAddress && (
           <SidebarButton onClick={showWallet}>Wallet</SidebarButton>
         )}
         {showBuyMembButton && (
-          <SidebarButton onClick={handleBuyMembership}>
-            Buy Membership
-          </SidebarButton>
+          <>
+            <SidebarButton onClick={handleBuyMembership}>
+              Buy Membership
+            </SidebarButton>
+            <MembershipExpired>Membership Expired</MembershipExpired>
+          </>
         )}
       </Section>
       <Section>
@@ -186,43 +137,6 @@ export default function Sidebar() {
             {link.title}
           </NavLink>
         ))}
-      </Section>
-      <Section>
-        {!ctc || ctc.isFetchingViews ? (
-          <Loader color='#000' />
-        ) : (
-          <>
-            {user && (
-              <p>
-                {ctc.currentSecs > user.membershipExp
-                  ? 'Membership Expired'
-                  : `Membership Exp: ${moment(
-                      user.membershipExp * 1000,
-                    ).fromNow()}`}
-              </p>
-            )}
-            {isLoggedIn && (
-              <>
-                <p>Payout: {formatCurrency(payout)}</p>
-                <button onClick={() => handleReceivePayouts()}>
-                  Receive Payout
-                </button>
-              </>
-            )}
-            <p>Membership Cost: {ctc.membershipCost}</p>
-            <p>Current Voting Period: {ctc.votingPeriod}</p>
-            <p>
-              {ctc.currentSecs > ctc.endPeriodTime
-                ? `Period ${ctc.votingPeriod} Ended`
-                : `Period Ends: ${moment(ctc.endPeriodTime * 1000).fromNow()}`}
-            </p>
-            {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
-              <SidebarButton onClick={handleEndVotingPeriod}>
-                End Voting Period
-              </SidebarButton>
-            )}
-          </>
-        )}
       </Section>
       {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}
     </Container>
