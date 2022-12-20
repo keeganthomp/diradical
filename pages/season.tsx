@@ -5,7 +5,7 @@ import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
 import { Button } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
-import moment from 'moment'
+import useSeason from 'hooks/useSeason'
 
 const Container = styled.div`
   width: 100%;
@@ -21,6 +21,7 @@ const EndVotingPeriodButton = styled(Button)`
 `
 
 export default function Sidebar() {
+  const { season } = useSeason()
   const { walletAddress } = useMagicWallet()
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
@@ -33,7 +34,7 @@ export default function Sidebar() {
     }
   }
 
-  if (!ctc || ctc.isFetchingViews)
+  if (!season)
     return (
       <Container>
         <Loader color='#000' />
@@ -42,15 +43,10 @@ export default function Sidebar() {
 
   return (
     <Container>
-      <p>Membership Cost: {ctc.membershipCost}</p>
-      <p>Current Season: {ctc.votingPeriod}</p>
-      <p>
-        {ctc.currentSecs > ctc.endPeriodTime
-          ? `Season ${ctc.votingPeriod} Ended`
-          : `Season ${ctc.votingPeriod} Ends: ${moment(
-              ctc.endPeriodTime * 1000,
-            ).fromNow()}`}
-      </p>
+      <p>Current Season: {season.current}</p>
+      <p>{`Season ${season.current} ${season.hasEnded ? 'ended' : 'ends'} ${
+        season.end
+      }`}</p>
       {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
         <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
           Start Season {ctc.votingPeriod + 1}

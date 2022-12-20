@@ -1,22 +1,19 @@
 import React from 'react'
 import useContract from 'hooks/useContract'
 import useMagicWallet from 'hooks/useMagicWallet'
+import payoutState, { Payout } from 'atoms/payouts'
+import { useRecoilState } from 'recoil'
 import useApi from './useApi'
 
-export type Payout = {
-  period: number
-  amount: number
-  received?: boolean
-}
-
 export default function usePayouts() {
-  const { walletAddress, isLoggedIn } = useMagicWallet()
+  const { walletAddress } = useMagicWallet()
   const { fetchPayouts } = useApi()
   const ctc = useContract()
-  const [payouts, setPayouts] = React.useState<Payout[] | null>(null)
+  const [payouts, setPayouts] = useRecoilState(payoutState)
 
   React.useEffect(() => {
     const getRelevantPayouts = async () => {
+      console.log('weee')
       const payoutsFromDb = await fetchPayouts(walletAddress)
       const payoutPeriodsReceived = payoutsFromDb.map((p) => p.period)
       const currentPeriod = await ctc.votingPeriod
@@ -37,8 +34,8 @@ export default function usePayouts() {
       }, [])
       setPayouts(payoutsFromCtc)
     }
-    if (isLoggedIn && ctc?.votingPeriod) getRelevantPayouts()
-  }, [isLoggedIn])
+    if (walletAddress && ctc?.votingPeriod) getRelevantPayouts()
+  }, [walletAddress, ctc?.votingPeriod])
 
   const receivePayouts = async (votingPeriod: number) => {
     if (votingPeriod >= ctc.votingPeriod) throw new Error('Period is not over')

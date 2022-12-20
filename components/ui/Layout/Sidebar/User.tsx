@@ -1,14 +1,20 @@
 import styled from 'styled-components'
+import { useState } from 'react'
 import { truncateWalletAddress } from 'utils'
 import useMagicWallet from 'hooks/useMagicWallet'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
+import { BsChevronCompactUp } from 'react-icons/bs'
+import moment from 'moment'
 
-const Container = styled.div`
+const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
   left: 0;
+`
+
+const Container = styled.div`
   display: grid;
   align-items: center;
   grid-template-columns: 3rem 1fr;
@@ -22,16 +28,8 @@ const Container = styled.div`
 `
 
 const LogoutButton = styled.p`
-  width: 4rem;
-  background: transparent;
   color: red;
-  position: absolute;
-  bottom: 0.5rem;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
   cursor: pointer;
-  font-size: 14px;
   &:hover {
     text-decoration: underline;
   }
@@ -48,35 +46,77 @@ const ProfilePicture = styled.div`
 
 const MetaData = styled.div`
   width: 100%;
+  display: flex;
 `
 const WalletAddress = styled.p`
-  margin: 0;
   color: #000;
   font-weight: 100;
   text-align: left;
   font-size: 14px;
+  flex-grow: 1;
+`
+
+const MenuContainer = styled.div`
+  text-align: center;
+  font-size: 14px;
+  padding: 0.5rem 0;
+  padding: 10px;
+`
+const MenuItem = styled.p<{ isInfo?: boolean }>`
+  padding: 4px 0;
+  cursor: ${({ isInfo }) => (isInfo ? 'default' : 'pointer')};
+  border-radius: 10px;
+  margin-bottom: 5px;
+  &:hover {
+    background: ${({ isInfo }) => (isInfo ? 'transparent' : '#f0f0f09d')};
+  }
+`
+
+const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
+  ${({ open }) => open && 'transform: rotate(180deg);'}
+  transition: all 0.15s ease-in-out;
+  color: #a5a5a5b0;
+  flex-grow: 1;
 `
 
 function UserInfo() {
-  const { showWallet, isLoggedIn } = useMagicWallet()
+  const [isOpen, setOpen] = useState(false)
+  const { showWallet, isLoggedIn, logout } = useMagicWallet()
   const ctc = useContract()
   const { user } = useUser()
 
   if (!isLoggedIn) return null
 
+  const toggleOpen = () => setOpen(!isOpen)
+
   const isMembershipValid =
     ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
   const showExpiredMessage = isLoggedIn && !isMembershipValid
 
+  const getMembershipText = () => {
+    if (showExpiredMessage) return `Membership Expired`
+    return 'Membership is Valid'
+  }
+
   return (
-    <Container onClick={showWallet}>
-      <ProfilePicture />
-      <MetaData>
-        <WalletAddress>
-          {truncateWalletAddress('3242342342323424')}
-        </WalletAddress>
-      </MetaData>
-    </Container>
+    <Wrapper>
+      {isOpen && (
+        <MenuContainer>
+          <MenuItem isInfo>{getMembershipText()}</MenuItem>
+          <MenuItem onClick={showWallet}>Wallet</MenuItem>
+          <LogoutButton onClick={logout}>Logout</LogoutButton>
+        </MenuContainer>
+      )}
+      <Container onClick={toggleOpen}>
+        <ProfilePicture />
+        <MetaData>
+          <WalletAddress>
+            {truncateWalletAddress('3242342342323424')}
+          </WalletAddress>
+          <Chevron open={isOpen} />
+        </MetaData>
+      </Container>
+    </Wrapper>
   )
 }
 

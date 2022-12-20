@@ -8,6 +8,7 @@ import Head from 'next/head'
 import Modals from 'components/modal'
 import React from 'react'
 import { SWRConfig } from 'swr'
+import ConnectFromCache from 'components/ConnectFromCache'
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -22,6 +23,7 @@ function App({ Component, pageProps }: AppProps) {
         }}
       >
         <RecoilRoot>
+          <ConnectFromCache />
           <ThemeProvider theme={theme}>
             <Layout>
               <Component {...pageProps} />

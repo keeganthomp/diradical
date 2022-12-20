@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import React from 'react'
 import useMagicWallet from 'hooks/useMagicWallet'
-import usePayouts, { Payout } from 'hooks/usePayouts'
+import usePayouts from 'hooks/usePayouts'
+import { Payout } from 'atoms/payouts'
 import { Button } from 'components/ui/Buttons'
 import { formatCurrency } from 'utils'
 import Loader from 'components/ui/Loader'
@@ -56,17 +57,17 @@ export default function Sidebar() {
   const { payouts, receivePayouts } = usePayouts()
   const { isAuthenticating, isLoggedIn } = useMagicWallet()
 
-  if (!isLoggedIn)
-    return (
-      <CenterContainer>
-        <p>Please Login</p>
-      </CenterContainer>
-    )
-
   if (isAuthenticating || !payouts)
     return (
       <CenterContainer>
         <Loader color='#000' />
+      </CenterContainer>
+    )
+
+  if (!isLoggedIn)
+    return (
+      <CenterContainer>
+        <p>Please Login</p>
       </CenterContainer>
     )
 

@@ -51,14 +51,8 @@ const Logo = styled.p`
 
 export default function Sidebar() {
   const router = useRouter()
-  const {
-    authenticate,
-    logout,
-    walletAddress,
-    isAuthenticating,
-    isLoggedIn,
-    showWallet,
-  } = useMagicWallet()
+  const { authenticate, walletAddress, isAuthenticating, isLoggedIn } =
+    useMagicWallet()
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
   const { user } = useUser()

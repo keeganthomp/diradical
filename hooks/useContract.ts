@@ -38,7 +38,6 @@ const useContract = () => {
     getMembershipCost,
     getPeriodEndTime,
     getOwnerPayout: ctcGetOwnerPayout,
-    getSong: ctcGetSong,
   } = contract.methods
 
   // fetch global views

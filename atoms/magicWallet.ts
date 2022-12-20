@@ -4,6 +4,7 @@ const magicWalletState = atom({
   key: 'magicWallet',
   default: {
     walletAddress: '',
+    isAuthenticating: false,
   },
 })
 

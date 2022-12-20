@@ -14,7 +14,6 @@ const polygonNodeOptions = {
 }
 
 const useMagicWallet = () => {
-  const [isAuthenticating, setAuthenticating] = useState(false)
   if (typeof window === 'undefined') return { isInitializing: true } // ensure code is client side
 
   const [magicWallet, setMagicWallet] = useRecoilState(magicWalletState)
@@ -39,16 +38,39 @@ const useMagicWallet = () => {
     }
   }
 
+  const connectFromCache = async () => {
+    setMagicWallet({
+      ...magicWallet,
+      isAuthenticating: true,
+    })
+    try {
+      const wallet = await magicMatic.connect.getWalletInfo()
+      await authenticate()
+    } catch (error) {
+      console.log('error checking if user is logged in', error)
+      setMagicWallet({
+        ...magicWallet,
+        isAuthenticating: false,
+      })
+    }
+  }
+
   const authenticate = async () => {
     try {
-      setAuthenticating(true)
+      setMagicWallet({
+        ...magicWallet,
+        isAuthenticating: true,
+      })
       const accounts = await maticWeb3.eth.getAccounts()
       setMagicWallet({
+        isAuthenticating: false,
         walletAddress: accounts[0],
       })
-      setAuthenticating(false)
     } catch (err) {
-      setAuthenticating(false)
+      setMagicWallet({
+        ...magicWallet,
+        isAuthenticating: false,
+      })
       console.log('Error authenticating with magic:', err)
     }
   }
@@ -58,6 +80,7 @@ const useMagicWallet = () => {
       await magicMatic.connect.disconnect()
       setMagicWallet({
         walletAddress: '',
+        isAuthenticating: false,
       })
       console.log('Logged out!')
     } catch (error) {
@@ -65,25 +88,16 @@ const useMagicWallet = () => {
     }
   }
 
-  const getToken = async () => {
-    try {
-      const didToken = await magicMatic.user.getIdToken()
-      return didToken
-    } catch (error) {
-      console.log('error getting token', error)
-    }
-  }
-
   return {
     authenticate,
     logout,
-    getToken,
     isLoggedIn: !!magicWallet.walletAddress,
     isInitializing: false,
     walletAddress: magicWallet.walletAddress,
     web3: maticWeb3,
-    isAuthenticating,
+    isAuthenticating: magicWallet.isAuthenticating,
     showWallet,
+    connectFromCache,
   }
 }
 
