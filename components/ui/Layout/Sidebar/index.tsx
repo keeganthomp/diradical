@@ -1,24 +1,26 @@
 import styled from 'styled-components'
-import NavLink from 'components/ui/Layout/Sidebar/NavLink'
 import { devices } from 'styles/theme'
 import React from 'react'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import useModal from 'hooks/useModal'
 import useMagicWallet from 'hooks/useMagicWallet'
-import { Button, SidebarButton } from 'components/ui/Buttons'
-import { truncateWalletAddress } from 'utils'
+import { SidebarButton } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import { NAV_LINKS } from 'const'
+import { BsPeople, BsPersonCheck } from 'react-icons/bs'
+import { BiLogIn } from 'react-icons/bi'
+import { useRouter } from 'next/router'
+import UserIfno from './User'
 
 const Container = styled.div`
   position: relative;
   grid-area: sidebar;
   display: grid;
   grid-template-columns: 1fr;
+  grid-template-rows: 4rem 1fr;
   background: white;
   align-items: start;
-  justify-content: center;
   padding: 1rem 0;
   border-radius: ${(p) => p.theme.borderRadius};
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
@@ -28,58 +30,27 @@ const Container = styled.div`
   }
 `
 
-const Section = styled.div`
-  width: 100%;
-  text-align: center;
-`
-
-const WalletAddress = styled.p`
-  margin: 0;
-  color: #000;
-  font-weight: 100;
-  padding: 0.5rem 0;
-  text-align: center;
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
 `
 
 const AuthButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  margin-bottom: 1.25rem;
 `
 
-const LoginButton = styled.p`
-  color: #000;
-  font-size: 14px;
-  text-decoration: underline;
-  width: 50%;
-  cursor: pointer;
+const LoginButton = styled(SidebarButton)`
+  margin: 0;
 `
-const LogoutButton = styled.p`
-  width: 4rem;
-  background: transparent;
-  color: red;
-  position: absolute;
-  bottom: 0.5rem;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+const Logo = styled.p`
   text-align: center;
-  cursor: pointer;
-  font-size: 14px;
-  &:hover {
-    text-decoration: underline;
-  }
-`
-
-const WalleButton = styled(SidebarButton)`
-  padding: 8px 0;
-`
-
-const MembershipExpired = styled.p`
-  color: red;
-  font-weight: bold;
+  align-self: center;
 `
 
 export default function Sidebar() {
+  const router = useRouter()
   const {
     authenticate,
     logout,
@@ -113,36 +84,34 @@ export default function Sidebar() {
 
   return (
     <Container>
-      <Section>
-        {walletAddress && (
-          <WalletAddress>{truncateWalletAddress(walletAddress)}</WalletAddress>
-        )}
+      <Logo>DIERAD</Logo>
+      <Content>
         {!walletAddress && (
           <AuthButtonContainer>
-            <LoginButton onClick={authenticate}>Login</LoginButton>
-            <Button onClick={authenticate}>Signup</Button>
+            <LoginButton icon={<BiLogIn />} onClick={authenticate}>
+              Login
+            </LoginButton>
+            <SidebarButton icon={<BsPersonCheck />} onClick={authenticate}>
+              Signup
+            </SidebarButton>
           </AuthButtonContainer>
         )}
-        {walletAddress && (
-          <WalleButton onClick={showWallet}>Wallet</WalleButton>
-        )}
         {showBuyMembButton && (
-          <>
-            <WalleButton onClick={handleBuyMembership}>
-              Buy Membership
-            </WalleButton>
-            <MembershipExpired>Membership Expired</MembershipExpired>
-          </>
+          <SidebarButton icon={<BsPeople />} onClick={handleBuyMembership}>
+            Buy Membership
+          </SidebarButton>
         )}
-      </Section>
-      <Section>
         {NAV_LINKS.map((link) => (
-          <NavLink key={link.title} href={link.path}>
+          <SidebarButton
+            onClick={() => router.push(link.path)}
+            icon={<link.icon />}
+            key={link.title}
+          >
             {link.title}
-          </NavLink>
+          </SidebarButton>
         ))}
-      </Section>
-      {walletAddress && <LogoutButton onClick={logout}>Logout</LogoutButton>}
+      </Content>
+      <UserIfno />
     </Container>
   )
 }

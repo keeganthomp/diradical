@@ -1,35 +1,42 @@
 import styled from 'styled-components'
 
 const StyledButton = styled.button<{ active?: boolean }>`
-  background: #dadada;
+  background: transparent;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   cursor: pointer;
-  transition: all 0.1s ease-in-out;
+  transition: all 0.15s ease-in-out;
   border-radius: 30px;
   width: 100%;
-  text-align: center;
-  font-size: 14px;
-  margin: 3px 0;
+  font-size: 16px;
+  margin-bottom: 8px;
   border: none;
-  margin-bottom: 10px;
-  width: 100%;
+  padding: 10px 0 10px 8px;
   &:hover {
-    background: rgba(88, 88, 88, 0.133);
-  }
-  a {
-    color: #000;
-    text-decoration: none;
-    width: 100%;
-    height: 100%;
-    padding: 8px 0;
-    &:visited {
-      color: #000;
-    }
+    background: #f0f0f09d;
   }
 `
 
-export default function SidebarButton({ children, ...props }) {
-  return <StyledButton {...props}>{children}</StyledButton>
+const Icon = styled.span`
+  padding-right: 0.75rem;
+`
+
+const Title = styled.span``
+
+export default function SidebarButton({
+  children,
+  icon,
+  onClick,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  icon: JSX.Element
+}) {
+  return (
+    <StyledButton onClick={onClick}>
+      {icon && <Icon>{icon}</Icon>}
+      <Title>{children}</Title>
+    </StyledButton>
+  )
 }

@@ -4,7 +4,7 @@ import Sidebar from './Sidebar'
 import { devices } from 'styles/theme'
 import AudioPlayer from 'components/audio/AudioPlayer'
 
-const SIDEBAR_WIDTH = '15rem'
+const SIDEBAR_WIDTH = '11rem'
 
 const Container = styled.div`
   display: grid;
