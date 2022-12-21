@@ -14,7 +14,7 @@ import useMagicWallet from './useMagicWallet'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0x64c9e7abff10A07B03cA9372b8551481700c401F'
+const ROYALTY_CTC_ADDRESS = '0x3f0fB8B9e81D5cf4ec80DD538525B1C20ab3f8e5'
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
@@ -38,6 +38,9 @@ const useContract = () => {
     getMembershipCost,
     getPeriodEndTime,
     getOwnerPayout: ctcGetOwnerPayout,
+    getPeriodPayouts: ctcGetPeriodPayouts,
+    getPeriodVotes: ctcGetPeriodVotes,
+    getPeriodMembers: ctcGetPeriodMembers,
   } = contract.methods
 
   // fetch global views
@@ -67,6 +70,21 @@ const useContract = () => {
       }
     } catch (err) {
       console.log('Error getting song info', err)
+    }
+  }
+
+  const getSeasonInfo = async (vPeriod: number) => {
+    try {
+      const seasonPayout = await ctcGetPeriodPayouts(vPeriod).call()
+      const seasonVotes = await ctcGetPeriodVotes().call()
+      const seasonMembers = await ctcGetPeriodMembers().call()
+      return {
+        payout: Number(seasonPayout),
+        votes: Number(seasonVotes),
+        members: Number(seasonMembers),
+      }
+    } catch (err) {
+      console.log('Error getting season info', err)
     }
   }
 
@@ -213,6 +231,7 @@ const useContract = () => {
     receivePayout,
     getSongInfo,
     isFetchingViews,
+    getSeasonInfo,
     ...views,
   }
 }

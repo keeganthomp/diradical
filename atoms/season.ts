@@ -3,6 +3,9 @@ import { atom } from 'recoil'
 type Season = {
   current: number
   end: string
+  payout: number
+  members: number
+  votes: number
   hasEnded?: boolean
 }
 

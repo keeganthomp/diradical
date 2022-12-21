@@ -12,6 +12,7 @@ const Container = styled.div`
   text-align: center;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -33,6 +34,16 @@ const PayoutCardContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: #f2f2f29d;
+  padding: 1rem;
+  border-radius: 10px;
+`
+
+const Season = styled.p`
+  font-weight: bold;
+`
+const PayoutAmt = styled.p`
+  padding: 1rem 0;
 `
 
 const PayoutCard = ({
@@ -44,8 +55,8 @@ const PayoutCard = ({
 }) => {
   return (
     <PayoutCardContainer key={payout.period}>
-      <p>Season: {payout.period}</p>
-      <p>Payout: {formatCurrency(payout.amount)}</p>
+      <Season>Season {payout.period}</Season>
+      <PayoutAmt>Payout: {formatCurrency(payout.amount)} MATIC</PayoutAmt>
       <ReceivePayoutsButton onClick={onClick}>
         Receive Payout
       </ReceivePayoutsButton>
