@@ -57,17 +57,17 @@ export default function Sidebar() {
   const { payouts, receivePayouts } = usePayouts()
   const { isAuthenticating, isLoggedIn } = useMagicWallet()
 
-  if (isAuthenticating || !payouts)
-    return (
-      <CenterContainer>
-        <Loader color='#000' />
-      </CenterContainer>
-    )
-
   if (!isLoggedIn)
     return (
       <CenterContainer>
         <p>Please Login</p>
+      </CenterContainer>
+    )
+
+  if (isAuthenticating || !payouts)
+    return (
+      <CenterContainer>
+        <Loader color='#000' />
       </CenterContainer>
     )
 

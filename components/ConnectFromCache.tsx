@@ -2,10 +2,16 @@ import useMagicWallet from 'hooks/useMagicWallet'
 import React from 'react'
 
 export default function ConnectFromCache() {
-  const { connectFromCache } = useMagicWallet()
+  const { connectFromCache, walletAddress } = useMagicWallet()
 
   React.useEffect(() => {
-    connectFromCache()
+    let mounted = true
+    if (mounted && !walletAddress) {
+      connectFromCache()
+    }
+    return () => {
+      mounted = false
+    }
   }, [])
 
   return null

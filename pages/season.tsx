@@ -47,7 +47,7 @@ export default function Sidebar() {
       <p>{`Season ${season.current} ${season.hasEnded ? 'ended' : 'ends'} ${
         season.end
       }`}</p>
-      {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
+      {walletAddress && season.hasEnded && (
         <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
           Start Season {ctc.votingPeriod + 1}
         </EndVotingPeriodButton>
