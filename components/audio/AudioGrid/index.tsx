@@ -31,20 +31,7 @@ export default function AudioGrid({ tracks }: { tracks: TrackWithArtist[] }) {
   return (
     <Grid>
       {tracks.map((track: TrackWithArtist) => (
-        <>
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-          <AudioCard key={track.id} track={track} />
-        </>
+        <AudioCard key={track.id} track={track} />
       ))}
     </Grid>
   )
