@@ -5,7 +5,7 @@ import useMagicWallet from 'hooks/useMagicWallet'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import { BsChevronCompactUp } from 'react-icons/bs'
-import moment from 'moment'
+import useOutsideClick from 'hooks/useClickOutside'
 
 const Wrapper = styled.div`
   position: absolute;
@@ -98,8 +98,10 @@ function UserInfo() {
     return 'Membership is Valid'
   }
 
+  const ref = useOutsideClick(() => setOpen(false))
+
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       {isOpen && (
         <MenuContainer>
           <MenuItem isInfo>{getMembershipText()}</MenuItem>
