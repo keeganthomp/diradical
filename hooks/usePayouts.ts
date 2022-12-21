@@ -12,8 +12,9 @@ export default function usePayouts() {
   const [payouts, setPayouts] = useRecoilState(payoutState)
 
   React.useEffect(() => {
+    let mounted = true
     const getRelevantPayouts = async () => {
-      console.log('weee')
+      if (!mounted || payouts) return
       const payoutsFromDb = await fetchPayouts(walletAddress)
       const payoutPeriodsReceived = payoutsFromDb.map((p) => p.period)
       const currentPeriod = await ctc.votingPeriod
@@ -32,9 +33,14 @@ export default function usePayouts() {
         acc.push(period)
         return acc
       }, [])
-      setPayouts(payoutsFromCtc)
+      if (mounted && !payouts) {
+        setPayouts(payoutsFromCtc)
+      }
     }
     if (walletAddress && ctc?.votingPeriod) getRelevantPayouts()
+    return () => {
+      mounted = false
+    }
   }, [walletAddress, ctc?.votingPeriod])
 
   const receivePayouts = async (votingPeriod: number) => {

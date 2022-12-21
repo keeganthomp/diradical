@@ -75,27 +75,7 @@ export default function AudioCardMenu({ track, isOpenToPublic }: Props) {
 
   if (!isProfilePage) return null
 
-  const updateArchiveCache = () => {
-    // queryClient.setQueryData('userTracks', (old: any[]) => {
-    //   const updatedArray = [...old]
-    //   const findTrackIndex = old.findIndex((t) => t.id === track.id)
-    //   updatedArray[findTrackIndex] = {
-    //     ...updatedArray[findTrackIndex],
-    //     archived: !updatedArray[findTrackIndex].archived,
-    //   }
-    //   return updatedArray
-    // })
-    // queryClient.setQueryData('tracks', (old: any[]) => {
-    //   const updatedArray = old ? [...old] : []
-    //   const findTrackIndex = updatedArray.findIndex((t) => t.id === track.id)
-    //   if (findTrackIndex < 0) return old
-    //   updatedArray[findTrackIndex] = {
-    //     ...updatedArray[findTrackIndex],
-    //     archived: !updatedArray[findTrackIndex].archived,
-    //   }
-    //   return updatedArray
-    // })
-  }
+  const updateArchiveCache = () => {}
 
   const handleClickOutside = (e) => {
     if (

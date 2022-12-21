@@ -9,12 +9,18 @@ export default function useSeason() {
   const ctc = useContract()
 
   useEffect(() => {
+    let mounted = true
     if (ctc?.votingPeriod) {
-      setSeason({
-        current: ctc.votingPeriod,
-        end: moment(ctc.endPeriodTime * 1000).fromNow(),
-        hasEnded: ctc.currentSecs > ctc.endPeriodTime,
-      })
+      if (mounted && !season) {
+        setSeason({
+          current: ctc.votingPeriod,
+          end: moment(ctc.endPeriodTime * 1000).fromNow(),
+          hasEnded: ctc.currentSecs > ctc.endPeriodTime,
+        })
+      }
+    }
+    return () => {
+      mounted = false
     }
   }, [ctc?.votingPeriod])
 
