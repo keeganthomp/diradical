@@ -4,10 +4,9 @@ import AudioGrid from 'components/audio/AudioGrid'
 import prisma from 'lib/prisma'
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 5.5rem;
 `
 
 export default function HomePage({ tracks = [] }) {

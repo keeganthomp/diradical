@@ -30,7 +30,7 @@ const Bar = styled.div`
   margin: 0 0.5rem;
   border-radius: 7px;
   overflow: hidden;
-  background: #3e3e3e;
+  background: #aeadadcd;
   @media ${devices.mobile} {
     margin: 0;
     border-radius: 0px;
@@ -38,7 +38,7 @@ const Bar = styled.div`
   }
 `
 const BarFill = styled.div<Props>`
-  background: white;
+  background: #656565;
   height: 100%;
   width: ${(p) => `${p.progress}%`};
   position: absolute;

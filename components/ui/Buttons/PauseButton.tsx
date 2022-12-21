@@ -12,6 +12,9 @@ const StyledButton = styled(Button)<{ audioPlayer?: boolean }>`
   z-index: 8;
   height: ${(p) => (p.audioPlayer ? '2rem' : '3rem')};
   width: ${(p) => (p.audioPlayer ? '2rem' : '3rem')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
   @media ${devices.mobile} {
     height: 3rem;
     width: 3rem;
@@ -20,7 +23,7 @@ const StyledButton = styled(Button)<{ audioPlayer?: boolean }>`
 
 const PauseIcon = styled(FaPause)`
   position: relative;
-  top: 2px;
+  top: 1px;
   font-size: 20px;
   font-size: ${(p) => (p.audioPlayer ? '2rem' : '20px')};
 `

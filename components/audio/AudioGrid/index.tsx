@@ -13,8 +13,6 @@ const Grid = styled.div`
   grid-gap: 1.25rem;
   justify-items: center;
   row-gap: 1.5rem;
-  height: calc(100vh - 7rem);
-  overflow-y: scroll;
   @media ${devices.medium} {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -33,7 +31,20 @@ export default function AudioGrid({ tracks }: { tracks: TrackWithArtist[] }) {
   return (
     <Grid>
       {tracks.map((track: TrackWithArtist) => (
-        <AudioCard key={track.id} track={track} />
+        <>
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+          <AudioCard key={track.id} track={track} />
+        </>
       ))}
     </Grid>
   )

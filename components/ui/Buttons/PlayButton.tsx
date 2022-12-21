@@ -25,7 +25,7 @@ const StyledButton = styled(Button)<{ audioPlayer?: boolean }>`
 `
 const PlayIcon = styled(FaPlay)<{ audioPlayer?: boolean }>`
   position: relative;
-  top: 2px;
+  top: 1px;
   left: 2px;
   font-size: ${(p) => (p.audioPlayer ? '2rem' : '20px')};
 `
