@@ -1271,6 +1271,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
+"@enzoferey/ethers-error-parser@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@enzoferey/ethers-error-parser/-/ethers-error-parser-0.2.3.tgz#f7e6e37bd9cda48f650c264a83c78aeaf8957954"
+  integrity sha512-Xt5DPAwJP/Czvw6bVLuWpk+y3M5z1fKWUy3w8nLV7WLfDxoN+HmtqQ1+vgG4lvmD2Xr/bW2mBvHPyI3bKDkuXA==
+
 "@eslint/eslintrc@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.4.0.tgz#8ec64e0df3e7a1971ee1ff5158da87389f167a63"
@@ -7157,11 +7162,6 @@ raw-body@2.5.1:
     http-errors "2.0.0"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
-
-react-crypto-icons@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/react-crypto-icons/-/react-crypto-icons-1.0.5.tgz#015912c20d6c3177861afeaab3f37e4200556ca9"
-  integrity sha512-kh8O55ze+ib2dJOAORcmhCB9a1SuBdj3f1Q6GGzVez/yL8NXklRKz32hKAVAJPCDuR8iXRuG51DrxVGouNdIEw==
 
 react-dom@17.0.2:
   version "17.0.2"

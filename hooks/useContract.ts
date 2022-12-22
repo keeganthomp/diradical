@@ -27,6 +27,7 @@ const useContract = () => {
   if (!web3) return null
 
   const contract = new web3.eth.Contract(abi, ROYALTY_CTC_ADDRESS)
+  const getGasPrice = async () => await web3.eth.getGasPrice()
 
   const {
     addSong: ctcAddSong,
@@ -94,53 +95,48 @@ const useContract = () => {
     cb: (songId: number | string) => void,
   ) => {
     if (!walletAddress) return
+    const gasPrice = await getGasPrice()
     const [artBytes32, audioBytes32] = [
       convertIpfsCidV0ToByte32(artIPFSHash),
       convertIpfsCidV0ToByte32(audioIPFSHASH),
     ]
     const method = () => ctcAddSong(artBytes32, audioBytes32)
-    await method()
-      .send({
-        from: walletAddress,
-        gas: DEFAULT_GAS_LIMIT,
-        gasPrice: await web3.eth.getGasPrice(),
+    try {
+      const receipt = await method().send({
+        gasPrice,
       })
-      .on('receipt', async (receipt) => {
-        const {
-          events: {
-            songAdded: { returnValues },
-          },
-        } = receipt
-        const songId = Number(returnValues[0])
-        await cb(songId)
-      })
-      .on('error', (_, receipt) => {
-        console.log('Error Adding Song:', receipt)
-      })
+      const {
+        events: {
+          songAdded: { returnValues },
+        },
+      } = receipt
+      const songId = Number(returnValues[0])
+      await cb(songId)
+    } catch (err) {
+      console.log('Error adding song', err)
+    }
   }
 
   const buyMembership = async () => {
     if (!walletAddress) return
-    const method = () => ctcBuyMembership()
-    await method()
-      .send({
+    const gasPrice = await getGasPrice()
+    try {
+      const receipt = await ctcBuyMembership().send({
         value: parseCurrency(views.membershipCost),
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
-        gasPrice: await web3.eth.getGasPrice(),
+        gasPrice,
       })
-      .on('receipt', async function (receipt) {
-        const {
-          events: {
-            membershipPurchased: { returnValues },
-          },
-        } = receipt
-        const membershipExp = Number(returnValues[1])
-        await register(walletAddress, membershipExp)
-      })
-      .on('error', function (_, receipt) {
-        console.log('Error Buying Membership:', receipt)
-      })
+      const {
+        events: {
+          membershipPurchased: { returnValues },
+        },
+      } = receipt
+      const membershipExp = Number(returnValues[1])
+      await register(walletAddress, membershipExp)
+    } catch (err) {
+      console.log('Error buying membership', err)
+    }
   }
 
   const vote = async (
@@ -148,79 +144,73 @@ const useContract = () => {
     cb: (wallet: string, votedPeriod: number) => void,
   ) => {
     if (!walletAddress) return
-    const method = () => ctcVote(artist)
-    await method()
-      .send({
+    const gasPrice = await getGasPrice()
+    try {
+      const receipt = await ctcVote(artist).send({
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
-        gasPrice: await web3.eth.getGasPrice(),
+        gasPrice,
       })
-      .on('receipt', async (receipt) => {
-        const {
-          events: {
-            voted: { returnValues },
-          },
-        } = receipt
-        const votedPeriod = Number(returnValues[1])
-        await cb(walletAddress, votedPeriod)
-      })
-      .on('error', function (_, receipt) {
-        console.log('Error voting:', receipt)
-      })
+      const {
+        events: {
+          voted: { returnValues },
+        },
+      } = receipt
+      const votedPeriod = Number(returnValues[1])
+      await cb(walletAddress, votedPeriod)
+    } catch (err) {
+      console.log('Error voting', err)
+    }
   }
 
   const endVotingPeriod = async () => {
     if (!walletAddress) return
-    const method = () => ctcEndVotingPeriod()
-    await method()
-      .send({
+    const gasPrice = await getGasPrice()
+    try {
+      const receipt = await ctcEndVotingPeriod().send({
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
-        gasPrice: await web3.eth.getGasPrice(),
+        gasPrice,
       })
-      .on('receipt', async (receipt) => {
-        const {
-          events: {
-            endedVotingPeriod: { returnValues },
-          },
-        } = receipt
-        const endPeriodTime = await getPeriodEndTime().call()
-        const currentTime = await getNetworkSecs()
-        setContractData({
-          ...views,
-          votingPeriod: Number(returnValues[0]) + 1,
-          endPeriodTime: Number(endPeriodTime),
-          currentSecs: currentTime,
-        })
+      const {
+        events: {
+          endedVotingPeriod: { returnValues },
+        },
+      } = receipt
+      const endPeriodTime = await getPeriodEndTime().call()
+      const currentTime = await getNetworkSecs()
+      setContractData({
+        ...views,
+        votingPeriod: Number(returnValues[0]) + 1,
+        endPeriodTime: Number(endPeriodTime),
+        currentSecs: currentTime,
       })
-      .on('error', function (_, receipt) {
-        console.log('Error ending voting period:', receipt)
-      })
+    } catch (err) {
+      console.log('Error ending voting period', err)
+    }
   }
 
   const receivePayout = async (vPeriod: number) => {
     if (!walletAddress) return
-    const method = () => ctcReceivePayout(vPeriod)
-    await method()
-      .send({
+    const gasPrice = await getGasPrice()
+    try {
+      const receipt = await ctcReceivePayout(vPeriod).send({
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
-        gasPrice: await web3.eth.getGasPrice(),
+        gasPrice,
       })
-      .on('receipt', async (receipt) => {
-        const {
-          events: {
-            payoutReceived: { returnValues },
-          },
-        } = receipt
-        const receiver = returnValues[0]
-        const season = Number(returnValues[1])
-        const amount = Number(returnValues[2])
-        await addPayout(receiver, amount, season)
-      })
-      .on('error', function (_, receipt) {
-        console.log('Error receiving payout:', receipt)
-      })
+      const {
+        events: {
+          payoutReceived: { returnValues },
+        },
+      } = receipt
+      const receiver = returnValues[0]
+      const season = Number(returnValues[1])
+      const amount = Number(returnValues[2])
+      await addPayout(receiver, amount, season)
+    } catch (err) {
+      console.log('Error receiving payout', err)
+    }
   }
 
   return {

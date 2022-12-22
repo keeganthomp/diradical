@@ -26,8 +26,7 @@ const useMagicWallet = () => {
 
   const rpcProvider = magicMatic.rpcProvider
   const maticWeb3 = new Web3(rpcProvider as any)
-
-  maticWeb3.currentProvider
+  maticWeb3.eth.handleRevert = true
 
   const showWallet = async () => {
     // TODO: check if wallet type is 'magic'
