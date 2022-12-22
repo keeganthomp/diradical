@@ -7,6 +7,7 @@ import { Button } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import useSeason from 'hooks/useSeason'
 import { formatCurrency } from 'utils'
+import { ErrorMessage } from 'types'
 
 const Container = styled.div`
   width: 100%;
@@ -59,8 +60,12 @@ export default function Sidebar() {
   const handleEndVotingPeriod = async () => {
     try {
       await ctc.endVotingPeriod()
-    } catch {
-      openModal(ModalType.ERROR, 'Error ending voting period')
+    } catch (err) {
+      if (err.message === ErrorMessage.SEASON_NOT_OVER) {
+        openModal(ModalType.ERROR, 'Season not over yet!')
+      } else {
+        openModal(ModalType.ERROR, 'Unable to start new season')
+      }
     }
   }
 

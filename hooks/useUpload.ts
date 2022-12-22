@@ -1,7 +1,9 @@
 import useModal from 'hooks/useModal'
 import axios from 'axios'
+import useApi from './useApi'
 import useContract from './useContract'
 import useMagicWallet from './useMagicWallet'
+import { ErrorMessage } from 'types'
 
 type UploadProps = {
   title: string
@@ -10,21 +12,20 @@ type UploadProps = {
 }
 
 export default function useUpload() {
-  const { addSong } = useContract()
+  const { addSong, checkIfPeriodEnded } = useContract()
+  const { addSong: addSongToDb } = useApi()
   const { walletAddress } = useMagicWallet()
   const { openModal, ModalType, closeModal } = useModal()
 
   const showSignModal = () => {
     openModal(ModalType.SIGNING)
   }
-  const showErrorModal = (error: string) => {
-    openModal(ModalType.ERROR, error)
-  }
 
   const upload = async ({ title, coverArtFile, audioFile }: UploadProps) => {
     if (!walletAddress) return
     try {
-      showSignModal()
+      const isPeriodOver = await checkIfPeriodEnded()
+      if (isPeriodOver) throw new Error(ErrorMessage.SEASON_OVER)
       const formData = new FormData()
       formData.set('coverArtFile', coverArtFile)
       formData.set('audioFile', audioFile)
@@ -33,20 +34,19 @@ export default function useUpload() {
         data: { audioIPFSCid, coverArtIPFSCid },
       } = await axios.post('/api/ipfs', formData)
       // add to royalty contract
-      // callback - index in db
-      await addSong(coverArtIPFSCid, audioIPFSCid, (songId) =>
-        axios.post('/api/tracks/upload', {
-          songId,
-          title,
-          audioIPFSCid,
-          coverArtIPFSCid,
-          wallet: walletAddress,
-        }),
-      )
+      const songId = await addSong(coverArtIPFSCid, audioIPFSCid)
+      console.log('songId', songId)
+      // index in db
+      await addSongToDb({
+        songId,
+        title,
+        audioIPFSCid,
+        coverArtIPFSCid,
+        wallet: walletAddress,
+      })
       closeModal()
     } catch (err) {
-      showErrorModal('Error uploading track')
-      console.log('err uploading track', err)
+      throw new Error(err.message)
     }
   }
 

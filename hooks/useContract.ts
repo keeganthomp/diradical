@@ -9,8 +9,10 @@ import {
   formatCurrency,
   parseCurrency,
 } from 'utils'
+import { ErrorMessage } from 'types'
 import useApi from './useApi'
 import useMagicWallet from './useMagicWallet'
+import useUser from './useUser'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
@@ -19,10 +21,12 @@ const ROYALTY_CTC_ADDRESS = '0x3f0fB8B9e81D5cf4ec80DD538525B1C20ab3f8e5'
 const DEFAULT_GAS_LIMIT = 5_000_000
 
 const useContract = () => {
+  const [isProcessing, setProcessing] = useState(false)
   const [isFetchingViews, setFetching] = useState(false)
   const { web3, walletAddress } = useMagicWallet()
   const [views, setContractData] = useRecoilState(contractViewState)
-  const { register, addPayout } = useApi()
+  const { register, addPayout, addVote } = useApi()
+  const { user } = useUser()
 
   if (!web3) return null
 
@@ -43,6 +47,12 @@ const useContract = () => {
     getPeriodVotes: ctcGetPeriodVotes,
     getPeriodMembers: ctcGetPeriodMembers,
   } = contract.methods
+
+  const checkIfPeriodEnded = async () => {
+    const currentSecs = await getNetworkSecs()
+    const endPeriodBlock = await contract.methods.getPeriodEndTime().call()
+    return currentSecs >= endPeriodBlock
+  }
 
   // fetch global views
   useEffect(() => {
@@ -89,20 +99,23 @@ const useContract = () => {
     }
   }
 
-  const addSong = async (
-    artIPFSHash: string,
-    audioIPFSHASH: string,
-    cb: (songId: number | string) => void,
-  ) => {
-    if (!walletAddress) return
-    const gasPrice = await getGasPrice()
+  const addSong = async (artIPFSHash: string, audioIPFSHASH: string) => {
+    if (!walletAddress || !user) return
+    setProcessing(true)
+    const hasPeriodEnded = await checkIfPeriodEnded()
+    if (hasPeriodEnded) {
+      setProcessing(false)
+      throw new Error(ErrorMessage.SEASON_OVER)
+    }
     const [artBytes32, audioBytes32] = [
       convertIpfsCidV0ToByte32(artIPFSHash),
       convertIpfsCidV0ToByte32(audioIPFSHASH),
     ]
-    const method = () => ctcAddSong(artBytes32, audioBytes32)
     try {
-      const receipt = await method().send({
+      const gasPrice = await getGasPrice()
+      const receipt = await ctcAddSong(artBytes32, audioBytes32).send({
+        from: walletAddress,
+        gas: DEFAULT_GAS_LIMIT,
         gasPrice,
       })
       const {
@@ -111,16 +124,22 @@ const useContract = () => {
         },
       } = receipt
       const songId = Number(returnValues[0])
-      await cb(songId)
+      return songId
     } catch (err) {
-      console.log('Error adding song', err)
+      throw new Error(err)
     }
   }
 
   const buyMembership = async () => {
     if (!walletAddress) return
-    const gasPrice = await getGasPrice()
+    setProcessing(true)
+    const hasPeriodEnded = await checkIfPeriodEnded()
+    if (hasPeriodEnded) {
+      setProcessing(false)
+      throw new Error(ErrorMessage.SEASON_NOT_OVER)
+    }
     try {
+      const gasPrice = await getGasPrice()
       const receipt = await ctcBuyMembership().send({
         value: parseCurrency(views.membershipCost),
         from: walletAddress,
@@ -135,17 +154,17 @@ const useContract = () => {
       const membershipExp = Number(returnValues[1])
       await register(walletAddress, membershipExp)
     } catch (err) {
-      console.log('Error buying membership', err)
+      console.log('error buying membership', err)
+    } finally {
+      setProcessing(false)
     }
   }
 
-  const vote = async (
-    artist: string,
-    cb: (wallet: string, votedPeriod: number) => void,
-  ) => {
+  const vote = async (artist: string) => {
     if (!walletAddress) return
-    const gasPrice = await getGasPrice()
+    setProcessing(true)
     try {
+      const gasPrice = await getGasPrice()
       const receipt = await ctcVote(artist).send({
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
@@ -157,16 +176,26 @@ const useContract = () => {
         },
       } = receipt
       const votedPeriod = Number(returnValues[1])
-      await cb(walletAddress, votedPeriod)
+      await addVote(walletAddress, artist, votedPeriod)
     } catch (err) {
-      console.log('Error voting', err)
+      console.log('error voting', err)
+    } finally {
+      setProcessing(false)
     }
   }
 
   const endVotingPeriod = async () => {
     if (!walletAddress) return
-    const gasPrice = await getGasPrice()
+    setProcessing(true)
+    const currentSecs = await getNetworkSecs()
+    const endPeriodTime = await getPeriodEndTime().call()
+    const fmtEndPriosTime = Number(endPeriodTime)
+    if (fmtEndPriosTime > currentSecs) {
+      setProcessing(false)
+      throw new Error(ErrorMessage.SEASON_NOT_OVER)
+    }
     try {
+      const gasPrice = await getGasPrice()
       const receipt = await ctcEndVotingPeriod().send({
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
@@ -187,13 +216,16 @@ const useContract = () => {
       })
     } catch (err) {
       console.log('Error ending voting period', err)
+    } finally {
+      setProcessing(false)
     }
   }
 
   const receivePayout = async (vPeriod: number) => {
     if (!walletAddress) return
-    const gasPrice = await getGasPrice()
+    setProcessing(true)
     try {
+      const gasPrice = await getGasPrice()
       const receipt = await ctcReceivePayout(vPeriod).send({
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
@@ -210,6 +242,8 @@ const useContract = () => {
       await addPayout(receiver, amount, season)
     } catch (err) {
       console.log('Error receiving payout', err)
+    } finally {
+      setProcessing(false)
     }
   }
 
@@ -222,6 +256,8 @@ const useContract = () => {
     getSongInfo,
     isFetchingViews,
     getSeasonInfo,
+    isProcessing,
+    checkIfPeriodEnded,
     ...views,
   }
 }

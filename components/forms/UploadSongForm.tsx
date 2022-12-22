@@ -36,9 +36,15 @@ const Label = styled.label`
   text-transform: lowercase;
 `
 
-export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
+export function UploadForm({
+  onSubmit,
+  onError,
+}: {
+  onSubmit?: () => void
+  onError?: (e: any) => void
+}) {
   const { upload } = useUpload()
-  const { register, handleSubmit, reset, formState, getValues } = useForm({
+  const { register, handleSubmit, reset, formState } = useForm({
     mode: 'all',
     defaultValues: {
       title: '',
@@ -53,9 +59,13 @@ export function UploadForm({ onSubmit }: { onSubmit?: () => void }) {
       coverArtFile: data.artFiles[0],
       audioFile: data.audioFiles[0],
     }
-    await upload(songPayload)
-    reset()
-    if (onSubmit) onSubmit()
+    try {
+      await upload(songPayload)
+      reset()
+      if (onSubmit) onSubmit()
+    } catch (error) {
+      onError(error)
+    }
   }
 
   return (

@@ -76,10 +76,14 @@ const useMagicWallet = () => {
 
   const logout = async () => {
     try {
+      setMagicWallet({
+        ...magicWallet,
+        isAuthenticating: true,
+      })
       await magicMatic.connect.disconnect()
       setMagicWallet({
-        walletAddress: '',
         isAuthenticating: false,
+        walletAddress: '',
       })
       console.log('Logged out!')
     } catch (error) {

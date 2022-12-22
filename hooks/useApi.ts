@@ -38,6 +38,33 @@ const useApi = () => {
     })
   const fetchPayouts = (wallet: string) =>
     callApi(`/api/user/${wallet}/payouts`)
+  const addSong = ({
+    songId,
+    title,
+    audioIPFSCid,
+    coverArtIPFSCid,
+    wallet,
+  }: {
+    songId: number
+    title: string
+    audioIPFSCid: string
+    coverArtIPFSCid: string
+    wallet: string
+  }) => {
+    callApi('/api/tracks/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        songId,
+        title,
+        audioIPFSCid,
+        coverArtIPFSCid,
+        wallet,
+      }),
+    })
+  }
 
   return {
     fetchAllTracks,
@@ -46,6 +73,7 @@ const useApi = () => {
     addVote,
     addPayout,
     fetchPayouts,
+    addSong,
   }
 }
 

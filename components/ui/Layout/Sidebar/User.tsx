@@ -99,6 +99,9 @@ function UserInfo() {
   }
 
   const ref = useOutsideClick(() => setOpen(false))
+  const handleLogout = async () => {
+    await logout()
+  }
 
   return (
     <Wrapper ref={ref}>
@@ -106,7 +109,7 @@ function UserInfo() {
         <MenuContainer>
           <MenuItem isInfo>{getMembershipText()}</MenuItem>
           <MenuItem onClick={showWallet}>Wallet</MenuItem>
-          <LogoutButton onClick={logout}>Logout</LogoutButton>
+          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
         </MenuContainer>
       )}
       <Container onClick={toggleOpen}>

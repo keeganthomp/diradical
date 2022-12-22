@@ -1,12 +1,13 @@
 import styled from 'styled-components'
+import Loader from '../Loader'
 
-const StyledButton = styled.button<{ active?: boolean }>`
+const StyledButton = styled.button<{ active?: boolean; isLoading?: boolean }>`
   background: transparent;
   display: flex;
-  justify-content: flex-start;
+  justify-content: ${({ isLoading }) => (isLoading ? 'center' : 'flex-start')};
   align-items: center;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
+  transition: background 0.15s ease-in-out;
   border-radius: 30px;
   width: 100%;
   font-size: 16px;
@@ -15,6 +16,10 @@ const StyledButton = styled.button<{ active?: boolean }>`
   padding: 10px 0 10px 8px;
   &:hover {
     background: #f0f0f09d;
+  }
+  &:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
   }
 `
 
@@ -28,15 +33,29 @@ export default function SidebarButton({
   children,
   icon,
   onClick,
+  disabled,
+  isLoading,
 }: {
   children: React.ReactNode
   onClick: () => void
   icon: JSX.Element
+  disabled?: boolean
+  isLoading?: boolean
 }) {
   return (
-    <StyledButton onClick={onClick}>
-      {icon && <Icon>{icon}</Icon>}
-      <Title>{children}</Title>
+    <StyledButton
+      isLoading={isLoading}
+      disabled={disabled || isLoading}
+      onClick={onClick}
+    >
+      {isLoading ? (
+        <Loader color='#000' size={20} />
+      ) : (
+        <>
+          {icon && <Icon>{icon}</Icon>}
+          <Title>{children}</Title>
+        </>
+      )}
     </StyledButton>
   )
 }

@@ -12,6 +12,7 @@ import { BsPeople, BsPersonCheck } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import UserIfno from './User'
+import { ErrorMessage } from 'types'
 
 const Container = styled.div`
   position: relative;
@@ -60,8 +61,10 @@ export default function Sidebar() {
   const handleBuyMembership = async () => {
     try {
       await ctc.buyMembership()
-    } catch {
-      openModal(ModalType.ERROR, 'Error buying membership')
+    } catch (err) {
+      if (err.message === ErrorMessage.SEASON_NOT_OVER) {
+        openModal(ModalType.ERROR, 'Start the new Season first!')
+      }
     }
   }
 
@@ -91,7 +94,11 @@ export default function Sidebar() {
           </AuthButtonContainer>
         )}
         {showBuyMembButton && (
-          <SidebarButton icon={<BsPeople />} onClick={handleBuyMembership}>
+          <SidebarButton
+            isLoading={ctc.isProcessing}
+            icon={<BsPeople />}
+            onClick={handleBuyMembership}
+          >
             Buy Membership
           </SidebarButton>
         )}

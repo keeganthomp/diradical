@@ -5,7 +5,6 @@ import prisma from 'lib/prisma'
 import { Button } from 'components/ui/Buttons'
 import { useRouter } from 'next/router'
 import useContract from 'hooks/useContract'
-import useApi from 'hooks/useApi'
 import useUser from 'hooks/useUser'
 
 const Container = styled.div`
@@ -29,13 +28,10 @@ export default function ArtistPage({ artistTracks }) {
   const { user } = useUser()
   const ctc = useContract()
   const router = useRouter()
-  const { addVote } = useApi()
   const artistWallet = router.query.artistId
 
   const handleVote = async () => {
-    await ctc.vote(artistWallet as string, (voterWallet, votingPeriod) =>
-      addVote(voterWallet, artistWallet as string, votingPeriod),
-    )
+    await ctc.vote(artistWallet as string)
     console.log('done voting')
   }
 
