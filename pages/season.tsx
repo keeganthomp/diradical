@@ -19,9 +19,7 @@ const Container = styled.div`
   align-items: center;
   height: 100%;
   overflow-y: auto;
-  @media ${devices.mobile} {
-    justify-content: flex-start;
-  }
+  justify-content: flex-start;
 `
 
 const EndVotingPeriodButton = styled(Button)`

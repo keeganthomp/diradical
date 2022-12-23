@@ -9,6 +9,17 @@ import Loader from 'components/ui/Loader'
 import { devices } from 'styles/theme'
 import PleaseConnect from 'components/ui/PleaseConnect'
 
+const Wrapper = styled.div`
+  height: 100%;
+`
+
+const Title = styled.p`
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.5rem;
+  padding-bottom: 1rem;
+`
+
 const Container = styled.div`
   width: 100%;
   text-align: center;
@@ -18,12 +29,13 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
   overflow-y: auto;
   @media ${devices.mobile} {
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    padding-bottom: 4.5rem;
   }
 `
 
@@ -87,17 +99,20 @@ export default function Sidebar() {
     )
 
   return (
-    <Container>
-      {payouts.map(
-        (p) =>
-          !p.received && (
-            <PayoutCard
-              key={p.period}
-              payout={p}
-              onClick={() => receivePayouts(p.period)}
-            />
-          ),
-      )}
-    </Container>
+    <Wrapper>
+      <Title>Payouts</Title>
+      <Container>
+        {payouts.map(
+          (p) =>
+            !p.received && (
+              <PayoutCard
+                key={p.period}
+                payout={p}
+                onClick={() => receivePayouts(p.period)}
+              />
+            ),
+        )}
+      </Container>
+    </Wrapper>
   )
 }

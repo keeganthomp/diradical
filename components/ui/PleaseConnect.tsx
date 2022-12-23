@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { Button } from 'components/ui/Buttons'
 import React from 'react'
 import useMagicWallet from 'hooks/useMagicWallet'
+import Loader from './Loader'
 
 const LoginButton = styled(Button)`
   width: 10rem;
@@ -20,12 +21,16 @@ const Title = styled.p`
 `
 
 export default function PleaseConnect() {
-  const { authenticate } = useMagicWallet()
+  const { authenticate, isAuthenticating } = useMagicWallet()
 
   return (
     <Container>
       <Title>Please Connect</Title>
-      <LoginButton onClick={authenticate}>Login</LoginButton>
+      {isAuthenticating ? (
+        <Loader color='#000' />
+      ) : (
+        <LoginButton onClick={authenticate}>Login</LoginButton>
+      )}
     </Container>
   )
 }
