@@ -1,4 +1,3 @@
-import useModal from 'hooks/useModal'
 import axios from 'axios'
 import useApi from './useApi'
 import useContract from './useContract'
@@ -15,11 +14,6 @@ export default function useUpload() {
   const { addSong, checkIfPeriodEnded } = useContract()
   const { addSong: addSongToDb } = useApi()
   const { walletAddress } = useMagicWallet()
-  const { openModal, ModalType, closeModal } = useModal()
-
-  const showSignModal = () => {
-    openModal(ModalType.SIGNING)
-  }
 
   const upload = async ({ title, coverArtFile, audioFile }: UploadProps) => {
     if (!walletAddress) return
@@ -44,7 +38,6 @@ export default function useUpload() {
         coverArtIPFSCid,
         wallet: walletAddress,
       })
-      closeModal()
     } catch (err) {
       throw new Error(err.message)
     }

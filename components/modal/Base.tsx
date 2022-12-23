@@ -39,7 +39,7 @@ function BaseModal({ children }: { children: React.ReactNode }) {
   const { currentModal, closeModal } = useModal()
   return (
     <Modal isOpen style={customStyles} contentLabel='Example Modal'>
-      {!currentModal.hideClose && <CloseIcon onClick={closeModal} />}
+      <CloseIcon onClick={closeModal} />
       {children}
     </Modal>
   )

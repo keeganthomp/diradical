@@ -5,11 +5,9 @@ const useModal = () => {
   const [currentModal, setModal] = useRecoilState(modalState)
 
   const openModal = (type: ModalType, error = '') => {
-    const hideClose = type === ModalType.SIGNING ? true : false
     setModal(() => ({
       error,
       type: type,
-      hideClose,
     }))
   }
 

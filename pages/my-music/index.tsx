@@ -1,11 +1,11 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
-import useModal from 'hooks/useModal'
 import { Button } from 'components/ui/Buttons'
 import React from 'react'
 import useMagicWallet from 'hooks/useMagicWallet'
 import useMusic from 'hooks/useMusic'
 import Loader from 'components/ui/Loader'
+import { useRouter } from 'next/router'
 
 const UploadButton = styled(Button)`
   width: 10rem;
@@ -19,13 +19,11 @@ const Container = styled.div`
 `
 
 export default function ProfilePage() {
-  const { openModal, ModalType } = useModal()
+  const router = useRouter()
   const { walletAddress } = useMagicWallet()
   const { tracks, isLoading } = useMusic(walletAddress)
 
-  const openUploadModal = () => {
-    openModal(ModalType.UPLOAD)
-  }
+  const gotoUpload = () => router.push('/my-music/upload')
 
   if (!walletAddress)
     return (
@@ -43,7 +41,7 @@ export default function ProfilePage() {
 
   return (
     <Container>
-      <UploadButton onClick={openUploadModal}>upload</UploadButton>
+      <UploadButton onClick={gotoUpload}>upload</UploadButton>
       <AudioGrid tracks={tracks} />
     </Container>
   )

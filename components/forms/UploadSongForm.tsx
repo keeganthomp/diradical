@@ -3,48 +3,59 @@ import React from 'react'
 import styled from 'styled-components'
 import { Button } from 'components/ui/Buttons'
 import useUpload from 'hooks/useUpload'
+import { IoIosCloseCircle } from 'react-icons/io'
 import TextInput from '../ui/Inputs/TextInput'
 import Form from './Form'
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-`
 
 const UploadButton = styled(Button)`
   width: 100%;
 `
 
-const ModalTitle = styled.h3`
-  font-weight: 400;
-  margin: 0;
-  text-transform: uppercase;
+const UploadForma = styled(Form)`
+  width: 14rem;
 `
+
 const Field = styled.div`
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-align: center;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
-const Label = styled.label`
-  font-weight: 200;
-  text-transform: lowercase;
+const FilePreview = styled.div`
+  position: relative;
+`
+const RemoveFileButton = styled(IoIosCloseCircle)`
+  width: 16px;
+  position: absolute;
+  top: 7px;
+  right: 0;
+  color: red;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
 `
 
-export function UploadForm({
-  onSubmit,
-  onError,
-}: {
-  onSubmit?: () => void
-  onError?: (e: any) => void
-}) {
+const SelectFileButton = styled.p`
+  background: #e3e3e3b0;
+  padding: 2px 0;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+  }
+`
+
+export function UploadForm() {
   const { upload } = useUpload()
-  const { register, handleSubmit, reset, formState } = useForm({
+  const { register, handleSubmit, formState, watch, setValue } = useForm({
     mode: 'all',
     defaultValues: {
       title: '',
@@ -52,6 +63,9 @@ export function UploadForm({
       artFiles: [] as File[],
     },
   })
+  const [selectAudioFiles, selectedArtFiles] = watch(['audioFiles', 'artFiles'])
+  const audioFile = selectAudioFiles[0]
+  const artFile = selectedArtFiles[0]
 
   const uploadTrack = async (data) => {
     const songPayload = {
@@ -61,59 +75,74 @@ export function UploadForm({
     }
     try {
       await upload(songPayload)
-      reset()
-      if (onSubmit) onSubmit()
     } catch (error) {
-      onError(error)
+      throw new Error('oops')
     }
   }
 
   return (
-    <Container>
-      <ModalTitle>upload a song</ModalTitle>
-      <Form onSubmit={handleSubmit(uploadTrack)}>
-        <Field>
-          <Label>song sitle</Label>
-          <TextInput
-            {...register('title', {
-              required: true,
-            })}
-            placeholder='rad song xxx'
-            disabled={formState.isSubmitting}
-          />
-        </Field>
-        <Field>
-          <Label>Choose audio file</Label>
-          <input
-            name='audioFiles'
-            type='file'
-            accept='.mp3,.wav'
-            {...register('audioFiles', {
-              required: true,
-            })}
-            disabled={formState.isSubmitting}
-          />
-        </Field>
-        <Field>
-          <Label>Choose cover image</Label>
-          <input
-            name='coverArt'
-            type='file'
-            accept='image/*'
-            {...register('artFiles', {
-              required: true,
-            })}
-            disabled={formState.isSubmitting}
-          />
-        </Field>
-        <UploadButton
-          disabled={!formState.isValid || formState.isSubmitting}
-          type='submit'
-        >
-          Submit
-        </UploadButton>
-      </Form>
-    </Container>
+    <UploadForma onSubmit={handleSubmit(uploadTrack)}>
+      <Field>
+        <TextInput
+          {...register('title', {
+            required: true,
+          })}
+          placeholder='Song Title'
+          disabled={formState.isSubmitting}
+        />
+      </Field>
+      <Field>
+        {audioFile ? (
+          <FilePreview>
+            <p>{audioFile.name}</p>
+            <RemoveFileButton onClick={() => setValue('audioFiles', [])} />
+          </FilePreview>
+        ) : (
+          <label>
+            <input
+              style={{ display: 'none' }}
+              name='audioFiles'
+              accept='.mp3,.wav'
+              {...register('audioFiles', {
+                required: true,
+                onChange: (e) => console.log(e.target.files),
+              })}
+              type='file'
+              disabled={formState.isSubmitting}
+            />
+            <SelectFileButton>Select Audio File</SelectFileButton>
+          </label>
+        )}
+      </Field>
+      <Field>
+        {artFile ? (
+          <FilePreview>
+            <p>{artFile.name}</p>
+            <RemoveFileButton onClick={() => setValue('artFiles', [])} />
+          </FilePreview>
+        ) : (
+          <label>
+            <input
+              name='coverArt'
+              style={{ display: 'none' }}
+              type='file'
+              accept='image/*'
+              {...register('artFiles', {
+                required: true,
+              })}
+              disabled={formState.isSubmitting}
+            />
+            <SelectFileButton>Select Art File</SelectFileButton>
+          </label>
+        )}
+      </Field>
+      <UploadButton
+        disabled={!formState.isValid || formState.isSubmitting}
+        type='submit'
+      >
+        Upload
+      </UploadButton>
+    </UploadForma>
   )
 }
 
