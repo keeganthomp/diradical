@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import UploadForm from 'components/forms/UploadSongForm'
 import { IoArrowBack } from 'react-icons/io5'
 import { useRouter } from 'next/router'

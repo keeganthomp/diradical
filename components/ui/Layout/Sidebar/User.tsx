@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useState } from 'react'
 import { truncateWalletAddress } from 'utils'
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import { BsChevronCompactUp } from 'react-icons/bs'

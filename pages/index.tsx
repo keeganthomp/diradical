@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import AudioGrid from 'components/audio/AudioGrid'
-import prisma from 'lib/prisma'
+import useCatalog from 'hooks/music/useCatalog'
+import Loader from 'components/ui/Loader'
 
 const Container = styled.div`
   height: 100%;
@@ -9,22 +10,25 @@ const Container = styled.div`
   padding-bottom: 5.5rem;
 `
 
-export default function HomePage({ tracks = [] }) {
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+export default function HomePage() {
+  const { tracks, isLoading } = useCatalog()
+
+  if (isLoading)
+    return (
+      <LoadingContainer>
+        <Loader color='#000' />
+      </LoadingContainer>
+    )
+
   return (
     <Container>
       <AudioGrid tracks={tracks} />
     </Container>
   )
-}
-
-export async function getStaticProps() {
-  const tracks = await prisma.track.findMany({
-    where: { archived: false },
-    include: { artist: { select: { wallet: true } } },
-  })
-  return {
-    props: {
-      tracks: JSON.parse(JSON.stringify(tracks)),
-    },
-  }
 }

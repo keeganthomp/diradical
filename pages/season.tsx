@@ -2,13 +2,14 @@ import styled from 'styled-components'
 import React from 'react'
 import useContract from 'hooks/useContract'
 import useModal from 'hooks/useModal'
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import { Button } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import useSeason from 'hooks/useSeason'
 import { formatCurrency } from 'utils'
 import { ErrorMessage } from 'types'
 import { devices } from 'styles/theme'
+import moment from 'moment'
 
 const Container = styled.div`
   width: 100%;
@@ -61,20 +62,33 @@ const StatNumber = styled.p`
 `
 
 export default function Sidebar() {
-  const { season } = useSeason()
+  const [isEnding, setIsEnding] = React.useState(false)
+  const { season, updateSeason } = useSeason()
   const { walletAddress } = useMagicWallet()
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
 
   const handleEndVotingPeriod = async () => {
     try {
-      await ctc.endVotingPeriod()
+      setIsEnding(true)
+      const { newSeason, newEnd } = await ctc.endVotingPeriod()
+      const fmtEndTime = moment(newEnd * 1000).fromNow()
+      updateSeason({
+        current: newSeason,
+        end: fmtEndTime,
+        payout: 0,
+        members: 0,
+        votes: 0,
+        hasEnded: false,
+      })
     } catch (err) {
       if (err.message === ErrorMessage.SEASON_NOT_OVER) {
         openModal(ModalType.ERROR, 'Season not over yet!')
       } else {
         openModal(ModalType.ERROR, 'Unable to start new season')
       }
+    } finally {
+      setIsEnding(false)
     }
   }
 
@@ -105,11 +119,15 @@ export default function Sidebar() {
           <StatNumber>{season.members}</StatNumber>
         </Stat>
       </StatsContainer>
-      {walletAddress && season.hasEnded && (
-        <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
-          Start Season {ctc.votingPeriod + 1}
-        </EndVotingPeriodButton>
-      )}
+      {walletAddress &&
+        season.hasEnded &&
+        (isEnding ? (
+          <Loader color='#000' />
+        ) : (
+          <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
+            Start Season {ctc.votingPeriod + 1}
+          </EndVotingPeriodButton>
+        ))}
     </Container>
   )
 }

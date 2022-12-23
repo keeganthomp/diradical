@@ -11,7 +11,7 @@ import {
 } from 'utils'
 import { ErrorMessage } from 'types'
 import useApi from './useApi'
-import useMagicWallet from './useMagicWallet'
+import useMagicWallet from './useWallet'
 import useUser from './useUser'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
@@ -214,6 +214,10 @@ const useContract = () => {
         endPeriodTime: Number(endPeriodTime),
         currentSecs: currentTime,
       })
+      return {
+        newSeason: Number(returnValues[0]) + 1,
+        newEnd: Number(endPeriodTime),
+      }
     } catch (err) {
       console.log('Error ending voting period', err)
     } finally {
@@ -258,6 +262,7 @@ const useContract = () => {
     getSeasonInfo,
     isProcessing,
     checkIfPeriodEnded,
+    getNetworkSecs,
     ...views,
   }
 }

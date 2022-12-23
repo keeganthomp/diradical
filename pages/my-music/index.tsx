@@ -2,8 +2,8 @@ import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
 import { Button } from 'components/ui/Buttons'
 import React from 'react'
-import useMagicWallet from 'hooks/useMagicWallet'
-import useMusic from 'hooks/useMusic'
+import useMagicWallet from 'hooks/useWallet'
+import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
 import { useRouter } from 'next/router'
 import PleaseConnect from 'components/ui/PleaseConnect'
@@ -22,7 +22,7 @@ const Container = styled.div`
 export default function ProfilePage() {
   const router = useRouter()
   const { walletAddress } = useMagicWallet()
-  const { tracks, isLoading } = useMusic(walletAddress)
+  const { tracks, isLoading } = useUserMusic(walletAddress)
 
   const gotoUpload = () => router.push('/my-music/upload')
 

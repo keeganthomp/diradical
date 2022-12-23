@@ -8,6 +8,10 @@ export default function useSeason() {
   const [season, setSeason] = useRecoilState(seasonState)
   const ctc = useContract()
 
+  const updateSeason = async (payload: Object) => {
+    setSeason({ ...season, ...payload })
+  }
+
   useEffect(() => {
     let mounted = true
     const asyncFetchSeasonInfo = async () => {
@@ -15,10 +19,11 @@ export default function useSeason() {
       const { payout, members, votes } = await ctc.getSeasonInfo(
         ctc.votingPeriod,
       )
+      const currSecs = await ctc.getNetworkSecs()
       const current = ctc.votingPeriod
       const end = moment(ctc.endPeriodTime * 1000).fromNow()
-      const hasEnded = ctc.currentSecs > ctc.endPeriodTime
-      if (mounted && !season) {
+      const hasEnded = currSecs > ctc.endPeriodTime
+      if (mounted) {
         setSeason({
           hasEnded,
           current,
@@ -35,5 +40,5 @@ export default function useSeason() {
     }
   }, [ctc?.votingPeriod])
 
-  return { season }
+  return { season, updateSeason }
 }

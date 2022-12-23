@@ -1,7 +1,7 @@
 import axios from 'axios'
 import useApi from './useApi'
 import useContract from './useContract'
-import useMagicWallet from './useMagicWallet'
+import useMagicWallet from './useWallet'
 import { ErrorMessage } from 'types'
 
 type UploadProps = {

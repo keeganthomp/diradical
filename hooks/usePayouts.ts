@@ -1,6 +1,6 @@
 import React from 'react'
 import useContract from 'hooks/useContract'
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import payoutState, { Payout } from 'atoms/payouts'
 import { useRecoilState } from 'recoil'
 import useApi from './useApi'
@@ -14,7 +14,7 @@ export default function usePayouts() {
   React.useEffect(() => {
     let mounted = true
     const getRelevantPayouts = async () => {
-      if (!mounted || payouts) return
+      if (!mounted) return
       const payoutsFromDb = await fetchPayouts(walletAddress)
       const payoutPeriodsReceived = payoutsFromDb.map((p) => p.period)
       const currentPeriod = await ctc.votingPeriod

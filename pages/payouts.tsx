@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import usePayouts from 'hooks/usePayouts'
 import { Payout } from 'atoms/payouts'
 import { Button } from 'components/ui/Buttons'

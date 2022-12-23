@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import { User, Vote } from '@prisma/client'
-import useMagicWallet from './useMagicWallet'
+import useMagicWallet from './useWallet'
 
 export default function useUser() {
   const { walletAddress } = useMagicWallet()

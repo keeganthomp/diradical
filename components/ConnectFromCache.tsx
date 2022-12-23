@@ -1,4 +1,4 @@
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import React from 'react'
 
 export default function ConnectFromCache() {

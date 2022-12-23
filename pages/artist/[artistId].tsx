@@ -1,11 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import AudioGrid from 'components/audio/AudioGrid'
-import prisma from 'lib/prisma'
 import { Button } from 'components/ui/Buttons'
 import { useRouter } from 'next/router'
 import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
+import useUserMusic from 'hooks/music/useUserMusic'
+import { truncateWalletAddress } from 'utils'
+import Loader from 'components/ui/Loader'
 
 const Container = styled.div`
   display: flex;
@@ -24,11 +26,13 @@ const VoteButton = styled(Button)`
   margin: 1rem 0;
 `
 
-export default function ArtistPage({ artistTracks }) {
-  const { user } = useUser()
-  const ctc = useContract()
+export default function ArtistPage() {
   const router = useRouter()
   const artistWallet = router.query.artistId
+  const { user } = useUser()
+  const ctc = useContract()
+
+  const { tracks, isLoading } = useUserMusic(artistWallet as string)
 
   const handleVote = async () => {
     await ctc.vote(artistWallet as string)
@@ -40,19 +44,13 @@ export default function ArtistPage({ artistTracks }) {
     ctc.votingPeriod &&
     !user.castedVotes.some((v) => v.period === ctc.votingPeriod)
 
+  if (isLoading) return <Loader color='#000' />
+
   return (
     <Container>
-      <Heading>{artistWallet}</Heading>
+      <Heading>{truncateWalletAddress(artistWallet as string)}</Heading>
       {showVoteButton && <VoteButton onClick={handleVote}>Vote</VoteButton>}
-      <AudioGrid tracks={artistTracks} />
+      <AudioGrid tracks={tracks} />
     </Container>
   )
-}
-
-export const getServerSideProps = async (context) => {
-  const artistTracks = await prisma.track.findMany({
-    where: { wallet: context.params.artistId },
-    include: { artist: { select: { wallet: true } } },
-  })
-  return { props: { artistTracks: JSON.parse(JSON.stringify(artistTracks)) } }
 }

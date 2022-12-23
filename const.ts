@@ -1,5 +1,4 @@
 import React from 'react'
-import { IoWalletOutline } from 'react-icons/io5'
 import { BsMusicNoteBeamed, BsMusicPlayerFill, BsFlower2 } from 'react-icons/bs'
 import { FaRegMoneyBillAlt } from 'react-icons/fa'
 

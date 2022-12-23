@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Button } from 'components/ui/Buttons'
 import React from 'react'
-import useMagicWallet from 'hooks/useMagicWallet'
+import useMagicWallet from 'hooks/useWallet'
 import Loader from './Loader'
 
 const LoginButton = styled(Button)`
