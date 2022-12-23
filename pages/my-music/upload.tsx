@@ -4,6 +4,7 @@ import useMagicWallet from 'hooks/useMagicWallet'
 import UploadForm from 'components/forms/UploadSongForm'
 import { IoArrowBack } from 'react-icons/io5'
 import { useRouter } from 'next/router'
+import PleaseConnect from 'components/ui/PleaseConnect'
 
 const Container = styled.div`
   display: flex;
@@ -33,12 +34,7 @@ export default function ProfilePage() {
 
   const goBack = () => router.push('/my-music')
 
-  if (!walletAddress)
-    return (
-      <Container>
-        <p>Please Conect</p>
-      </Container>
-    )
+  if (!walletAddress) return <PleaseConnect />
 
   return (
     <Container>

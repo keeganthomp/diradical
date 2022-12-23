@@ -31,7 +31,7 @@ const Grid = styled.div`
 `
 
 export default function AudioGrid({ tracks }: { tracks: TrackWithArtist[] }) {
-  if (tracks.length === 1) {
+  if (tracks.length === 0) {
     return (
       <NoTracksContainer>
         <p>No Tracks</p>

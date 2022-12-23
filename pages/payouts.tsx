@@ -7,6 +7,7 @@ import { Button } from 'components/ui/Buttons'
 import { formatCurrency } from 'utils'
 import Loader from 'components/ui/Loader'
 import { devices } from 'styles/theme'
+import PleaseConnect from 'components/ui/PleaseConnect'
 
 const Container = styled.div`
   width: 100%;
@@ -22,6 +23,7 @@ const Container = styled.div`
   @media ${devices.mobile} {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
   }
 `
 
@@ -75,12 +77,7 @@ export default function Sidebar() {
   const { payouts, receivePayouts } = usePayouts()
   const { isAuthenticating, isLoggedIn } = useMagicWallet()
 
-  if (!isLoggedIn)
-    return (
-      <CenterContainer>
-        <p>Please Login</p>
-      </CenterContainer>
-    )
+  if (!isLoggedIn) return <PleaseConnect />
 
   if (isAuthenticating || !payouts)
     return (

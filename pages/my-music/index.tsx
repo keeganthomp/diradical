@@ -6,6 +6,7 @@ import useMagicWallet from 'hooks/useMagicWallet'
 import useMusic from 'hooks/useMusic'
 import Loader from 'components/ui/Loader'
 import { useRouter } from 'next/router'
+import PleaseConnect from 'components/ui/PleaseConnect'
 
 const UploadButton = styled(Button)`
   width: 10rem;
@@ -25,12 +26,7 @@ export default function ProfilePage() {
 
   const gotoUpload = () => router.push('/my-music/upload')
 
-  if (!walletAddress)
-    return (
-      <Container>
-        <p>Please Conect</p>
-      </Container>
-    )
+  if (!walletAddress) return <PleaseConnect />
 
   if (isLoading)
     return (
