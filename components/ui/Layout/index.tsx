@@ -17,7 +17,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     grid-template-columns: 1fr;
-    padding: 2.5rem 10px 1.25rem 10px;
+    padding: 3rem 10px 1.25rem 10px;
   }
 `
 const Content = styled.div`

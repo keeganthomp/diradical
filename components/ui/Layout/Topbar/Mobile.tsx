@@ -49,7 +49,7 @@ const Container = styled.div`
   display: none;
   justify-content: center;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   @media ${devices.mobile} {
     display: flex;
   }

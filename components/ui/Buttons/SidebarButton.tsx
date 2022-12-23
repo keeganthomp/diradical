@@ -14,6 +14,7 @@ const StyledButton = styled.button<{ active?: boolean; isLoading?: boolean }>`
   margin-bottom: 8px;
   border: none;
   padding: 10px 0 10px 8px;
+  color: #000;
   &:hover {
     background: #f0f0f09d;
   }

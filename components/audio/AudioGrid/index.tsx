@@ -6,6 +6,12 @@ import React from 'react'
 
 const DEF_NUM_OF_COLUMNS = 5
 
+const NoTracksContainer = styled.div`
+  text-align: center;
+  font-weight: bold;
+  padding-top: 2rem;
+`
+
 const Grid = styled.div`
   width: 100%;
   display: grid;
@@ -25,8 +31,12 @@ const Grid = styled.div`
 `
 
 export default function AudioGrid({ tracks }: { tracks: TrackWithArtist[] }) {
-  if (tracks.length === 0) {
-    return <div>no tracks</div>
+  if (tracks.length === 1) {
+    return (
+      <NoTracksContainer>
+        <p>No Tracks</p>
+      </NoTracksContainer>
+    )
   }
   return (
     <Grid>
