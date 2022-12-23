@@ -4,7 +4,6 @@ import useModal from 'hooks/useModal'
 
 const Container = styled.div`
   text-align: center;
-  color: white;
 `
 
 function ErrorModal() {

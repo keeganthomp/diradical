@@ -1,18 +1,18 @@
 import { FaBars } from 'react-icons/fa'
 import styled from 'styled-components'
 import React from 'react'
-import { devices } from 'styles/theme'
 import { useRouter } from 'next/router'
 import { IoCloseOutline } from 'react-icons/io5'
 import useMagicWallet from 'hooks/useMagicWallet'
 import useContract from 'hooks/useContract'
-import useUser from 'hooks/useUser'
-import Loader from 'components/ui/Loader'
-import moment from 'moment'
-import useModal from 'hooks/useModal'
+import { NAV_LINKS } from 'const'
+import { SidebarButton } from 'components/ui/Buttons'
+import { BsPersonCheck } from 'react-icons/bs'
+import { BiLogIn } from 'react-icons/bi'
+import { devices } from 'styles/theme'
 
 const Overlay = styled.div`
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(180%) blur(20px);
   -webkitbackdropfilter: saturate(180%) blur(20px);
   position: fixed;
@@ -23,24 +23,6 @@ const Overlay = styled.div`
   z-index: 10;
 `
 
-const Container = styled.div`
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkitbackdropfilter: saturate(180%) blur(20px);
-  width: 100%;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  top: 0;
-  left: 0;
-  height: 2.75rem;
-  position: fixed;
-  display: none;
-  z-index: 10;
-  @media ${devices.mobile} {
-    display: flex;
-  }
-`
 const Content = styled.div`
   z-index: 10;
   width: 100vw;
@@ -54,9 +36,29 @@ const Content = styled.div`
   flex-direction: column;
 `
 
+const Container = styled.div`
+  position: fixed;
+  background: #fff;
+  box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
+  top: 0;
+  left: 10px;
+  right: 10px;
+  width: 95%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  @media ${devices.mobile} {
+    display: flex;
+  }
+`
+
 const Hamburger = styled(FaBars)`
-  color: #fff;
-  cursor: pointer;
+  color: #000;
+  position: absolute;
+  right: 0.75rem;
 `
 
 const List = styled.div`
@@ -65,9 +67,8 @@ const List = styled.div`
   align-items: center;
 `
 
-const ListItem = styled.span`
-  color: #fff;
-  margin: 8px 0;
+const LoginButton = styled(SidebarButton)`
+  margin: 0;
 `
 
 const CloseIcon = styled(IoCloseOutline)`
@@ -78,19 +79,12 @@ const CloseIcon = styled(IoCloseOutline)`
   font-size: 2rem;
   opacity: 0.5;
   cursor: pointer;
-  color: #fff;
+  color: #000;
   z-index: 11;
   transition: opacity 0.1s ease-in-out;
   &:hover {
     opacity: 0.9;
   }
-`
-
-const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: #fff;
-  text-align: center;
 `
 
 export default function MobileNavbar() {
@@ -99,13 +93,11 @@ export default function MobileNavbar() {
   const { authenticate, logout, walletAddress, isLoggedIn, showWallet } =
     useMagicWallet()
   const ctc = useContract()
-  const { user } = useUser()
-  const { openModal, ModalType } = useModal()
 
   const toggle = () => setIsOpen(!isOpen)
 
-  const handleRouteChange = (to: string) => {
-    router.push(to)
+  const handleRoute = (path: string) => {
+    router.push(path)
     setIsOpen(false)
   }
 
@@ -113,17 +105,10 @@ export default function MobileNavbar() {
     setIsOpen(false)
   }
 
-  const handleEndVotingPeriod = async () => {
-    try {
-      await ctc.endVotingPeriod()
-    } catch {
-      openModal(ModalType.ERROR, 'Error ending voting period')
-    }
-  }
-
   return (
     <>
       <Container>
+        <p>DIERAD</p>
         <Hamburger onClick={toggle} />
       </Container>
       {isOpen && (
@@ -132,51 +117,29 @@ export default function MobileNavbar() {
           <CloseIcon onClick={handleClose} />
           <Content>
             <List>
-              {!isLoggedIn && (
+              {!walletAddress && (
                 <>
-                  <ListItem onClick={authenticate}>Login</ListItem>
-                  <ListItem onClick={authenticate}>Signup</ListItem>
+                  <LoginButton icon={<BiLogIn />} onClick={authenticate}>
+                    Login
+                  </LoginButton>
+                  <SidebarButton
+                    icon={<BsPersonCheck />}
+                    onClick={authenticate}
+                  >
+                    Signup
+                  </SidebarButton>
                 </>
               )}
-              <ListItem onClick={() => handleRouteChange('/')}>Music</ListItem>
-              {isLoggedIn && (
-                <>
-                  <ListItem onClick={logout}>Logout</ListItem>
-                  <ListItem onClick={showWallet}>Wallet</ListItem>
-                </>
-              )}
+              {NAV_LINKS.map((link) => (
+                <SidebarButton
+                  onClick={() => handleRoute(link.path)}
+                  icon={<link.icon />}
+                  key={link.title}
+                >
+                  {link.title}
+                </SidebarButton>
+              ))}
             </List>
-            <Info>
-              {!ctc || ctc.isFetchingViews ? (
-                <Loader color='#fff' />
-              ) : (
-                <>
-                  {user && (
-                    <p>
-                      {ctc.currentSecs > user.membershipExp
-                        ? 'Membership Expired'
-                        : `Membership Exp: ${moment(
-                            user.membershipExp * 1000,
-                          ).fromNow()}`}
-                    </p>
-                  )}
-                  <p>Membership Cost: {ctc.membershipCost}</p>
-                  <p>Current Voting Period: {ctc.votingPeriod}</p>
-                  <p>
-                    {ctc.currentSecs > ctc.endPeriodTime
-                      ? `Period ${ctc.votingPeriod} Ended`
-                      : `Period Ends: ${moment(
-                          ctc.endPeriodTime * 1000,
-                        ).fromNow()}`}
-                  </p>
-                  {walletAddress && ctc.currentSecs > ctc.endPeriodTime && (
-                    <button onClick={handleEndVotingPeriod}>
-                      End Voting Period
-                    </button>
-                  )}
-                </>
-              )}
-            </Info>
           </Content>
         </>
       )}

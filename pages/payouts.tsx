@@ -6,6 +6,7 @@ import { Payout } from 'atoms/payouts'
 import { Button } from 'components/ui/Buttons'
 import { formatCurrency } from 'utils'
 import Loader from 'components/ui/Loader'
+import { devices } from 'styles/theme'
 
 const Container = styled.div`
   width: 100%;
@@ -16,6 +17,12 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 100%;
+  overflow-y: auto;
+  @media ${devices.mobile} {
+    display: flex;
+    flex-direction: column;
+  }
 `
 
 const ReceivePayoutsButton = styled(Button)`

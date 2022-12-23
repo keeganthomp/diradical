@@ -8,6 +8,7 @@ import Loader from 'components/ui/Loader'
 import useSeason from 'hooks/useSeason'
 import { formatCurrency } from 'utils'
 import { ErrorMessage } from 'types'
+import { devices } from 'styles/theme'
 
 const Container = styled.div`
   width: 100%;
@@ -37,6 +38,10 @@ const StatsContainer = styled.div`
   grid-gap: 1rem;
   width: 100%;
   padding: 2rem;
+  @media ${devices.mobile} {
+    display: flex;
+    flex-direction: column;
+  }
 `
 
 const Stat = styled.div`

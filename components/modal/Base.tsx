@@ -12,13 +12,13 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    borderRadius: '10px',
     background: 'transparent',
-    color: '#fff',
+    color: '#000',
     border: 'none',
+    width: '20rem',
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     backdropFilter: 'saturate(180%) blur(20px)',
     WebkitBackdropFilter: 'saturate(180%) blur(20px)',
     zIndex: 10,
@@ -30,13 +30,13 @@ Modal.setAppElement('#__next')
 const CloseIcon = styled(IoCloseOutline)`
   font-size: 1.25rem;
   position: absolute;
-  top: 0;
+  top: -0.25rem;
   right: 0;
   cursor: pointer;
 `
 
 function BaseModal({ children }: { children: React.ReactNode }) {
-  const { currentModal, closeModal } = useModal()
+  const { closeModal } = useModal()
   return (
     <Modal isOpen style={customStyles} contentLabel='Example Modal'>
       <CloseIcon onClick={closeModal} />

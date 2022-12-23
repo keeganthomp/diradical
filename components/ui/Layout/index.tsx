@@ -17,6 +17,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     grid-template-columns: 1fr;
+    padding: 2.5rem 10px 1.25rem 10px;
   }
 `
 const Content = styled.div`
@@ -30,7 +31,7 @@ const Content = styled.div`
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
   @media ${devices.mobile} {
     height: 100vh;
-    padding: 3.5rem 0.5rem 5.5rem 0.5rem;
+    padding: 0.5rem 10px 1rem 10px;
   }
 `
 

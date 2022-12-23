@@ -8,12 +8,11 @@ import { truncateWalletAddress } from 'utils'
 
 const Container = styled.div`
   display: none;
-  /* box-shadow: 1px -15px 47px 0px rgba(0, 0, 0, 0.75); */
   z-index: 9;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(180%) blur(10px);
   -webkitbackdropfilter: saturate(180%) blur(20px);
-  color: white;
+  color: #000;
   position: fixed;
   bottom: 0;
   left: 0;
