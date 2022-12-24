@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import MobileTopbar from './Topbar/Mobile'
-import Sidebar from './Sidebar'
+import MobileMenu from './Mobile'
+import DesktopSidebar from './Desktop'
 import { devices } from 'styles/theme'
 import AudioPlayer from 'components/audio/AudioPlayer'
 
@@ -13,11 +13,12 @@ const Container = styled.div`
   height: 100vh;
   padding: 1.5rem;
   column-gap: 1.5rem;
+  overflow: hidden;
   @media ${devices.mobile} {
     display: flex;
     flex-direction: column;
     grid-template-columns: 1fr;
-    padding: 3rem 10px 10px 10px;
+    padding: 0 10px 10px 10px;
   }
 `
 const Content = styled.div`
@@ -38,8 +39,8 @@ const Content = styled.div`
 export default function Layout({ children }) {
   return (
     <Container>
-      <MobileTopbar />
-      <Sidebar />
+      <MobileMenu />
+      <DesktopSidebar />
       <Content>
         {children}
         <AudioPlayer />
