@@ -17,6 +17,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 4.5rem;
 `
 
 export default function ProfilePage() {

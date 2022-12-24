@@ -4,7 +4,9 @@ import styled from 'styled-components'
 import { Button } from 'components/ui/Buttons'
 import useUpload from 'hooks/useUpload'
 import { IoIosCloseCircle } from 'react-icons/io'
-import TextInput from '../ui/Inputs/TextInput'
+import Loader from 'components/ui/Loader'
+import TextInput from 'components/ui/Inputs/TextInput'
+import { useRouter } from 'next/router'
 import Form from './Form'
 
 const UploadButton = styled(Button)`
@@ -27,16 +29,16 @@ const Field = styled.div`
 const FilePreview = styled.div`
   position: relative;
 `
-const RemoveFileButton = styled(IoIosCloseCircle)`
+const RemoveFileButton = styled(IoIosCloseCircle)<{ disabled?: boolean }>`
   width: 16px;
   position: absolute;
   top: 7px;
   right: 0;
-  color: red;
+  color: ${(p) => (p.disabled ? '#d0d0d0' : 'red')};
   opacity: 0.5;
-  cursor: pointer;
   transition: all 0.2s ease-in-out;
   &:hover {
+    cursor: ${(p) => (p.disabled ? 'not-allowed' : 'pointer')};
     opacity: 1;
   }
 `
@@ -53,7 +55,14 @@ const SelectFileButton = styled.p`
   }
 `
 
+const Error = styled.p`
+  color: red;
+  padding: 0.5rem 0;
+`
+
 export function UploadForm() {
+  const router = useRouter()
+  const [uploadError, setUploadError] = React.useState('')
   const { upload } = useUpload()
   const { register, handleSubmit, formState, watch, setValue } = useForm({
     mode: 'all',
@@ -68,6 +77,7 @@ export function UploadForm() {
   const artFile = selectedArtFiles[0]
 
   const uploadTrack = async (data) => {
+    setUploadError('')
     const songPayload = {
       title: data.title,
       coverArtFile: data.artFiles[0],
@@ -75,8 +85,9 @@ export function UploadForm() {
     }
     try {
       await upload(songPayload)
+      router.push('/my-music')
     } catch (error) {
-      throw new Error('oops')
+      setUploadError(error.message)
     }
   }
 
@@ -95,7 +106,12 @@ export function UploadForm() {
         {audioFile ? (
           <FilePreview>
             <p>{audioFile.name}</p>
-            <RemoveFileButton onClick={() => setValue('audioFiles', [])} />
+            <RemoveFileButton
+              disabled={formState.isSubmitting}
+              onClick={() =>
+                !formState.isSubmitting && setValue('audioFiles', [])
+              }
+            />
           </FilePreview>
         ) : (
           <label>
@@ -118,7 +134,12 @@ export function UploadForm() {
         {artFile ? (
           <FilePreview>
             <p>{artFile.name}</p>
-            <RemoveFileButton onClick={() => setValue('artFiles', [])} />
+            <RemoveFileButton
+              disabled={formState.isSubmitting}
+              onClick={() =>
+                !formState.isSubmitting && setValue('artFiles', [])
+              }
+            />
           </FilePreview>
         ) : (
           <label>
@@ -140,8 +161,9 @@ export function UploadForm() {
         disabled={!formState.isValid || formState.isSubmitting}
         type='submit'
       >
-        Upload
+        {formState.isSubmitting ? <Loader size={20} color='#000' /> : 'Upload'}
       </UploadButton>
+      {uploadError && <Error>{uploadError}</Error>}
     </UploadForma>
   )
 }

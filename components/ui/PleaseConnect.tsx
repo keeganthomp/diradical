@@ -25,7 +25,7 @@ export default function PleaseConnect() {
 
   return (
     <Container>
-      <Title>Please Connect</Title>
+      <Title>{isAuthenticating ? 'Connecting...' : 'Please Connect'}</Title>
       {isAuthenticating ? (
         <Loader color='#000' />
       ) : (

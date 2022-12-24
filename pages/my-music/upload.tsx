@@ -25,7 +25,9 @@ const PageTitle = styled.h1`
 `
 
 const BackButton = styled(IoArrowBack)`
-  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 export default function ProfilePage() {

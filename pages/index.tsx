@@ -7,7 +7,8 @@ import Loader from 'components/ui/Loader'
 const Container = styled.div`
   height: 100%;
   overflow-y: auto;
-  padding-bottom: 5.5rem;
+  padding-bottom: 4.5rem;
+  height: 100%;
 `
 
 const LoadingContainer = styled.div`

@@ -58,6 +58,9 @@ const PayoutCardContainer = styled.div`
   background: #f2f2f29d;
   padding: 1rem;
   border-radius: 10px;
+  @media ${devices.mobile} {
+    width: 100%;
+  }
 `
 
 const Season = styled.p`
