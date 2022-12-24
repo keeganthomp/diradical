@@ -11,6 +11,7 @@ const Container = styled.div`
   grid-template-columns: ${SIDEBAR_WIDTH} auto;
   grid-template-areas: 'sidebar content';
   height: 100vh;
+  min-height: -webkit-fill-available; // chrome bs
   padding: 1.5rem;
   column-gap: 1.5rem;
   overflow: hidden;
