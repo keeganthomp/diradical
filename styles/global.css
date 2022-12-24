@@ -7,8 +7,16 @@ body {
   line-height: 1.6;
   font-size: 18px;
   font-family: Jost;
-  height: 100%;
   background: rgb(245, 245, 245);
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+html {
+  height: -webkit-fill-available;
 }
 
 * {
@@ -33,4 +41,8 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+#__next {
+  height: 100%;
 }
