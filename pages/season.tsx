@@ -21,6 +21,9 @@ const Container = styled.div`
   height: 100%;
   overflow-y: auto;
   justify-content: flex-start;
+  @media ${devices.mobile} {
+    overflow: hidden;
+  }
 `
 
 const EndVotingPeriodButton = styled(Button)`

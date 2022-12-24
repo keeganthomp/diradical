@@ -23,7 +23,7 @@ const Container = styled.div`
 const Hamburger = styled(FaBars)`
   color: #000;
   position: absolute;
-  right: 0.75rem;
+  right: 1rem;
 `
 
 export default function MobileNavbar() {

@@ -36,6 +36,7 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     padding-bottom: 4.5rem;
+    overflow: hidden;
   }
 `
 

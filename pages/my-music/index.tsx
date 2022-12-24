@@ -7,6 +7,7 @@ import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
 import { useRouter } from 'next/router'
 import PleaseConnect from 'components/ui/PleaseConnect'
+import { devices } from 'styles/theme'
 
 const UploadButton = styled(Button)`
   width: 10rem;
@@ -20,6 +21,9 @@ const Container = styled.div`
   height: 100%;
   overflow-y: auto;
   padding-bottom: 4.5rem;
+  @media ${devices.mobile} {
+    overflow: hidden;
+  }
 `
 
 export default function ProfilePage() {

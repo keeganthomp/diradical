@@ -16,6 +16,7 @@ const Container = styled.div`
   column-gap: 1.5rem;
   overflow: hidden;
   @media ${devices.mobile} {
+    height: 100%;
     display: flex;
     flex-direction: column;
     grid-template-columns: 1fr;
@@ -32,20 +33,13 @@ const Content = styled.div`
   overflow: hidden;
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
   @media ${devices.mobile} {
-    height: 100vh;
+    overflow-y: scroll;
+    height: 100%;
     padding: 0.5rem 10px 1rem 10px;
   }
 `
 
 export default function Layout({ children }) {
-  if (typeof window === 'undefined') return null
-  const documentHeight = () => {
-    const doc = document.documentElement
-    doc.style.setProperty('--doc-height', `${window.innerHeight}px`)
-    console.log('yay')
-  }
-  window.addEventListener('resize', documentHeight)
-  documentHeight()
   return (
     <Container>
       <MobileMenu />
