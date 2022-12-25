@@ -1,16 +1,14 @@
 import { TrackWithArtist } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
-import PlayButton from 'components/ui/Buttons/PlayButton'
-import PauseButton from 'components/ui/Buttons/PauseButton'
 import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
-import moment from 'moment'
 import { truncateWalletAddress } from 'utils'
-import AudioCardMenu from './Menu'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { Button } from 'components/ui/Buttons'
+import { FaPlay, FaPause } from 'react-icons/fa'
 
 type Props = {
   track: TrackWithArtist
@@ -22,6 +20,11 @@ const Wrapper = styled.div`
   grid-template-rows: 17rem auto;
   grid-template-columns: 1fr;
   color: #000;
+  @media ${devices.mobile} {
+    grid-template-rows: 1fr;
+    grid-template-columns: 3rem 1fr;
+    gap: 10px;
+  }
 `
 
 const ImageContainer = styled.div`
@@ -36,6 +39,7 @@ const ImageContainer = styled.div`
   color: white;
   @media ${devices.mobile} {
     width: 100%;
+    border-radius: 4px;
   }
 `
 
@@ -49,7 +53,7 @@ const Meta = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-start;
   width: 100%;
   p {
     font-size: 14px;
@@ -58,10 +62,9 @@ const Meta = styled.div`
 const TitleInfo = styled.div`
   margin: 0;
   text-align: left;
-  p {
-    font-size: 14px;
-    margin: 0;
-  }
+  font-size: 14px;
+  margin: 0;
+  line-height: 20px;
 `
 const Artist = styled.p`
   font-weight: 200;
@@ -79,22 +82,48 @@ const CoverArt = styled.img`
   height: 100%;
   object-fit: cover;
 `
-
-const Realesed = styled.p`
-  margin: 0;
-  font-size: 14px;
-  text-transform: lowercase;
-`
 const RightCol = styled.div`
   display: flex;
   flex-direction: column;
+`
+const CustomPlayButton = styled(FaPlay)`
+  z-index: 9;
+  &:hover {
+    cursor: pointer;
+  }
+`
+const CustomPauseButton = styled(FaPause)`
+  z-index: 9;
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const VoteButton = styled(Button)`
+  opacity: 0.6;
+  &:hover {
+    opacity: 1;
+  }
+  @media ${devices.mobile} {
+    opacity: 1;
+  }
+`
+const ArchiveButton = styled(Button)`
+  background: #ff5959;
+  opacity: 0.6;
+  &:hover {
+    opacity: 1;
+  }
+  @media ${devices.mobile} {
+    opacity: 1;
+  }
 `
 
 export default function AudioCard({ track }: Props) {
   const router = useRouter()
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
-  const { isPlaying, track: nowPlayingTrack } = useNowPlaying()
+  const { isPlaying, track: nowPlayingTrack, play, pause } = useNowPlaying()
   const isTrackPlaying =
     nowPlayingTrack && isPlaying && track.id === nowPlayingTrack.id
 
@@ -102,7 +131,8 @@ export default function AudioCard({ track }: Props) {
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
   const isArtistPage = router.pathname.includes('/artist/')
-  const isMyMusicPage = router.pathname.includes('/my-music')
+  const isMyMusicPage = router.pathname.includes('/me')
+  const isListenPage = router.pathname.includes('/listen')
 
   return (
     <Wrapper>
@@ -111,12 +141,15 @@ export default function AudioCard({ track }: Props) {
         onMouseLeave={handleMouseLeave}
         bgImage={track.coverArt}
       >
-        <AudioCardMenu track={track} isOpenToPublic={false} />
         <CoverArt
           src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${track.coverArt}`}
         />
         {isHovering &&
-          (isTrackPlaying ? <PauseButton /> : <PlayButton track={track} />)}
+          (isTrackPlaying ? (
+            <CustomPauseButton onClick={pause} />
+          ) : (
+            <CustomPlayButton onClick={() => play(track)} />
+          ))}
       </ImageContainer>
       <MetaData>
         <Meta>
@@ -129,7 +162,8 @@ export default function AudioCard({ track }: Props) {
             )}
           </TitleInfo>
           <RightCol>
-            <Realesed>{moment(track.createdAt).calendar()}</Realesed>
+            {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
+            {isListenPage && <VoteButton>Vote</VoteButton>}
           </RightCol>
         </Meta>
       </MetaData>
