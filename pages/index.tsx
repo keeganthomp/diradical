@@ -34,6 +34,7 @@ const BoxWrapper = styled.div`
   padding: 3rem 0;
   @media ${devices.mobile} {
     grid-template-columns: 1fr;
+    padding: 2rem 0;
   }
 `
 
@@ -56,16 +57,22 @@ const BoxContainer = styled.div`
   @media ${devices.mobile} {
     background: ${(p) => p.theme.colors.main};
     color: #fff;
-    height: 6rem;
+    height: 4rem;
   }
 `
 
 const BoxTitle = styled.p`
   font-weight: bold;
   font-size: 2rem;
+  @media ${devices.mobile} {
+    font-size: 1.5rem;
+  }
 `
 const BoxDescription = styled.p`
   font-style: italic;
+  @media ${devices.mobile} {
+    display: none;
+  }
 `
 const InfoContainer = styled.div`
   display: flex;
