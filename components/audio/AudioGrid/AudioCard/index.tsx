@@ -57,9 +57,7 @@ const Meta = styled.div`
   align-items: flex-start;
   width: 100%;
   font-size: 14px;
-  @media ${devices.mobile} {
-    align-items: center;
-  }
+  align-items: center;
 `
 const TitleInfo = styled.div`
   margin: 0;

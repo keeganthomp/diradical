@@ -1,18 +1,11 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
-import { Button } from 'components/ui/Buttons'
 import React from 'react'
 import useMagicWallet from 'hooks/useWallet'
 import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
-import { useRouter } from 'next/router'
 import PleaseConnect from 'components/ui/PleaseConnect'
 import { devices } from 'styles/theme'
-
-const UploadButton = styled(Button)`
-  width: 10rem;
-  margin: 1rem 0;
-`
 
 const Container = styled.div`
   display: flex;
@@ -27,12 +20,16 @@ const Container = styled.div`
   }
 `
 
+const Title = styled.p`
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.5rem;
+  padding-bottom: 1rem;
+`
+
 export default function ProfilePage() {
-  const router = useRouter()
   const { walletAddress } = useMagicWallet()
   const { tracks, isLoading } = useUserMusic(walletAddress)
-
-  const gotoUpload = () => router.push('/my-music/upload')
 
   if (!walletAddress) return <PleaseConnect />
 
@@ -45,7 +42,7 @@ export default function ProfilePage() {
 
   return (
     <Container>
-      <UploadButton onClick={gotoUpload}>upload</UploadButton>
+      <Title>My Music</Title>
       <AudioGrid tracks={tracks} />
     </Container>
   )
