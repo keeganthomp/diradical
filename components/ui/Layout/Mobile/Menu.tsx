@@ -5,8 +5,12 @@ import { IoCloseOutline } from 'react-icons/io5'
 import useMagicWallet from 'hooks/useWallet'
 import { NAV_LINKS } from 'const'
 import { SidebarButton } from 'components/ui/Buttons'
-import { BsPersonCheck } from 'react-icons/bs'
+import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
+import useContract from 'hooks/useContract'
+import useUser from 'hooks/useUser'
+import useModal from 'hooks/useModal'
+import { ErrorMessage } from 'types'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
@@ -18,6 +22,7 @@ const Overlay = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 10;
+  overflow: hidden;
 `
 
 const Menu = styled.div`
@@ -66,15 +71,34 @@ export default function MobileMenu({
   isOpen: boolean
   close: () => void
 }) {
+  const ctc = useContract()
+  const { user } = useUser()
   const router = useRouter()
-  const { authenticate, walletAddress } = useMagicWallet()
+  const { openModal, ModalType, closeModal } = useModal()
+  const { authenticate, walletAddress, isLoggedIn } = useMagicWallet()
 
   const handleRoute = (path: string) => {
     router.push(path)
     close()
   }
 
+  const handleBuyMembership = async () => {
+    try {
+      await ctc.buyMembership()
+      close()
+    } catch (err) {
+      if (err.message === ErrorMessage.SEASON_NOT_OVER) {
+        openModal(ModalType.ERROR, 'Start the new Season first!')
+      }
+      close()
+    }
+  }
+
   if (!isOpen) return null
+
+  const isMembershipValid =
+    ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
+  const showBuyMembButton = isLoggedIn && !isMembershipValid
 
   return (
     <>
@@ -86,6 +110,15 @@ export default function MobileMenu({
             <LoginButton icon={<BiLogIn />} onClick={authenticate}>
               Login
             </LoginButton>
+          )}
+          {showBuyMembButton && (
+            <SidebarButton
+              isLoading={ctc.isProcessing}
+              icon={<BsPeople />}
+              onClick={handleBuyMembership}
+            >
+              Buy Membership
+            </SidebarButton>
           )}
           {NAV_LINKS.map((link) => (
             <SidebarButton

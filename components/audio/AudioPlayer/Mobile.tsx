@@ -18,11 +18,9 @@ const Container = styled.div`
   left: 0;
   flex-direction: column;
   width: 100%;
-  height: 3.5rem;
-  @media ${devices.mobile} {
-    display: flex;
-    flex-direction: column;
-  }
+  height: 3.25rem;
+  display: flex;
+  flex-direction: column;
 `
 
 const SongTitle = styled.p`
@@ -38,8 +36,8 @@ const Artist = styled.p`
 `
 
 const CoverArt = styled.img`
-  max-height: 3rem;
-  max-width: 3rem;
+  height: 2.5rem;
+  width: 2.5rem;
   border-radius: 4px;
   padding-left: 3px;
   margin-right: 6px;

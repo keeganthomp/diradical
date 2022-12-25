@@ -28,6 +28,7 @@ const Container = styled.div`
 
 const EndVotingPeriodButton = styled(Button)`
   width: 10rem;
+  margin-bottom: 10px;
 `
 
 const Season = styled.p`

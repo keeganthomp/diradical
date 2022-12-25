@@ -23,6 +23,7 @@ const Container = styled.div`
   padding-bottom: 4.5rem;
   @media ${devices.mobile} {
     overflow: hidden;
+    padding-bottom: 10px;
   }
 `
 

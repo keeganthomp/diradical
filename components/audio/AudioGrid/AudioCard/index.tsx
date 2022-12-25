@@ -24,6 +24,7 @@ const Wrapper = styled.div`
     grid-template-rows: 1fr;
     grid-template-columns: 3rem 1fr;
     gap: 10px;
+    height: 3rem;
   }
 `
 
@@ -55,8 +56,9 @@ const Meta = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  p {
-    font-size: 14px;
+  font-size: 14px;
+  @media ${devices.mobile} {
+    align-items: center;
   }
 `
 const TitleInfo = styled.div`

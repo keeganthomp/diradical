@@ -29,13 +29,23 @@ const Hamburger = styled(FaBars)`
 export default function MobileNavbar() {
   const [isOpen, setIsOpen] = React.useState(false)
 
+  const handleOpen = () => {
+    window.document.body.style.overflow = 'hidden'
+    setIsOpen(true)
+  }
+
+  const handleClose = () => {
+    window.document.body.style.overflow = 'initial'
+    setIsOpen(false)
+  }
+
   return (
     <>
       <Container>
         <p>DIERAD</p>
-        <Hamburger onClick={() => setIsOpen(true)} />
+        <Hamburger onClick={handleOpen} />
       </Container>
-      <MobileMenu isOpen={isOpen} close={() => setIsOpen(false)} />
+      <MobileMenu isOpen={isOpen} close={handleClose} />
     </>
   )
 }

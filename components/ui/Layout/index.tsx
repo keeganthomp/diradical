@@ -35,7 +35,8 @@ const Content = styled.div`
   @media ${devices.mobile} {
     overflow-y: scroll;
     height: 100%;
-    padding: 0.5rem 10px 1rem 10px;
+    padding: 10px;
+    margin-bottom: 3.25rem;
   }
 `
 

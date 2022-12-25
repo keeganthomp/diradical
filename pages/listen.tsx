@@ -11,6 +11,7 @@ const Container = styled.div`
   height: 100%;
   @media ${devices.mobile} {
     overflow: hidden;
+    padding-bottom: 10px;
   }
 `
 
