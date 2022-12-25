@@ -9,12 +9,13 @@ type NavLinkType = {
 }
 
 export const NAV_LINKS: NavLinkType[] = [
-  { title: 'Catalog', path: '/', icon: BsMusicNoteBeamed },
-  { title: 'My Music', path: '/my-music', icon: BsMusicPlayerFill },
-  { title: 'Current Season', path: '/season', icon: BsFlower2 },
+  { title: 'Upload', path: '/upload', icon: BsFlower2 },
+  { title: 'Listen', path: '/listen', icon: BsMusicNoteBeamed },
+  { title: 'Season', path: '/season', icon: BsFlower2 },
   {
     title: 'Payouts',
     path: '/payouts',
     icon: FaRegMoneyBillAlt,
   },
+  { title: 'My Music', path: '/me', icon: BsMusicPlayerFill },
 ]

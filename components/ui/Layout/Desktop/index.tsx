@@ -8,7 +8,7 @@ import useMagicWallet from 'hooks/useWallet'
 import { SidebarButton } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import { NAV_LINKS } from 'const'
-import { BsPeople, BsPersonCheck } from 'react-icons/bs'
+import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import UserIfno from './User'
@@ -48,6 +48,9 @@ const LoginButton = styled(SidebarButton)`
 const Logo = styled.p`
   text-align: center;
   align-self: center;
+  &:hover {
+    cursor: pointer;
+  }
 `
 
 export default function Sidebar() {
@@ -81,16 +84,13 @@ export default function Sidebar() {
 
   return (
     <Container>
-      <Logo>DIERAD</Logo>
+      <Logo onClick={() => router.push('/')}>DIERAD</Logo>
       <Content>
         {!walletAddress && (
           <AuthButtonContainer>
             <LoginButton icon={<BiLogIn />} onClick={authenticate}>
               Login
             </LoginButton>
-            <SidebarButton icon={<BsPersonCheck />} onClick={authenticate}>
-              Signup
-            </SidebarButton>
           </AuthButtonContainer>
         )}
         {showBuyMembButton && (

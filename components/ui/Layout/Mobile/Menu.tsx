@@ -83,14 +83,9 @@ export default function MobileMenu({
       <Menu>
         <List>
           {!walletAddress && (
-            <>
-              <LoginButton icon={<BiLogIn />} onClick={authenticate}>
-                Login
-              </LoginButton>
-              <SidebarButton icon={<BsPersonCheck />} onClick={authenticate}>
-                Signup
-              </SidebarButton>
-            </>
+            <LoginButton icon={<BiLogIn />} onClick={authenticate}>
+              Login
+            </LoginButton>
           )}
           {NAV_LINKS.map((link) => (
             <SidebarButton
