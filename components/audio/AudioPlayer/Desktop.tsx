@@ -71,6 +71,7 @@ const CoverArt = styled.img`
   grid-area: coverArt;
   max-height: 4rem;
   max-width: 3.5rem;
+  border-radius: 4px;
 `
 
 export default function DesktopAudioPlayer() {

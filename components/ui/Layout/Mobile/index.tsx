@@ -2,6 +2,7 @@ import { FaBars } from 'react-icons/fa'
 import styled from 'styled-components'
 import React from 'react'
 import { devices } from 'styles/theme'
+import { useRouter } from 'next/router'
 import MobileMenu from './Menu'
 
 const Container = styled.div`
@@ -26,7 +27,10 @@ const Hamburger = styled(FaBars)`
   right: 1rem;
 `
 
+const Logo = styled.p``
+
 export default function MobileNavbar() {
+  const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
 
   const handleOpen = () => {
@@ -42,7 +46,7 @@ export default function MobileNavbar() {
   return (
     <>
       <Container>
-        <p>DIERAD</p>
+        <Logo onClick={() => router.push('/')}>DIERAD</Logo>
         <Hamburger onClick={handleOpen} />
       </Container>
       <MobileMenu isOpen={isOpen} close={handleClose} />

@@ -31,7 +31,7 @@ const BoxWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
-  padding: 2.5rem 0;
+  padding: 3rem 0;
   @media ${devices.mobile} {
     grid-template-columns: 1fr;
   }
@@ -53,6 +53,11 @@ const BoxContainer = styled.div`
     background: ${(p) => p.theme.colors.main};
     color: #fff;
   }
+  @media ${devices.mobile} {
+    background: ${(p) => p.theme.colors.main};
+    color: #fff;
+    height: 6rem;
+  }
 `
 
 const BoxTitle = styled.p`
@@ -69,11 +74,7 @@ const InfoContainer = styled.div`
   align-items: center;
 `
 const InfoTitle = styled.p`
-  font-weight: bold;
   padding-bottom: 1rem;
-`
-const BuyMembership = styled(Button)`
-  width: 8rem;
 `
 
 const Box = ({ title, description, onClick }) => (
@@ -95,10 +96,8 @@ export default function HomePage() {
       </BoxWrapper>
       <InfoContainer>
         <InfoTitle>
-          In order to upload tracks or vote, you will need to login and have an
-          active membership
+          Uploading and voting require you to login & have an active membership
         </InfoTitle>
-        <BuyMembership>Login</BuyMembership>
       </InfoContainer>
     </Container>
   )
