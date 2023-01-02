@@ -6,12 +6,14 @@ import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import { BsChevronCompactUp } from 'react-icons/bs'
 import useOutsideClick from 'hooks/useClickOutside'
+import { MdContentCopy } from 'react-icons/md'
 
 const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
   left: 0;
+  overflow: hidden;
 `
 
 const Container = styled.div`
@@ -22,8 +24,11 @@ const Container = styled.div`
   border-top: 1px solid #f0f0f0;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
+  position: relative;
+  background: white;
+  z-index: 2;
   &:hover {
-    background: #f0f0f09d;
+    background: #f8f8f8;
   }
 `
 
@@ -56,12 +61,17 @@ const WalletAddress = styled.p`
   flex-grow: 1;
 `
 
-const MenuContainer = styled.div`
+const MenuContainer = styled.div<{ open?: boolean }>`
   text-align: center;
   font-size: 14px;
   padding: 0.5rem 0;
   padding: 10px;
+  position: relative;
+  bottom: ${(p) => (p.open ? 0 : '-8rem')};
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
 `
+
 const MenuItem = styled.p<{ isInfo?: boolean }>`
   padding: 4px 0;
   cursor: ${({ isInfo }) => (isInfo ? 'default' : 'pointer')};
@@ -69,6 +79,15 @@ const MenuItem = styled.p<{ isInfo?: boolean }>`
   margin-bottom: 5px;
   &:hover {
     background: ${({ isInfo }) => (isInfo ? 'transparent' : '#f0f0f09d')};
+  }
+`
+
+const CopyButton = styled(MenuItem)<{ didCopy?: boolean }>`
+  background: ${({ didCopy }) => (didCopy ? '#aaffa245' : 'transparent')};
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    background: ${({ isInfo, didCopy }) =>
+      didCopy ? '#aaffa245' : isInfo ? 'transparent' : '#f0f0f09d'};
   }
 `
 
@@ -80,6 +99,7 @@ const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
 `
 
 function UserInfo() {
+  const [didCopy, setDidCopy] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const { isLoggedIn, logout, walletAddress, balance } = useMagicWallet()
   const ctc = useContract()
@@ -104,15 +124,22 @@ function UserInfo() {
     await logout()
   }
 
+  const copyAddress = () => {
+    navigator.clipboard.writeText(walletAddress)
+    setDidCopy(true)
+    setTimeout(() => setDidCopy(false), 1000)
+  }
+
   return (
     <Wrapper ref={ref}>
-      {isOpen && (
-        <MenuContainer>
-          <MenuItem isInfo>{getMembershipText()}</MenuItem>
-          <MenuItem isInfo>{balance} MATIC</MenuItem>
-          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-        </MenuContainer>
-      )}
+      <MenuContainer open={isOpen}>
+        <MenuItem isInfo>{getMembershipText()}</MenuItem>
+        <MenuItem isInfo>{balance} MATIC</MenuItem>
+        <CopyButton didCopy={didCopy} onClick={copyAddress}>
+          Copy address <MdContentCopy />
+        </CopyButton>
+        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+      </MenuContainer>
       <Container onClick={toggleOpen}>
         <ProfilePicture />
         <MetaData>

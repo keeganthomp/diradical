@@ -17,7 +17,7 @@ export const NAV_LINKS: NavLinkType[] = [
   { title: 'Listen', path: '/listen', icon: BsMusicNoteBeamed },
   { title: 'Season', path: '/season', icon: BsFlower2 },
   { title: 'My Music', path: '/me', icon: BsMusicPlayerFill },
-  { title: 'Upload', path: '/upload', icon: BsUpload },
+  { title: 'Upload Song', path: '/upload', icon: BsUpload },
   {
     title: 'Payouts',
     path: '/payouts',

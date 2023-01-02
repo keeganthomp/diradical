@@ -1,8 +1,7 @@
 import { useRef, useState, useEffect, SyntheticEvent } from 'react'
-import ProgressBar from './ProgressBar'
+import ProgressBar from '../ProgressBar'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
-import { devices } from 'styles/theme'
 import { FaPause, FaPlay } from 'react-icons/fa'
 import { truncateWalletAddress } from 'utils'
 

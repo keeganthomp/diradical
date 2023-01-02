@@ -15,7 +15,11 @@ const customStyles = {
     background: 'transparent',
     color: '#000',
     border: 'none',
-    width: '20rem',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   overlay: {
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
@@ -28,10 +32,10 @@ const customStyles = {
 Modal.setAppElement('#__next')
 
 const CloseIcon = styled(IoCloseOutline)`
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   position: absolute;
-  top: -0.25rem;
-  right: 0;
+  top: 0.75rem;
+  right: 0.75rem;
   cursor: pointer;
 `
 

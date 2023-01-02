@@ -15,8 +15,8 @@ import Loader from 'components/ui/Loader'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkitbackdropfilter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(45px);
+  -webkitbackdropfilter: saturate(180%) blur(45px);
   position: fixed;
   top: 0;
   left: 0;
@@ -43,6 +43,7 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 10rem;
 `
 
 const LoginButton = styled(SidebarButton)`
@@ -55,14 +56,9 @@ const CloseIcon = styled(IoCloseOutline)`
   top: 0.75rem;
   right: 0.75rem;
   font-size: 1.5rem;
-  opacity: 0.5;
   cursor: pointer;
   color: #000;
   z-index: 11;
-  transition: opacity 0.1s ease-in-out;
-  &:hover {
-    opacity: 0.9;
-  }
 `
 
 const LogoutButton = styled.p`

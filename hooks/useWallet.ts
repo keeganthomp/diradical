@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import { polygonNodeOptions } from 'lib/magic'
 import { Magic } from 'magic-sdk'
 import Web3 from 'web3'
+import { formatCurrency } from 'utils'
+import { OAuthExtension } from '@magic-ext/oauth'
 
 const useMagicWallet = () => {
   const router = useRouter()
@@ -13,8 +15,48 @@ const useMagicWallet = () => {
 
   const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY, {
     network: polygonNodeOptions,
+    extensions: [new OAuthExtension()],
   })
   magic.preload()
+
+  const loginWithGithub = async () => {
+    try {
+      setWallet({
+        ...walletFromState,
+        isAuthenticating: true,
+      })
+      await magic.oauth.loginWithRedirect({
+        provider: 'github',
+        redirectURI: `${window.location.origin}/listen`,
+      })
+    } catch (error) {
+      console.log('error logging in with github', error)
+    }
+  }
+
+  const loginWithGoogle = async () => {
+    try {
+      setWallet({
+        ...walletFromState,
+        isAuthenticating: true,
+      })
+      await magic.oauth.loginWithRedirect({
+        provider: 'google',
+        redirectURI: `${window.location.origin}/listen`,
+      })
+    } catch (error) {
+      console.log('error logging in with google', error)
+    }
+  }
+
+  const getRedirectResult = async () => {
+    try {
+      const result = await magic.oauth.getRedirectResult()
+      return result
+    } catch (error) {
+      console.log('error getting redirect result', error)
+    }
+  }
 
   const web3 = new Web3(magic.rpcProvider as any)
 
@@ -31,7 +73,8 @@ const useMagicWallet = () => {
         ...walletFromState,
         isFetchingBalance: false,
       })
-      return Number(web3.utils.fromWei(balance, 'ether'))
+      const fmtBalance = formatCurrency(balance)
+      return fmtBalance
     } catch (error) {
       console.log('error getting user balance', error)
     }
@@ -105,6 +148,7 @@ const useMagicWallet = () => {
         ...walletFromState,
         isAuthenticating: true,
       })
+      router.push('/authenticate')
       await magic.user.logout()
       localStorage.clear()
       setWallet({
@@ -113,7 +157,6 @@ const useMagicWallet = () => {
         isAuthenticating: false,
         walletAddress: '',
       })
-      router.push('/authenticate')
     } catch (error) {
       setWallet({
         ...walletFromState,
@@ -127,6 +170,9 @@ const useMagicWallet = () => {
     authenticate,
     logout,
     connectFromCache,
+    loginWithGithub,
+    loginWithGoogle,
+    getRedirectResult,
     isLoggedIn: !!walletFromState.walletAddress,
     walletAddress: walletFromState.walletAddress,
     isAuthenticating: walletFromState.isAuthenticating,

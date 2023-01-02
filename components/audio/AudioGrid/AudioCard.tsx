@@ -82,20 +82,36 @@ const CoverArt = styled.img`
   height: 100%;
   object-fit: cover;
 `
+const ArtOverlay = styled.div<{ show?: boolean }>`
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  position: absolute;
+  background: ${(p) => (p.show ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0)')};
+`
+
 const RightCol = styled.div`
   display: flex;
   flex-direction: column;
 `
-const CustomPlayButton = styled(FaPlay)`
+const PlayButton = styled(FaPlay)`
   z-index: 9;
+  font-size: 1.75rem;
   &:hover {
     cursor: pointer;
   }
+  @media ${devices.mobile} {
+    font-size: 1rem;
+  }
 `
-const CustomPauseButton = styled(FaPause)`
+const PauseButton = styled(FaPause)`
   z-index: 9;
+  font-size: 1.75rem;
   &:hover {
     cursor: pointer;
+  }
+  @media ${devices.mobile} {
+    font-size: 1rem;
   }
 `
 
@@ -141,14 +157,15 @@ export default function AudioCard({ track }: Props) {
         onMouseLeave={handleMouseLeave}
         bgImage={track.coverArt}
       >
+        <ArtOverlay show={isHovering} />
         <CoverArt
           src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${track.coverArt}`}
         />
         {isHovering &&
           (isTrackPlaying ? (
-            <CustomPauseButton onClick={pause} />
+            <PauseButton onClick={pause} />
           ) : (
-            <CustomPlayButton onClick={() => play(track)} />
+            <PlayButton onClick={() => play(track)} />
           ))}
       </ImageContainer>
       <MetaData>

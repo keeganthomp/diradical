@@ -26,6 +26,7 @@ const Container = styled.div`
   border-radius: ${(p) => p.theme.borderRadius};
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
   padding: 10px;
+  overflow: hidden;
   @media ${devices.mobile} {
     display: none;
   }
