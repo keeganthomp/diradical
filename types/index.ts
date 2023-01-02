@@ -11,7 +11,7 @@ export enum ErrorMessage {
 
 export type Season = {
   currentSeason: number
-  payout: number
+  payout: number | string
   votes: number
   members: number
   endPeriodTime: number

@@ -6,7 +6,6 @@ import useMagicWallet from 'hooks/useWallet'
 import { Button } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import useSeason from 'hooks/useSeason'
-import { formatCurrency } from 'utils'
 import { ErrorMessage } from 'types'
 import { devices } from 'styles/theme'
 import moment from 'moment'
@@ -110,7 +109,7 @@ export default function Sidebar() {
         </Stat>
         <Stat>
           <StatLabel>Payouts</StatLabel>
-          <StatNumber>{formatCurrency(season.payout)}</StatNumber>
+          <StatNumber>{season.payout}</StatNumber>
         </Stat>
         <Stat>
           <StatLabel>Members</StatLabel>

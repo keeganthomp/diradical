@@ -109,6 +109,7 @@ const useMagicWallet = () => {
       localStorage.clear()
       setWallet({
         ...walletFromState,
+        balance: 0,
         isAuthenticating: false,
         walletAddress: '',
       })

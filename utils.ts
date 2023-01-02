@@ -1,5 +1,5 @@
 import { decode, encode } from 'bs58'
-import { ethers } from 'ethers'
+import { ethers, utils } from 'ethers'
 
 const provider = new ethers.providers.JsonRpcProvider(
   'https://rpc-mumbai.maticvigil.com/',
@@ -40,9 +40,5 @@ export const getNetworkSecs = async () => {
 }
 
 export const formatCurrency = (amount: number | string) => {
-  return (Number(amount) / 10 ** MATIC_DECIMALS).toFixed(4)
-}
-
-export const parseCurrency = (amount: number | string) => {
-  return Number(amount) * 10 ** MATIC_DECIMALS
+  return Number(utils.formatEther(amount)).toFixed(4)
 }

@@ -5,6 +5,7 @@ import { polygonNodeOptions } from 'lib/magic'
 import Web3 from 'web3'
 import * as backend from 'contracts/index.main.mjs'
 import { Payout } from 'types'
+import { formatCurrency } from 'utils'
 
 const { NEXT_PUBLIC_ROYALTY_CTC_ADDRESS } = process.env
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
@@ -40,7 +41,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             if (currPeriod === currentVotingPeriod) return acc
             const period = {
               period: currPeriod,
-              amount: cur?.payout || 0,
+              amount: cur?.payout ? formatCurrency(cur.payout) : 0,
             }
             if (hasReceived) {
               acc.received.push(period)

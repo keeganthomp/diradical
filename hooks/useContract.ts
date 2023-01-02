@@ -3,7 +3,7 @@ import { convertIpfsCidV0ToByte32 } from 'utils'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import contractViewState from 'atoms/contract'
-import { getNetworkSecs, formatCurrency } from 'utils'
+import { getNetworkSecs } from 'utils'
 import { ErrorMessage } from 'types'
 import Web3 from 'web3'
 import { polygonNodeOptions } from 'lib/magic'
@@ -58,7 +58,7 @@ const useContract = () => {
       setFetching(true)
       const membershipCost = await getMembershipCost().call()
       setViews({
-        membershipCost: formatCurrency(membershipCost),
+        membershipCost: web3.utils.fromWei(membershipCost),
       })
       setFetching(false)
     }

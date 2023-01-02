@@ -4,6 +4,7 @@ import Web3 from 'web3'
 import * as backend from 'contracts/index.main.mjs'
 import { getNetworkSecs } from 'utils'
 import { Season } from 'types'
+import { formatCurrency } from 'utils'
 
 const { NEXT_PUBLIC_ROYALTY_CTC_ADDRESS } = process.env
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
@@ -33,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const fmtEndTime = Number(seasonEndTime)
         const payload: Season = {
           currentSeason: currentVotingPeriod,
-          payout: Number(seasonPayout),
+          payout: formatCurrency(seasonPayout),
           votes: Number(seasonVotes),
           members: Number(seasonMembers),
           endPeriodTime: Number(seasonEndTime),

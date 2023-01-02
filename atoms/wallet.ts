@@ -5,7 +5,7 @@ const walletState = atom({
   default: {
     walletAddress: '',
     isAuthenticating: false,
-    balance: null as null | number,
+    balance: 0,
     isFetchingBalance: false,
   },
 })

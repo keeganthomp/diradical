@@ -4,7 +4,6 @@ import useMagicWallet from 'hooks/useWallet'
 import usePayouts from 'hooks/usePayouts'
 import { Payout } from 'types'
 import { Button } from 'components/ui/Buttons'
-import { formatCurrency } from 'utils'
 import Loader from 'components/ui/Loader'
 import { devices } from 'styles/theme'
 import PleaseConnect from 'components/ui/PleaseConnect'
@@ -80,7 +79,7 @@ const PayoutCard = ({
   return (
     <PayoutCardContainer key={payout.period}>
       <Season>Season {payout.period}</Season>
-      <PayoutAmt>Payout: {formatCurrency(payout.amount)} MATIC</PayoutAmt>
+      <PayoutAmt>Payout: {payout.amount} MATIC</PayoutAmt>
       <ReceivePayoutsButton onClick={onClick}>
         Receive Payout
       </ReceivePayoutsButton>
