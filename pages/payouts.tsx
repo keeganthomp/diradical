@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import React from 'react'
 import useMagicWallet from 'hooks/useWallet'
 import usePayouts from 'hooks/usePayouts'
-import { Payout } from 'atoms/payouts'
+import { Payout } from 'types'
 import { Button } from 'components/ui/Buttons'
 import { formatCurrency } from 'utils'
 import Loader from 'components/ui/Loader'
@@ -89,32 +89,31 @@ const PayoutCard = ({
 }
 
 export default function Sidebar() {
-  const { payouts, receivePayouts } = usePayouts()
+  const { payouts, isFetching, error, receivePayout } = usePayouts()
   const { isAuthenticating, isLoggedIn } = useMagicWallet()
 
   if (!isLoggedIn) return <PleaseConnect />
 
-  if (isAuthenticating || !payouts)
+  if (isAuthenticating || isFetching)
     return (
       <CenterContainer>
         <Loader color='#000' />
       </CenterContainer>
     )
 
+  if (error) return <p>{error.message}</p>
+
   return (
     <Wrapper>
       <Title>Payouts</Title>
       <Container>
-        {payouts.map(
-          (p) =>
-            !p.received && (
-              <PayoutCard
-                key={p.period}
-                payout={p}
-                onClick={() => receivePayouts(p.period)}
-              />
-            ),
-        )}
+        {payouts.all.map((p) => (
+          <PayoutCard
+            key={p.period}
+            payout={p}
+            onClick={() => receivePayout(p.period)}
+          />
+        ))}
       </Container>
     </Wrapper>
   )

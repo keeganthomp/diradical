@@ -10,7 +10,7 @@ export default function useCatalog() {
   })
   return {
     tracks,
-    isLoading: !error && !tracks,
+    isFetching: !error && !tracks,
     mutate,
     error,
   }

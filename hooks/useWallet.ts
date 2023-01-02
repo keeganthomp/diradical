@@ -1,92 +1,123 @@
+import magicWalletState from 'atoms/wallet'
+import { useRecoilState } from 'recoil'
+import { useRouter } from 'next/router'
+import { polygonNodeOptions } from 'lib/magic'
 import { Magic } from 'magic-sdk'
 import Web3 from 'web3'
-import { ConnectExtension } from '@magic-ext/connect'
-import magicWalletState from 'atoms/magicWallet'
-import { useRecoilState } from 'recoil'
-import { useState } from 'react'
-
-/**
- * Configure Polygon Connection
- */
-const polygonNodeOptions = {
-  rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
-  chainId: 80001,
-}
 
 const useMagicWallet = () => {
-  if (typeof window === 'undefined') return { isInitializing: true } // ensure code is client side
+  const router = useRouter()
+  const [walletFromState, setWallet] = useRecoilState(magicWalletState)
 
-  const [magicWallet, setMagicWallet] = useRecoilState(magicWalletState)
+  if (typeof window === 'undefined') return {} as any // ensure code is client side
 
-  const magicMatic = new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY, {
+  const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY, {
     network: polygonNodeOptions,
-    locale: 'en_US',
-    extensions: [new ConnectExtension()],
   })
+  magic.preload()
 
-  const rpcProvider = magicMatic.rpcProvider
-  const maticWeb3 = new Web3(rpcProvider as any)
-  maticWeb3.eth.handleRevert = true
+  const web3 = new Web3(magic.rpcProvider as any)
 
-  const showWallet = async () => {
-    // TODO: check if wallet type is 'magic'
+  const fetchWalletBalance = async (walletAddr?: string) => {
+    const addressToFetch = walletAddr || walletFromState.walletAddress
+    if (!addressToFetch) return
     try {
-      await magicMatic.connect.showWallet()
+      setWallet({
+        ...walletFromState,
+        isFetchingBalance: true,
+      })
+      const balance = await web3.eth.getBalance(addressToFetch)
+      setWallet({
+        ...walletFromState,
+        isFetchingBalance: false,
+      })
+      return Number(web3.utils.fromWei(balance, 'ether'))
     } catch (error) {
-      console.log('error showing wallet', error)
+      console.log('error getting user balance', error)
     }
   }
 
   const connectFromCache = async () => {
-    setMagicWallet({
-      ...magicWallet,
-      isAuthenticating: true,
-    })
     try {
-      const wallet = await magicMatic.connect.getWalletInfo()
-      await authenticate()
+      setWallet({
+        ...walletFromState,
+        isAuthenticating: true,
+      })
+      const isLoggedIn = await magic.user.isLoggedIn()
+      if (!isLoggedIn) {
+        setWallet({
+          ...walletFromState,
+          isAuthenticating: false,
+          walletAddress: '',
+        })
+        return
+      }
+      const user = await magic.user.getMetadata()
+      const didToken = await magic.user.getIdToken()
+      const balance = await fetchWalletBalance(user.publicAddress)
+      localStorage.setItem('didToken', didToken)
+      setWallet({
+        ...walletFromState,
+        isAuthenticating: false,
+        walletAddress: user.publicAddress,
+        balance,
+      })
     } catch (error) {
-      console.log('error checking if user is logged in', error)
-      setMagicWallet({
-        ...magicWallet,
+      setWallet({
+        ...walletFromState,
         isAuthenticating: false,
       })
+      console.log('error logging in from cache', error)
     }
   }
 
-  const authenticate = async () => {
+  const authenticate = async ({ email }: { email: string }) => {
+    setWallet({
+      ...walletFromState,
+      isAuthenticating: true,
+    })
     try {
-      setMagicWallet({
-        ...magicWallet,
-        isAuthenticating: true,
+      const didToken = await magic.auth.loginWithEmailOTP({
+        email,
       })
-      const accounts = await maticWeb3.eth.getAccounts()
-      setMagicWallet({
+      const user = await magic.user.getMetadata()
+      const balance = await fetchWalletBalance(user.publicAddress)
+      localStorage.setItem('didToken', didToken)
+      router.push('/listen')
+      setWallet({
+        ...walletFromState,
         isAuthenticating: false,
-        walletAddress: accounts[0],
+        walletAddress: user.publicAddress,
+        balance,
       })
     } catch (err) {
-      setMagicWallet({
-        ...magicWallet,
+      setWallet({
+        ...walletFromState,
         isAuthenticating: false,
       })
-      console.log('Error authenticating with magic:', err)
+      console.log('error logging in', err)
     }
   }
 
   const logout = async () => {
     try {
-      setMagicWallet({
-        ...magicWallet,
+      setWallet({
+        ...walletFromState,
         isAuthenticating: true,
       })
-      await magicMatic.connect.disconnect()
-      setMagicWallet({
+      await magic.user.logout()
+      localStorage.clear()
+      setWallet({
+        ...walletFromState,
         isAuthenticating: false,
         walletAddress: '',
       })
-      console.log('Logged out!')
+      router.push('/authenticate')
     } catch (error) {
+      setWallet({
+        ...walletFromState,
+        isAuthenticating: false,
+      })
       console.log('error logging out', error)
     }
   }
@@ -94,13 +125,12 @@ const useMagicWallet = () => {
   return {
     authenticate,
     logout,
-    isLoggedIn: !!magicWallet.walletAddress,
-    isInitializing: false,
-    walletAddress: magicWallet.walletAddress,
-    web3: maticWeb3,
-    isAuthenticating: magicWallet.isAuthenticating,
-    showWallet,
     connectFromCache,
+    isLoggedIn: !!walletFromState.walletAddress,
+    walletAddress: walletFromState.walletAddress,
+    isAuthenticating: walletFromState.isAuthenticating,
+    isFetchingBalance: walletFromState.isFetchingBalance,
+    balance: walletFromState.balance,
   }
 }
 

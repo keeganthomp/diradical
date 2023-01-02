@@ -67,24 +67,16 @@ const StatNumber = styled.p`
 
 export default function Sidebar() {
   const [isEnding, setIsEnding] = React.useState(false)
-  const { season, updateSeason } = useSeason()
+  const { season } = useSeason()
   const { walletAddress } = useMagicWallet()
-  const ctc = useContract()
+  const { endVotingPeriod } = useContract()
   const { openModal, ModalType } = useModal()
 
   const handleEndVotingPeriod = async () => {
     try {
       setIsEnding(true)
-      const { newSeason, newEnd } = await ctc.endVotingPeriod()
+      const { newSeason, newEnd } = await endVotingPeriod()
       const fmtEndTime = moment(newEnd * 1000).fromNow()
-      updateSeason({
-        current: newSeason,
-        end: fmtEndTime,
-        payout: 0,
-        members: 0,
-        votes: 0,
-        hasEnded: false,
-      })
     } catch (err) {
       if (err.message === ErrorMessage.SEASON_NOT_OVER) {
         openModal(ModalType.ERROR, 'Season not over yet!')
@@ -103,12 +95,14 @@ export default function Sidebar() {
       </Container>
     )
 
+  const timeFromNow = moment(season.endPeriodTime * 1000).fromNow()
+
   return (
     <Container>
-      <Season>Season {season.current}</Season>
-      <SeasonEnd>{`Season ${season.current} ${
+      <Season>Season {season.currentSeason}</Season>
+      <SeasonEnd>{`Season ${season.currentSeason} ${
         season.hasEnded ? 'ended' : 'ends'
-      } ${season.end}`}</SeasonEnd>
+      } ${timeFromNow}`}</SeasonEnd>
       <StatsContainer>
         <Stat>
           <StatLabel>Votes</StatLabel>
@@ -129,7 +123,7 @@ export default function Sidebar() {
           <Loader color='#000' />
         ) : (
           <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
-            Start Season {ctc.votingPeriod + 1}
+            Start Season {season.currentSeason + 1}
           </EndVotingPeriodButton>
         ))}
     </Container>

@@ -1,5 +1,10 @@
 const callApi = async (url: string, options: RequestInit = {}) => {
-  const res = await fetch(url, options)
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('didToken')}`,
+    },
+  })
   const json = await res.json()
   if (res.ok) {
     return json

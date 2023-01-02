@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
+import { checkIfAuthed } from 'lib/auth'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET': {
+      // await checkIfAuthed(req, res)
       try {
         const tracks = await prisma.track.findMany({
           where: { archived: false },

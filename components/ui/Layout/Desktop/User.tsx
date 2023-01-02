@@ -81,9 +81,11 @@ const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
 
 function UserInfo() {
   const [isOpen, setOpen] = useState(false)
-  const { showWallet, isLoggedIn, logout } = useMagicWallet()
+  const { isLoggedIn, logout, walletAddress, balance } = useMagicWallet()
   const ctc = useContract()
   const { user } = useUser()
+
+  const ref = useOutsideClick(() => setOpen(false))
 
   if (!isLoggedIn) return null
 
@@ -98,7 +100,6 @@ function UserInfo() {
     return 'Membership is Valid'
   }
 
-  const ref = useOutsideClick(() => setOpen(false))
   const handleLogout = async () => {
     await logout()
   }
@@ -108,16 +109,14 @@ function UserInfo() {
       {isOpen && (
         <MenuContainer>
           <MenuItem isInfo>{getMembershipText()}</MenuItem>
-          <MenuItem onClick={showWallet}>Wallet</MenuItem>
+          <MenuItem isInfo>{balance} MATIC</MenuItem>
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
         </MenuContainer>
       )}
       <Container onClick={toggleOpen}>
         <ProfilePicture />
         <MetaData>
-          <WalletAddress>
-            {truncateWalletAddress('3242342342323424')}
-          </WalletAddress>
+          <WalletAddress>{truncateWalletAddress(walletAddress)}</WalletAddress>
           <Chevron open={isOpen} />
         </MetaData>
       </Container>

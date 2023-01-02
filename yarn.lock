@@ -8541,7 +8541,7 @@ web3-eth-accounts@1.8.1:
     web3-core-method "1.8.1"
     web3-utils "1.8.1"
 
-web3-eth-contract@1.8.1:
+web3-eth-contract@1.8.1, web3-eth-contract@^1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/web3-eth-contract/-/web3-eth-contract-1.8.1.tgz#bdf3e33bbcb79a1b6144dffd6a0deefd2e459272"
   integrity sha512-1wphnl+/xwCE2io44JKnN+ti3oa47BKRiVzvWd42icwRbcpFfRxH9QH+aQX3u8VZIISNH7dAkTWpGIIJgGFTmg==

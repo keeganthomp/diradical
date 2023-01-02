@@ -32,7 +32,7 @@ export default function ArtistPage() {
   const { user } = useUser()
   const ctc = useContract()
 
-  const { tracks, isLoading } = useUserMusic(artistWallet as string)
+  const { tracks, isFetching } = useUserMusic(artistWallet as string)
 
   const handleVote = async () => {
     await ctc.vote(artistWallet as string)
@@ -44,7 +44,7 @@ export default function ArtistPage() {
     ctc.votingPeriod &&
     !user.castedVotes.some((v) => v.period === ctc.votingPeriod)
 
-  if (isLoading) return <Loader color='#000' />
+  if (isFetching) return <Loader color='#000' />
 
   return (
     <Container>

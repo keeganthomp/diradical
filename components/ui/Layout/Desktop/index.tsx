@@ -36,11 +36,6 @@ const Content = styled.div`
   flex-direction: column;
 `
 
-const AuthButtonContainer = styled.div`
-  width: 100%;
-  margin-bottom: 1.25rem;
-`
-
 const LoginButton = styled(SidebarButton)`
   margin: 0;
 `
@@ -55,8 +50,7 @@ const Logo = styled.p`
 
 export default function Sidebar() {
   const router = useRouter()
-  const { authenticate, walletAddress, isAuthenticating, isLoggedIn } =
-    useMagicWallet()
+  const { walletAddress, isAuthenticating, isLoggedIn } = useMagicWallet()
   const ctc = useContract()
   const { openModal, ModalType } = useModal()
   const { user } = useUser()
@@ -87,11 +81,12 @@ export default function Sidebar() {
       <Logo onClick={() => router.push('/')}>DIERAD</Logo>
       <Content>
         {!walletAddress && (
-          <AuthButtonContainer>
-            <LoginButton icon={<BiLogIn />} onClick={authenticate}>
-              Login
-            </LoginButton>
-          </AuthButtonContainer>
+          <LoginButton
+            icon={<BiLogIn />}
+            onClick={() => router.push('/authenticate')}
+          >
+            Login
+          </LoginButton>
         )}
         {showBuyMembButton && (
           <SidebarButton

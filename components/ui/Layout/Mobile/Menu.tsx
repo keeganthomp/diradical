@@ -11,6 +11,7 @@ import useContract from 'hooks/useContract'
 import useUser from 'hooks/useUser'
 import useModal from 'hooks/useModal'
 import { ErrorMessage } from 'types'
+import Loader from 'components/ui/Loader'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
@@ -64,6 +65,24 @@ const CloseIcon = styled(IoCloseOutline)`
   }
 `
 
+const LogoutButton = styled.p`
+  color: red;
+  cursor: pointer;
+  font-size: 14px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  bottom: 2.5rem;
+  position: absolute;
+`
+
+const LoaderContainer = styled.div`
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 export default function MobileMenu({
   isOpen,
   close,
@@ -74,8 +93,9 @@ export default function MobileMenu({
   const ctc = useContract()
   const { user } = useUser()
   const router = useRouter()
-  const { openModal, ModalType, closeModal } = useModal()
-  const { authenticate, walletAddress, isLoggedIn } = useMagicWallet()
+  const { openModal, ModalType } = useModal()
+  const { walletAddress, isLoggedIn, logout, isAuthenticating } =
+    useMagicWallet()
 
   const handleRoute = (path: string) => {
     router.push(path)
@@ -94,6 +114,20 @@ export default function MobileMenu({
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await logout()
+      close()
+    } catch (err) {
+      console.log('error logging out on mobile menu: ', err)
+    }
+  }
+
+  const handleLogin = () => {
+    router.push('/authenticate')
+    close()
+  }
+
   if (!isOpen) return null
 
   const isMembershipValid =
@@ -104,33 +138,40 @@ export default function MobileMenu({
     <>
       <Overlay />
       <CloseIcon onClick={close} />
-      <Menu>
-        <List>
-          {!walletAddress && (
-            <LoginButton icon={<BiLogIn />} onClick={authenticate}>
-              Login
-            </LoginButton>
-          )}
-          {showBuyMembButton && (
-            <SidebarButton
-              isLoading={ctc.isProcessing}
-              icon={<BsPeople />}
-              onClick={handleBuyMembership}
-            >
-              Buy Membership
-            </SidebarButton>
-          )}
-          {NAV_LINKS.map((link) => (
-            <SidebarButton
-              onClick={() => handleRoute(link.path)}
-              icon={<link.icon />}
-              key={link.title}
-            >
-              {link.title}
-            </SidebarButton>
-          ))}
-        </List>
-      </Menu>
+      {isAuthenticating ? (
+        <LoaderContainer>
+          <Loader color='#000' />
+        </LoaderContainer>
+      ) : (
+        <Menu>
+          <List>
+            {!walletAddress && (
+              <LoginButton icon={<BiLogIn />} onClick={handleLogin}>
+                Login
+              </LoginButton>
+            )}
+            {showBuyMembButton && (
+              <SidebarButton
+                isLoading={ctc.isProcessing}
+                icon={<BsPeople />}
+                onClick={handleBuyMembership}
+              >
+                Buy Membership
+              </SidebarButton>
+            )}
+            {NAV_LINKS.map((link) => (
+              <SidebarButton
+                onClick={() => handleRoute(link.path)}
+                icon={<link.icon />}
+                key={link.title}
+              >
+                {link.title}
+              </SidebarButton>
+            ))}
+          </List>
+          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+        </Menu>
+      )}
     </>
   )
 }

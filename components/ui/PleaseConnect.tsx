@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { Button } from 'components/ui/Buttons'
 import React from 'react'
+import { useRouter } from 'next/router'
 import useMagicWallet from 'hooks/useWallet'
-import Loader from './Loader'
+import Loader from 'components/ui/Loader'
 
 const LoginButton = styled(Button)`
   width: 10rem;
@@ -21,15 +22,17 @@ const Title = styled.p`
 `
 
 export default function PleaseConnect() {
-  const { authenticate, isAuthenticating } = useMagicWallet()
-
+  const router = useRouter()
+  const { isAuthenticating } = useMagicWallet()
   return (
     <Container>
       <Title>{isAuthenticating ? 'Connecting...' : 'Please Connect'}</Title>
       {isAuthenticating ? (
         <Loader color='#000' />
       ) : (
-        <LoginButton onClick={authenticate}>Login</LoginButton>
+        <LoginButton onClick={() => router.push('/authenticate')}>
+          Login
+        </LoginButton>
       )}
     </Container>
   )

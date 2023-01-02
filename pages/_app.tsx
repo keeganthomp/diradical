@@ -10,6 +10,28 @@ import React from 'react'
 import { SWRConfig } from 'swr'
 import ConnectFromCache from 'components/ConnectFromCache'
 
+class UnauthorizedError extends Error {
+  isUnauthorized: boolean
+  constructor(message = 'Unauthorized') {
+    super(message)
+    this.isUnauthorized = true
+  }
+}
+
+const fetcher = async (url) => {
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('didToken')}`,
+    },
+  })
+  const isUnauthorized = res.status === 401
+  if (isUnauthorized) {
+    localStorage.removeItem('didToken')
+    throw new UnauthorizedError()
+  }
+  return res.json()
+}
+
 function App({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -18,8 +40,7 @@ function App({ Component, pageProps }: AppProps) {
       </Head>
       <SWRConfig
         value={{
-          fetcher: (resource, init) =>
-            fetch(resource, init).then((res) => res.json()),
+          fetcher,
         }}
       >
         <RecoilRoot>

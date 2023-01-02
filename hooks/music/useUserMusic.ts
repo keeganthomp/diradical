@@ -5,12 +5,12 @@ export default function useUserMusic(wallet: string) {
     data: tracks,
     error,
     mutate,
-  } = useSWR(`/api/user/${wallet}/tracks`, {
+  } = useSWR(wallet ? `/api/user/${wallet}/tracks` : null, {
     refreshInterval: 7000,
   })
   return {
     tracks,
-    isLoading: !error && !tracks,
+    isFetching: !error && !tracks,
     mutate,
     error,
   }

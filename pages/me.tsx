@@ -29,11 +29,11 @@ const Title = styled.p`
 
 export default function ProfilePage() {
   const { walletAddress } = useMagicWallet()
-  const { tracks, isLoading } = useUserMusic(walletAddress)
+  const { tracks, isFetching } = useUserMusic(walletAddress)
 
   if (!walletAddress) return <PleaseConnect />
 
-  if (isLoading)
+  if (isFetching)
     return (
       <Container>
         <Loader color='#000' />

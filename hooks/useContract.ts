@@ -3,34 +3,37 @@ import { convertIpfsCidV0ToByte32 } from 'utils'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import contractViewState from 'atoms/contract'
-import {
-  getNetworkSecs,
-  getCurrentBlock,
-  formatCurrency,
-  parseCurrency,
-} from 'utils'
+import { getNetworkSecs, formatCurrency, parseCurrency } from 'utils'
 import { ErrorMessage } from 'types'
+import Web3 from 'web3'
+import { polygonNodeOptions } from 'lib/magic'
+import { Magic } from 'magic-sdk'
 import useApi from './useApi'
 import useMagicWallet from './useWallet'
 import useUser from './useUser'
 
 const abi = JSON.parse(backend._Connectors.ETH.ABI)
 
-const ROYALTY_CTC_ADDRESS = '0x3f0fB8B9e81D5cf4ec80DD538525B1C20ab3f8e5'
+const { NEXT_PUBLIC_ROYALTY_CTC_ADDRESS } = process.env
 
 const DEFAULT_GAS_LIMIT = 5_000_000
 
 const useContract = () => {
   const [isProcessing, setProcessing] = useState(false)
   const [isFetchingViews, setFetching] = useState(false)
-  const { web3, walletAddress } = useMagicWallet()
+  const { walletAddress } = useMagicWallet()
   const [views, setContractData] = useRecoilState(contractViewState)
   const { register, addPayout, addVote } = useApi()
   const { user } = useUser()
 
-  if (!web3) return null
+  if (typeof window === 'undefined') return {} as any // ensure code is client side
 
-  const contract = new web3.eth.Contract(abi, ROYALTY_CTC_ADDRESS)
+  const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY, {
+    network: polygonNodeOptions,
+  })
+  const web3 = new Web3(magic.rpcProvider as any)
+  const contract = new web3.eth.Contract(abi, NEXT_PUBLIC_ROYALTY_CTC_ADDRESS)
+
   const getGasPrice = async () => await web3.eth.getGasPrice()
 
   const {
@@ -39,13 +42,8 @@ const useContract = () => {
     vote: ctcVote,
     endVotingPeriod: ctcEndVotingPeriod,
     receivePayout: ctcReceivePayout,
-    getCurrentVotingPeriod,
     getMembershipCost,
     getPeriodEndTime,
-    getOwnerPayout: ctcGetOwnerPayout,
-    getPeriodPayouts: ctcGetPeriodPayouts,
-    getPeriodVotes: ctcGetPeriodVotes,
-    getPeriodMembers: ctcGetPeriodMembers,
   } = contract.methods
 
   const checkIfPeriodEnded = async () => {
@@ -58,46 +56,14 @@ const useContract = () => {
   useEffect(() => {
     const asyncGetCtcData = async () => {
       setFetching(true)
-      const votingPeriod = await getCurrentVotingPeriod().call()
       const membershipCost = await getMembershipCost().call()
-      const endPeriodTime = await getPeriodEndTime().call()
       setContractData({
-        currentBlock: await getCurrentBlock(),
-        currentSecs: await getNetworkSecs(),
-        votingPeriod: Number(votingPeriod),
         membershipCost: formatCurrency(membershipCost),
-        endPeriodTime: Number(endPeriodTime),
       })
       setFetching(false)
     }
     asyncGetCtcData()
   }, [])
-
-  const getSongInfo = async (owner: string, vPeriod: number) => {
-    try {
-      const songPayout = await ctcGetOwnerPayout(owner, vPeriod).call()
-      return {
-        payout: Number(songPayout),
-      }
-    } catch (err) {
-      console.log('Error getting song info', err)
-    }
-  }
-
-  const getSeasonInfo = async (vPeriod: number) => {
-    try {
-      const seasonPayout = await ctcGetPeriodPayouts(vPeriod).call()
-      const seasonVotes = await ctcGetPeriodVotes().call()
-      const seasonMembers = await ctcGetPeriodMembers().call()
-      return {
-        payout: Number(seasonPayout),
-        votes: Number(seasonVotes),
-        members: Number(seasonMembers),
-      }
-    } catch (err) {
-      console.log('Error getting season info', err)
-    }
-  }
 
   const addSong = async (artIPFSHash: string, audioIPFSHASH: string) => {
     if (!walletAddress || !user) return
@@ -208,12 +174,6 @@ const useContract = () => {
       } = receipt
       const endPeriodTime = await getPeriodEndTime().call()
       const currentTime = await getNetworkSecs()
-      setContractData({
-        ...views,
-        votingPeriod: Number(returnValues[0]) + 1,
-        endPeriodTime: Number(endPeriodTime),
-        currentSecs: currentTime,
-      })
       return {
         newSeason: Number(returnValues[0]) + 1,
         newEnd: Number(endPeriodTime),
@@ -257,9 +217,7 @@ const useContract = () => {
     endVotingPeriod,
     vote,
     receivePayout,
-    getSongInfo,
     isFetchingViews,
-    getSeasonInfo,
     isProcessing,
     checkIfPeriodEnded,
     getNetworkSecs,

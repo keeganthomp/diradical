@@ -4,6 +4,8 @@ import AudioGrid from 'components/audio/AudioGrid'
 import { devices } from 'styles/theme'
 import useCatalog from 'hooks/music/useCatalog'
 import Loader from 'components/ui/Loader'
+import useMagicWallet from 'hooks/useWallet'
+import PleaseConnect from 'components/ui/PleaseConnect'
 
 const Container = styled.div`
   overflow-y: auto;
@@ -22,9 +24,10 @@ const LoadingContainer = styled.div`
 `
 
 export default function ListenPage() {
-  const { tracks, isLoading } = useCatalog()
+  const { tracks, isFetching } = useCatalog()
+  const { isLoggedIn } = useMagicWallet()
 
-  if (isLoading)
+  if (isFetching)
     return (
       <LoadingContainer>
         <Loader color='#000' />
