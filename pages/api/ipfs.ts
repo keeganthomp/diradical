@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import ipfs from 'lib/IPFS'
 import formidable from 'formidable'
 import { readFile, unlink } from 'node:fs/promises'
+import { checkIfAuthed } from 'lib/auth'
 
 export const config = {
   api: {
@@ -12,6 +13,7 @@ export const config = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST': {
+      await checkIfAuthed(req, res)
       const form = formidable()
       form.parse(req, async function (err, fields, files) {
         const { audioFile, coverArtFile } = files

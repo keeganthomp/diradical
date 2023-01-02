@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
+import { checkIfAuthed } from 'lib/auth'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST': {
+      await checkIfAuthed(req, res)
       try {
         const { audioIPFSCid, coverArtIPFSCid, wallet, title, songId } =
           req.body

@@ -1,16 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
+import { checkIfAuthed } from 'lib/auth'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     res.status(405).send({ message: 'Only POST requests allowed' })
     return
   }
+  await checkIfAuthed(req, res)
   const {
     voterWallet,
     artist,
     period,
   }: { voterWallet: string; artist: string; period: number } = req.body
+
   if (!voterWallet || !artist || !period) {
     res.status(500).json({ message: 'missing wallet or songId' })
   }

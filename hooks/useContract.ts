@@ -3,7 +3,7 @@ import { convertIpfsCidV0ToByte32 } from 'utils'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import contractViewState from 'atoms/contract'
-import { getNetworkSecs, formatCurrency, parseCurrency } from 'utils'
+import { getNetworkSecs, formatCurrency } from 'utils'
 import { ErrorMessage } from 'types'
 import Web3 from 'web3'
 import { polygonNodeOptions } from 'lib/magic'
@@ -22,7 +22,7 @@ const useContract = () => {
   const [isProcessing, setProcessing] = useState(false)
   const [isFetchingViews, setFetching] = useState(false)
   const { walletAddress } = useMagicWallet()
-  const [views, setContractData] = useRecoilState(contractViewState)
+  const [views, setViews] = useRecoilState(contractViewState)
   const { register, addPayout, addVote } = useApi()
   const { user } = useUser()
 
@@ -57,7 +57,7 @@ const useContract = () => {
     const asyncGetCtcData = async () => {
       setFetching(true)
       const membershipCost = await getMembershipCost().call()
-      setContractData({
+      setViews({
         membershipCost: formatCurrency(membershipCost),
       })
       setFetching(false)
@@ -105,9 +105,10 @@ const useContract = () => {
       throw new Error(ErrorMessage.SEASON_NOT_OVER)
     }
     try {
+      const membershipCost = await getMembershipCost().call()
       const gasPrice = await getGasPrice()
       const receipt = await ctcBuyMembership().send({
-        value: parseCurrency(views.membershipCost),
+        value: membershipCost,
         from: walletAddress,
         gas: DEFAULT_GAS_LIMIT,
         gasPrice,

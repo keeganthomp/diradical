@@ -64,11 +64,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break
     }
     case 'POST': {
+      await checkIfAuthed(req, res)
       const {
         wallet,
         amount,
         period,
       }: { wallet: string; amount: number; period: number } = req.body
+
       if (!amount || !period) {
         res.status(500).json({ message: 'missing required fields' })
       }

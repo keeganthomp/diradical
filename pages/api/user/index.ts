@@ -10,6 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     req.body
   if (!wallet || !membershipExp) {
     res.status(500).json({ message: 'missing wallet or membership expiration' })
+    return
   }
   try {
     await prisma.user.upsert({
