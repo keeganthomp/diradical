@@ -107,8 +107,6 @@ function UserInfo() {
 
   const ref = useOutsideClick(() => setOpen(false))
 
-  if (!isLoggedIn) return null
-
   const toggleOpen = () => setOpen(!isOpen)
 
   const isMembershipValid =
@@ -129,6 +127,8 @@ function UserInfo() {
     setDidCopy(true)
     setTimeout(() => setDidCopy(false), 1000)
   }
+
+  if (!isLoggedIn) return null
 
   return (
     <Wrapper ref={ref}>

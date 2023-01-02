@@ -36,7 +36,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Diradical</title>
+        <title>Dierad</title>
       </Head>
       <SWRConfig
         value={{

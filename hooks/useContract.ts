@@ -54,15 +54,23 @@ const useContract = () => {
 
   // fetch global views
   useEffect(() => {
+    let mounted = true
     const asyncGetCtcData = async () => {
-      setFetching(true)
+      if (mounted) {
+        setFetching(true)
+      }
       const membershipCost = await getMembershipCost().call()
-      setViews({
-        membershipCost: web3.utils.fromWei(membershipCost),
-      })
-      setFetching(false)
+      if (mounted) {
+        setViews({
+          membershipCost: web3.utils.fromWei(membershipCost),
+        })
+        setFetching(false)
+      }
     }
     asyncGetCtcData()
+    return () => {
+      mounted = false
+    }
   }, [])
 
   const addSong = async (artIPFSHash: string, audioIPFSHASH: string) => {

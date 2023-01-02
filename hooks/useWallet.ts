@@ -27,7 +27,7 @@ const useMagicWallet = () => {
       })
       await magic.oauth.loginWithRedirect({
         provider: 'github',
-        redirectURI: `${window.location.origin}/listen`,
+        redirectURI: `${window.location.origin}/authenticate/callback`,
       })
     } catch (error) {
       console.log('error logging in with github', error)
@@ -42,7 +42,7 @@ const useMagicWallet = () => {
       })
       await magic.oauth.loginWithRedirect({
         provider: 'google',
-        redirectURI: `${window.location.origin}/listen`,
+        redirectURI: `${window.location.origin}/authenticate/callback`,
       })
     } catch (error) {
       console.log('error logging in with google', error)
@@ -173,6 +173,7 @@ const useMagicWallet = () => {
     loginWithGithub,
     loginWithGoogle,
     getRedirectResult,
+    fetchWalletBalance,
     isLoggedIn: !!walletFromState.walletAddress,
     walletAddress: walletFromState.walletAddress,
     isAuthenticating: walletFromState.isAuthenticating,
