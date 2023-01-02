@@ -29,7 +29,8 @@ export default function AuthCallback() {
       }
       const response = await getRedirectResult()
       if (response) {
-        const userMetadata = response.magic.userMetadata
+        const { userMetadata, idToken: didToken } = response.magic
+        localStorage.setItem('didToken', didToken)
         const balance = await fetchWalletBalance(userMetadata.publicAddress)
         if (mounted) {
           setWallet({
