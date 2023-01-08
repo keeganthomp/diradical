@@ -32,7 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const form = formidable()
       form.parse(req, async function (err, fields, files) {
         if (err) {
-          res.status(500).json({ message: 'Unable to parse audio files' })
+          res.status(500).json({ message: 'Unable to parse song files' })
         }
         const { audioFile, coverArtFile } = files
         const { title } = fields

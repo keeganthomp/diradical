@@ -83,7 +83,6 @@ export default function ProfilePage() {
   const artFile = selectedArtFiles[0]
 
   const uploadTrack = async (data) => {
-    console.log('weee')
     setUploadError('')
     const { title, audioFiles, artFiles } = data
     const coverArtFile = artFiles[0]
@@ -130,7 +129,6 @@ export default function ProfilePage() {
                 accept='.mp3,.wav'
                 {...register('audioFiles', {
                   required: true,
-                  onChange: (e) => console.log(e.target.files),
                 })}
                 type='file'
                 disabled={formState.isSubmitting}
@@ -167,7 +165,7 @@ export default function ProfilePage() {
           )}
         </Field>
         <UploadButton
-          // disabled={!formState.isValid || formState.isSubmitting}
+          disabled={!formState.isValid || formState.isSubmitting}
           type='submit'
         >
           {formState.isSubmitting ? (
