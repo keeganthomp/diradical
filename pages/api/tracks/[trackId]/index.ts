@@ -1,17 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
+import { checkIfAuthenticated } from 'lib/auth'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET': {
       try {
-        const trackId = Number(req.query.trackId)
+        await checkIfAuthenticated(req, res)
+        const trackId = req.query.trackId as string
         const track = await prisma.track.findUnique({
           where: { id: trackId },
           include: {
-            artist: {
-              select: { wallet: true },
-            },
+            artist: true,
           },
         })
         res.status(200).json(track)

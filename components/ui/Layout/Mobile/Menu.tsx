@@ -2,16 +2,14 @@ import styled from 'styled-components'
 import React from 'react'
 import { useRouter } from 'next/router'
 import { IoCloseOutline } from 'react-icons/io5'
-import useMagicWallet from 'hooks/useWallet'
 import { NAV_LINKS } from 'const'
 import { SidebarButton } from 'components/ui/Buttons'
 import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
-import useContract from 'hooks/useContract'
-import useUser from 'hooks/useUser'
 import useModal from 'hooks/useModal'
 import { ErrorMessage } from 'types'
 import Loader from 'components/ui/Loader'
+import { signOut } from 'next-auth/react'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
@@ -86,34 +84,19 @@ export default function MobileMenu({
   isOpen: boolean
   close: () => void
 }) {
-  const ctc = useContract()
-  const { user } = useUser()
   const router = useRouter()
   const { openModal, ModalType } = useModal()
-  const { walletAddress, isLoggedIn, logout, isAuthenticating } =
-    useMagicWallet()
 
   const handleRoute = (path: string) => {
     router.push(path)
     close()
   }
 
-  const handleBuyMembership = async () => {
-    try {
-      await ctc.buyMembership()
-      close()
-    } catch (err) {
-      if (err.message === ErrorMessage.SEASON_NOT_OVER) {
-        openModal(ModalType.ERROR, 'Start the new Season first!')
-      }
-      close()
-    }
-  }
+  const handleBuyMembership = async () => {}
 
   const handleLogout = async () => {
     try {
-      await logout()
-      close()
+      signOut()
     } catch (err) {
       console.log('error logging out on mobile menu: ', err)
     }
@@ -126,48 +109,30 @@ export default function MobileMenu({
 
   if (!isOpen) return null
 
-  const isMembershipValid =
-    ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
-  const showBuyMembButton = isLoggedIn && !isMembershipValid
-
   return (
     <>
       <Overlay />
       <CloseIcon onClick={close} />
-      {isAuthenticating ? (
-        <LoaderContainer>
-          <Loader color='#000' />
-        </LoaderContainer>
-      ) : (
-        <Menu>
-          <List>
-            {!walletAddress && (
-              <LoginButton icon={<BiLogIn />} onClick={handleLogin}>
-                Login
-              </LoginButton>
-            )}
-            {showBuyMembButton && (
-              <SidebarButton
-                isLoading={ctc.isProcessing}
-                icon={<BsPeople />}
-                onClick={handleBuyMembership}
-              >
-                Buy Membership
-              </SidebarButton>
-            )}
-            {NAV_LINKS.map((link) => (
-              <SidebarButton
-                onClick={() => handleRoute(link.path)}
-                icon={<link.icon />}
-                key={link.title}
-              >
-                {link.title}
-              </SidebarButton>
-            ))}
-          </List>
-          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-        </Menu>
-      )}
+      <Menu>
+        <List>
+          <LoginButton icon={<BiLogIn />} onClick={handleLogin}>
+            Login
+          </LoginButton>
+          <SidebarButton icon={<BsPeople />} onClick={handleBuyMembership}>
+            Buy Membership
+          </SidebarButton>
+          {NAV_LINKS.map((link) => (
+            <SidebarButton
+              onClick={() => handleRoute(link.path)}
+              icon={<link.icon />}
+              key={link.title}
+            >
+              {link.title}
+            </SidebarButton>
+          ))}
+        </List>
+        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+      </Menu>
     </>
   )
 }

@@ -11,50 +11,25 @@ datasource db {
 }
 
 model User {
-  wallet        String   @unique @db.VarChar(255)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  membershipExp Int
-  username      String?  @db.VarChar(30)
-  tracks        Track[]
-  castedVotes   Vote[]   @relation("voter")
-  votesReceived Vote[]   @relation("artist")
-  payouts       Payout[]
-}
-
-model Payout {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  period    Int
-  receiver  User?    @relation(fields: [wallet], references: [wallet])
-  wallet    String
-  amount    String
-
-  @@unique([period, wallet])
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  email            String   @unique @db.VarChar(255)
+  username         String   @unique @db.VarChar(45)
+  stripeCustomerId String   @unique @db.VarChar(255)
+  stripeAccountId  String?  @unique @db.VarChar(255) // only set if user is an artist to receive payouts
+  isArtist         Boolean  @default(false)
+  tracks           Track[]
 }
 
 model Track {
-  id        Int      @unique
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(30)
-  audio     String   @unique @db.VarChar(46) // IPFS hash
-  coverArt  String   @db.VarChar(46) // IPFS hash
-  artist    User?    @relation(fields: [wallet], references: [wallet])
-  wallet    String
+  title     String   @db.VarChar(45)
+  audio     String   @unique @db.VarChar(255) // IPFS hash
+  art       String   @db.VarChar(255) // IPFS hash
+  artist    User?    @relation(fields: [artistId], references: [id])
+  artistId  String
   archived  Boolean  @default(false)
-}
-
-model Vote {
-  id           String   @id @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  period       Int
-  artist       User     @relation("artist", fields: [artistWallet], references: [wallet])
-  artistWallet String
-  voter        User     @relation("voter", fields: [voterWallet], references: [wallet])
-  voterWallet  String
-
-  @@unique([period, voterWallet]) // user cannot vote for the same song twice in the same period
 }

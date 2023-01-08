@@ -1,12 +1,9 @@
 import styled from 'styled-components'
 import { useState } from 'react'
-import { truncateWalletAddress } from 'utils'
-import useMagicWallet from 'hooks/useWallet'
-import useContract from 'hooks/useContract'
-import useUser from 'hooks/useUser'
 import { BsChevronCompactUp } from 'react-icons/bs'
 import useOutsideClick from 'hooks/useClickOutside'
-import { MdContentCopy } from 'react-icons/md'
+import { signOut } from 'next-auth/react'
+import useUser from 'hooks/useUser'
 
 const Wrapper = styled.div`
   position: absolute;
@@ -19,7 +16,7 @@ const Wrapper = styled.div`
 const Container = styled.div`
   display: grid;
   align-items: center;
-  grid-template-columns: 3rem 1fr;
+  grid-template-columns: 2rem 1fr;
   padding: 10px;
   border-top: 1px solid #f0f0f0;
   transition: all 0.2s ease-in-out;
@@ -42,8 +39,8 @@ const LogoutButton = styled.p`
 
 const ProfilePicture = styled.div`
   background: ${({ theme }) => theme.colors.main};
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   flex-basis: 2rem;
   border: 1px solid #b9b9b997;
@@ -52,13 +49,6 @@ const ProfilePicture = styled.div`
 const MetaData = styled.div`
   width: 100%;
   display: flex;
-`
-const WalletAddress = styled.p`
-  color: #000;
-  font-weight: 100;
-  text-align: left;
-  font-size: 14px;
-  flex-grow: 1;
 `
 
 const MenuContainer = styled.div<{ open?: boolean }>`
@@ -72,23 +62,8 @@ const MenuContainer = styled.div<{ open?: boolean }>`
   z-index: 1;
 `
 
-const MenuItem = styled.p<{ isInfo?: boolean }>`
-  padding: 4px 0;
-  cursor: ${({ isInfo }) => (isInfo ? 'default' : 'pointer')};
-  border-radius: 10px;
-  margin-bottom: 5px;
-  &:hover {
-    background: ${({ isInfo }) => (isInfo ? 'transparent' : '#f0f0f09d')};
-  }
-`
-
-const CopyButton = styled(MenuItem)<{ didCopy?: boolean }>`
-  background: ${({ didCopy }) => (didCopy ? '#aaffa245' : 'transparent')};
-  transition: all 0.2s ease-in-out;
-  &:hover {
-    background: ${({ isInfo, didCopy }) =>
-      didCopy ? '#aaffa245' : isInfo ? 'transparent' : '#f0f0f09d'};
-  }
+const Username = styled.p`
+  font-size: 12px;
 `
 
 const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
@@ -99,51 +74,29 @@ const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
 `
 
 function UserInfo() {
-  const [didCopy, setDidCopy] = useState(false)
+  const { isAuthenticated, user } = useUser()
   const [isOpen, setOpen] = useState(false)
-  const { isLoggedIn, logout, walletAddress, balance } = useMagicWallet()
-  const ctc = useContract()
-  const { user } = useUser()
 
   const ref = useOutsideClick(() => setOpen(false))
 
   const toggleOpen = () => setOpen(!isOpen)
-
-  const isMembershipValid =
-    ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
-  const showExpiredMessage = isLoggedIn && !isMembershipValid
-
-  const getMembershipText = () => {
-    if (showExpiredMessage) return `Membership Expired`
-    return 'Membership is Valid'
+  const handleLogout = () => {
+    signOut({
+      callbackUrl: `${window.location.origin}/signin`,
+    })
   }
 
-  const handleLogout = async () => {
-    await logout()
-  }
-
-  const copyAddress = () => {
-    navigator.clipboard.writeText(walletAddress)
-    setDidCopy(true)
-    setTimeout(() => setDidCopy(false), 1000)
-  }
-
-  if (!isLoggedIn) return null
+  if (!isAuthenticated) return null
 
   return (
     <Wrapper ref={ref}>
       <MenuContainer open={isOpen}>
-        <MenuItem isInfo>{getMembershipText()}</MenuItem>
-        <MenuItem isInfo>{balance} MATIC</MenuItem>
-        <CopyButton didCopy={didCopy} onClick={copyAddress}>
-          Copy address <MdContentCopy />
-        </CopyButton>
         <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
       </MenuContainer>
       <Container onClick={toggleOpen}>
         <ProfilePicture />
         <MetaData>
-          <WalletAddress>{truncateWalletAddress(walletAddress)}</WalletAddress>
+          <Username>{user?.username}</Username>
           <Chevron open={isOpen} />
         </MetaData>
       </Container>

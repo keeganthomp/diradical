@@ -1,12 +1,9 @@
 import styled from 'styled-components'
 import React from 'react'
-import useContract from 'hooks/useContract'
 import useModal from 'hooks/useModal'
-import useMagicWallet from 'hooks/useWallet'
 import { Button } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import useSeason from 'hooks/useSeason'
-import { ErrorMessage } from 'types'
 import { devices } from 'styles/theme'
 import moment from 'moment'
 
@@ -67,25 +64,9 @@ const StatNumber = styled.p`
 export default function Sidebar() {
   const [isEnding, setIsEnding] = React.useState(false)
   const { season } = useSeason()
-  const { walletAddress } = useMagicWallet()
-  const { endVotingPeriod } = useContract()
   const { openModal, ModalType } = useModal()
 
-  const handleEndVotingPeriod = async () => {
-    try {
-      setIsEnding(true)
-      const { newSeason, newEnd } = await endVotingPeriod()
-      const fmtEndTime = moment(newEnd * 1000).fromNow()
-    } catch (err) {
-      if (err.message === ErrorMessage.SEASON_NOT_OVER) {
-        openModal(ModalType.ERROR, 'Season not over yet!')
-      } else {
-        openModal(ModalType.ERROR, 'Unable to start new season')
-      }
-    } finally {
-      setIsEnding(false)
-    }
-  }
+  const handleEndVotingPeriod = async () => {}
 
   if (!season)
     return (
@@ -116,15 +97,9 @@ export default function Sidebar() {
           <StatNumber>{season.members}</StatNumber>
         </Stat>
       </StatsContainer>
-      {walletAddress &&
-        season.hasEnded &&
-        (isEnding ? (
-          <Loader color='#000' />
-        ) : (
-          <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
-            Start Season {season.currentSeason + 1}
-          </EndVotingPeriodButton>
-        ))}
+      <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
+        Start Season {season.currentSeason + 1}
+      </EndVotingPeriodButton>
     </Container>
   )
 }

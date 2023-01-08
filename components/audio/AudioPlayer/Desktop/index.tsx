@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import PauseButton from './PauseButton'
 import PlayButton from './PlayButton'
 import { IoCloseOutline } from 'react-icons/io5'
-import { truncateWalletAddress } from 'utils'
 import { devices } from 'styles/theme'
 
 const Container = styled.div`
@@ -111,10 +110,7 @@ export default function DesktopAudioPlayer() {
       <Container>
         <CloseIcon onClick={stop} />
         <SongTitle>{nowPlayingTrack.title}</SongTitle>
-        <Artist>{truncateWalletAddress(nowPlayingTrack.artist.wallet)}</Artist>
-        <CoverArt
-          src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${nowPlayingTrack.coverArt}`}
-        />
+        <CoverArt src={nowPlayingTrack.art} />
         <ButtonWrapper>
           {isPlaying ? (
             <PauseButton audioPlayer />
@@ -128,7 +124,7 @@ export default function DesktopAudioPlayer() {
       <audio
         hidden
         ref={audioRef}
-        src={`https://diradical.infura-ipfs.io/ipfs/${nowPlayingTrack.audio}`}
+        src={nowPlayingTrack.audio}
         onTimeUpdate={handleProgressChange}
         onLoadedMetadata={() => setDuration(audioRef.current.duration)}
       />

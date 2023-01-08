@@ -1,18 +1,14 @@
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
 import React from 'react'
-import useContract from 'hooks/useContract'
-import useUser from 'hooks/useUser'
-import useModal from 'hooks/useModal'
-import useMagicWallet from 'hooks/useWallet'
 import { SidebarButton } from 'components/ui/Buttons'
-import Loader from 'components/ui/Loader'
 import { NAV_LINKS } from 'const'
 import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import UserIfno from './User'
-import { ErrorMessage } from 'types'
+import useUser from 'hooks/useUser'
+import useApi from 'hooks/useApi'
 
 const Container = styled.div`
   position: relative;
@@ -50,53 +46,63 @@ const Logo = styled.p`
 `
 
 export default function Sidebar() {
+  const [isRegistering, setIsRegistering] = React.useState(false)
+  const [isBuyingMembership, setIsBuyingMembership] = React.useState(false)
+  const { purchaseMembership, registerArtist } = useApi()
   const router = useRouter()
-  const { walletAddress, isAuthenticating, isLoggedIn } = useMagicWallet()
-  const ctc = useContract()
-  const { openModal, ModalType } = useModal()
-  const { user } = useUser()
+  const { isAuthenticated } = useUser()
 
-  const handleBuyMembership = async () => {
+  const handleArtistRegistration = async () => {
+    setIsRegistering(true)
     try {
-      await ctc.buyMembership()
-    } catch (err) {
-      if (err.message === ErrorMessage.SEASON_NOT_OVER) {
-        openModal(ModalType.ERROR, 'Start the new Season first!')
-      }
+      const accountLink = await registerArtist()
+      window.location.href = accountLink.url
+    } catch (e) {
+      setIsRegistering(false)
+      console.log('Error registering artist', e)
     }
   }
 
-  const isMembershipValid =
-    ctc?.currentSecs && user && user.membershipExp > ctc.currentSecs
-  const showBuyMembButton = isLoggedIn && !isMembershipValid
-
-  if (isAuthenticating)
-    return (
-      <Container>
-        <Loader color='#000' />
-      </Container>
-    )
+  const handlePurchaseMembership = async () => {
+    setIsBuyingMembership(true)
+    try {
+      const res = await purchaseMembership()
+      window.location.href = res.url
+    } catch (e) {
+      setIsBuyingMembership(false)
+      console.log('Error buying membership', e)
+    }
+  }
 
   return (
     <Container>
       <Logo onClick={() => router.push('/')}>DIERAD</Logo>
       <Content>
-        {!walletAddress && (
+        {!isAuthenticated && (
           <LoginButton
             icon={<BiLogIn />}
-            onClick={() => router.push('/authenticate')}
+            onClick={() => router.push('/signin')}
           >
             Login
           </LoginButton>
         )}
-        {showBuyMembButton && (
-          <SidebarButton
-            isLoading={ctc.isProcessing}
-            icon={<BsPeople />}
-            onClick={handleBuyMembership}
-          >
-            Buy Membership
-          </SidebarButton>
+        {isAuthenticated && (
+          <>
+            <LoginButton
+              disabled={isRegistering}
+              icon={<BiLogIn />}
+              onClick={handleArtistRegistration}
+            >
+              Register as Artist
+            </LoginButton>
+            <SidebarButton
+              icon={<BsPeople />}
+              disabled={isBuyingMembership}
+              onClick={handlePurchaseMembership}
+            >
+              Buy Membership
+            </SidebarButton>
+          </>
         )}
         {NAV_LINKS.map((link) => (
           <SidebarButton

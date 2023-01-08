@@ -1,11 +1,11 @@
 import useSWR from 'swr'
 
-export default function useUserMusic(wallet: string) {
+export default function useUserMusic(username: string) {
   const {
     data: tracks,
     error,
     mutate,
-  } = useSWR(wallet ? `/api/user/${wallet}/tracks` : null, {
+  } = useSWR(username ? `/api/users/${username}/tracks` : null, {
     refreshInterval: 7000,
   })
   return {

@@ -1,23 +1,24 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
+import { checkIfAuthenticated } from 'lib/auth'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST': {
       try {
-        const trackId = Number(req.query.trackId)
-        const track = await prisma.track.findFirst({
+        const user = await checkIfAuthenticated(req, res)
+        const trackId = req.query.trackId as string
+        const trackToUpdate = await prisma.track.findUnique({
           where: { id: trackId },
-          include: {
-            artist: {
-              select: { wallet: true },
-            },
-          },
         })
+        if (!trackToUpdate || trackToUpdate.artistId !== user.id) {
+          res.status(401).json({ message: 'unauthorized' })
+          return
+        }
         await prisma.track.update({
           where: { id: trackId },
           data: {
-            archived: !track.archived,
+            archived: !trackToUpdate.archived,
           },
         })
         res.status(200).json({ success: true })

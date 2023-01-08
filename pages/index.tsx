@@ -1,4 +1,3 @@
-import { Button } from 'components/ui/Buttons'
 import React from 'react'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
@@ -57,7 +56,7 @@ const BoxContainer = styled.div`
   @media ${devices.mobile} {
     background: ${(p) => p.theme.colors.main};
     color: #fff;
-    height: 4rem;
+    height: 2rem;
   }
 `
 

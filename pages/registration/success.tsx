@@ -1,10 +1,7 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
 import React from 'react'
-import useMagicWallet from 'hooks/useWallet'
-import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
-import PleaseConnect from 'components/ui/PleaseConnect'
 import { devices } from 'styles/theme'
 
 const Container = styled.div`
@@ -27,23 +24,10 @@ const Title = styled.p`
   padding-bottom: 1rem;
 `
 
-export default function ProfilePage() {
-  const { walletAddress } = useMagicWallet()
-  const { tracks, isFetching } = useUserMusic(walletAddress)
-
-  if (!walletAddress) return <PleaseConnect />
-
-  if (isFetching)
-    return (
-      <Container>
-        <Loader color='#000' />
-      </Container>
-    )
-
+export default function RegistrationSuccessPage() {
   return (
     <Container>
-      <Title>My Music</Title>
-      <AudioGrid tracks={tracks} />
+      <Title>Registration Success</Title>
     </Container>
   )
 }

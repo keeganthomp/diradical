@@ -150,17 +150,17 @@ export default function AudioCard({ track }: Props) {
   const isMyMusicPage = router.pathname.includes('/me')
   const isListenPage = router.pathname.includes('/listen')
 
+  console.log('track', track)
+
   return (
     <Wrapper>
       <ImageContainer
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        bgImage={track.coverArt}
+        bgImage={track.art}
       >
         <ArtOverlay show={isHovering} />
-        <CoverArt
-          src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${track.coverArt}`}
-        />
+        <CoverArt src={track.art} />
         {isHovering &&
           (isTrackPlaying ? (
             <PauseButton onClick={pause} />
@@ -173,8 +173,8 @@ export default function AudioCard({ track }: Props) {
           <TitleInfo>
             <p>{track.title}</p>
             {!isArtistPage && !isMyMusicPage && (
-              <Link href={`/artist/${track.artist.wallet}`}>
-                <Artist>{truncateWalletAddress(track.artist.wallet)}</Artist>
+              <Link href={`/artist/${track.artist.username}`}>
+                <Artist>{truncateWalletAddress(track.artist.username)}</Artist>
               </Link>
             )}
           </TitleInfo>
