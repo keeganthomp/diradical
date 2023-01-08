@@ -1,15 +1,15 @@
 import '../styles/global.css'
 import { AppProps } from 'next/app'
 import { RecoilRoot } from 'recoil'
-import Layout from 'components/ui/Layout'
+import Layout from 'components/Layout'
 import { ThemeProvider } from 'styled-components'
 import theme from 'styles/theme'
-import Head from 'next/head'
-import Modals from 'components/modal'
+import Modals from 'components/Modal'
 import React from 'react'
 import { SWRConfig } from 'swr'
 import { SessionProvider } from 'next-auth/react'
 import { Session } from 'next-auth'
+import Head from 'next/head'
 
 const fetcher = async (url) => {
   const res = await fetch(url)

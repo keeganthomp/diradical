@@ -79,26 +79,20 @@ export default function Sidebar() {
 
   return (
     <Container>
-      <Season>Season {season.currentSeason}</Season>
-      <SeasonEnd>{`Season ${season.currentSeason} ${
+      <Season>Season {season.id}</Season>
+      {/* <SeasonEnd>{`Season ${season.currentSeason} ${
         season.hasEnded ? 'ended' : 'ends'
-      } ${timeFromNow}`}</SeasonEnd>
+      } ${timeFromNow}`}</SeasonEnd> */}
       <StatsContainer>
         <Stat>
-          <StatLabel>Votes</StatLabel>
-          <StatNumber>{season.votes}</StatNumber>
-        </Stat>
-        <Stat>
           <StatLabel>Payouts</StatLabel>
-          <StatNumber>{season.payout}</StatNumber>
         </Stat>
         <Stat>
           <StatLabel>Members</StatLabel>
-          <StatNumber>{season.members}</StatNumber>
         </Stat>
       </StatsContainer>
       <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
-        Start Season {season.currentSeason + 1}
+        {/* Start Season {season.currentSeason + 1} */}
       </EndVotingPeriodButton>
     </Container>
   )

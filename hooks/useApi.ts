@@ -9,11 +9,6 @@ const callApi = async (url: string, options: RequestInit = {}) => {
 }
 
 const useApi = () => {
-  const addVote = (voterWallet: string, artist: string, period: number) =>
-    callApi('/api/vote', {
-      method: 'POST',
-      body: JSON.stringify({ voterWallet, artist, period }),
-    })
   const addPayout = (wallet: string, amount: number, period: number) =>
     callApi('/api/payout', {
       method: 'POST',
@@ -25,13 +20,15 @@ const useApi = () => {
     callApi('/api/register/artist', { method: 'POST' })
   const uploadSong = (formData: FormData) =>
     callApi('/api/tracks', { method: 'POST', body: formData })
+  const savePlay = (trackId: string) =>
+    callApi(`/api/tracks/${trackId}/play`, { method: 'POST' })
 
   return {
     registerArtist,
-    addVote,
     addPayout,
     uploadSong,
     purchaseMembership,
+    savePlay,
   }
 }
 

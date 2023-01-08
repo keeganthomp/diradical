@@ -6,7 +6,7 @@ import { NAV_LINKS } from 'const'
 import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
 import { useRouter } from 'next/router'
-import UserIfno from './User'
+import UserIfno from './UserInfo'
 import useUser from 'hooks/useUser'
 import useApi from 'hooks/useApi'
 

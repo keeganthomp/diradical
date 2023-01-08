@@ -35,7 +35,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET,
     )
-    // Handle the event
     switch (event.type) {
       case 'account.external_account.created':
         const stripeAccount = event.data.object
@@ -47,8 +46,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           data: { isArtist: true },
         })
         break
+      case 'customer.subscription.created':
+        const subscriptionSchedule = event.data.object
+        const { customer, id: stripeSubscriptionId } = subscriptionSchedule
+        const user = await prisma.user.findUnique({
+          where: { stripeCustomerId: customer },
+        })
+        await prisma.membership.create({
+          data: {
+            user: { connect: { id: user.id } },
+            stripeSubscriptionId,
+          },
+        })
+        break
       default:
-        console.log(`Unhandled event type ${event.type}`)
+        return
     }
     res.status(200)
   } catch (err) {

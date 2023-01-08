@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import MobileMenu from './Mobile'
-import DesktopSidebar from './Desktop'
+import MobileTopbar from './Mobile/Topbar'
+import DesktopSidebar from './Desktop/Sidebar'
 import { devices } from 'styles/theme'
 import AudioPlayer from 'components/audio/AudioPlayer'
 
@@ -43,7 +43,7 @@ const Content = styled.div`
 export default function Layout({ children }) {
   return (
     <Container>
-      <MobileMenu />
+      <MobileTopbar />
       <DesktopSidebar />
       <Content>
         {children}

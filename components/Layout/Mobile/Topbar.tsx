@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import React from 'react'
 import { devices } from 'styles/theme'
 import { useRouter } from 'next/router'
-import MobileMenu from './Menu'
+import MobileMenu from './OverlayMenu'
 
 const Container = styled.div`
   grid-area: mobile-navbar;

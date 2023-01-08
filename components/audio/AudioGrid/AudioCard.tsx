@@ -1,17 +1,16 @@
-import { TrackWithArtist } from 'types'
+import { TrackWithArtistAndPlays } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
-import { truncateWalletAddress } from 'utils'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Button } from 'components/ui/Buttons'
 import { FaPlay, FaPause } from 'react-icons/fa'
 
 type Props = {
-  track: TrackWithArtist
+  track: TrackWithArtistAndPlays
 }
 
 const Wrapper = styled.div`
@@ -114,16 +113,6 @@ const PauseButton = styled(FaPause)`
     font-size: 1rem;
   }
 `
-
-const VoteButton = styled(Button)`
-  opacity: 0.6;
-  &:hover {
-    opacity: 1;
-  }
-  @media ${devices.mobile} {
-    opacity: 1;
-  }
-`
 const ArchiveButton = styled(Button)`
   background: #ff5959;
   opacity: 0.6;
@@ -147,10 +136,7 @@ export default function AudioCard({ track }: Props) {
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
   const isArtistPage = router.pathname.includes('/artist/')
-  const isMyMusicPage = router.pathname.includes('/me')
-  const isListenPage = router.pathname.includes('/listen')
-
-  console.log('track', track)
+  const isMyMusicPage = router.pathname.includes('/profile')
 
   return (
     <Wrapper>
@@ -174,13 +160,12 @@ export default function AudioCard({ track }: Props) {
             <p>{track.title}</p>
             {!isArtistPage && !isMyMusicPage && (
               <Link href={`/artist/${track.artist.username}`}>
-                <Artist>{truncateWalletAddress(track.artist.username)}</Artist>
+                <Artist>{track.artist.username}</Artist>
               </Link>
             )}
           </TitleInfo>
           <RightCol>
             {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
-            {isListenPage && <VoteButton>Vote</VoteButton>}
           </RightCol>
         </Meta>
       </MetaData>

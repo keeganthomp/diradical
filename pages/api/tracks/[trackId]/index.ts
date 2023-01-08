@@ -12,9 +12,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           where: { id: trackId },
           include: {
             artist: true,
+            plays: true,
           },
         })
-        res.status(200).json(track)
+        res.status(200).json({
+          ...track,
+          totalPlays: track.plays.length,
+        })
       } catch {
         res.status(500).json({ message: 'unable to archive track' })
       }

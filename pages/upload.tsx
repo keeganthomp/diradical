@@ -6,6 +6,7 @@ import { IoIosCloseCircle } from 'react-icons/io'
 import Loader from 'components/ui/Loader'
 import TextInput from 'components/ui/Inputs/TextInput'
 import useApi from 'hooks/useApi'
+import Error from 'components/ui/Error'
 
 const UploadButton = styled(Button)`
   width: 100%;
@@ -51,11 +52,6 @@ const SelectFileButton = styled.p`
   &:hover {
     opacity: 0.8;
   }
-`
-
-const Error = styled.p`
-  color: red;
-  padding: 0.5rem 0;
 `
 
 const Container = styled.div`

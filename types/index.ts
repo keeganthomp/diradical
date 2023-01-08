@@ -1,6 +1,9 @@
-import { Track, User } from '@prisma/client'
+import { Track, User, PlayEvent } from '@prisma/client'
 
-export type TrackWithArtist = Track & { artist: Partial<User> }
+export type TrackWithArtistAndPlays = Track & {
+  artist: Partial<User>
+  plays: PlayEvent[]
+}
 
 export enum ErrorMessage {
   NO_WALLET = 'Please connect your wallet',
@@ -9,9 +12,8 @@ export enum ErrorMessage {
 }
 
 export type Season = {
-  currentSeason: number
+  id: number
   payout: number | string
-  votes: number
   members: number
   endPeriodTime: number
   hasEnded: boolean

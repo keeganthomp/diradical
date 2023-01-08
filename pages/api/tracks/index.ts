@@ -19,6 +19,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           where: { archived: false },
           include: {
             artist: true,
+            plays: true,
           },
         })
         res.status(200).json(tracks)

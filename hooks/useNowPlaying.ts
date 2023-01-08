@@ -1,8 +1,10 @@
 import { useRecoilState } from 'recoil'
 import nowPlayingState, { defaultNowPlayingState } from 'atoms/nowPlaying'
-import { TrackWithArtist } from 'types'
+import { TrackWithArtistAndPlays } from 'types'
+import useApi from './useApi'
 
 const useNowPlaying = () => {
+  const { savePlay } = useApi()
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingState)
 
   const pause = () => {
@@ -12,7 +14,8 @@ const useNowPlaying = () => {
     }))
   }
 
-  const play = (track: TrackWithArtist) => {
+  const play = async (track: TrackWithArtistAndPlays) => {
+    await savePlay(track.id)
     setNowPlaying((prev) => ({
       ...prev,
       isPlaying: true,

@@ -6,7 +6,6 @@ import { useRouter } from 'next/router'
 const BOXES = [
   { title: 'Upload', description: 'Upload tracks', to: '/upload' },
   { title: 'Listen', description: 'Listen to music', to: '/listen' },
-  { title: 'Vote', description: 'Vote for you favorite artist', to: '/listen' },
 ]
 
 const Container = styled.div`

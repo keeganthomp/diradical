@@ -11,25 +11,57 @@ datasource db {
 }
 
 model User {
-  id               String   @id @default(uuid())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  email            String   @unique @db.VarChar(255)
-  username         String   @unique @db.VarChar(45)
-  stripeCustomerId String   @unique @db.VarChar(255)
-  stripeAccountId  String?  @unique @db.VarChar(255) // only set if user is an artist to receive payouts
-  isArtist         Boolean  @default(false)
+  id               String       @id @default(uuid())
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  email            String       @unique @db.VarChar(255)
+  username         String       @unique @db.VarChar(45)
+  stripeCustomerId String       @unique @db.VarChar(255)
+  stripeAccountId  String?      @unique @db.VarChar(255) // only set if user is an artist to receive payouts
+  isArtist         Boolean      @default(false)
   tracks           Track[]
+  listens          PlayEvent[]
+  membership       Membership[]
 }
 
 model Track {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  title     String      @db.VarChar(45)
+  audio     String      @unique @db.VarChar(255) // IPFS hash
+  art       String      @db.VarChar(255) // IPFS hash
+  artist    User?       @relation(fields: [artistId], references: [id])
+  artistId  String
+  archived  Boolean     @default(false)
+  plays     PlayEvent[]
+}
+
+model Season {
+  id        Int         @id @default(autoincrement())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  current   Boolean     @default(true)
+  plays     PlayEvent[]
+}
+
+model PlayEvent {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(45)
-  audio     String   @unique @db.VarChar(255) // IPFS hash
-  art       String   @db.VarChar(255) // IPFS hash
-  artist    User?    @relation(fields: [artistId], references: [id])
-  artistId  String
-  archived  Boolean  @default(false)
+  track     Track?   @relation(fields: [trackId], references: [id])
+  trackId   String
+  season    Season?  @relation(fields: [seasonId], references: [id])
+  seasonId  Int
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Membership {
+  id                   String   @id @default(uuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  user                 User?    @relation(fields: [userId], references: [id])
+  userId               String
+  stripeSubscriptionId String
 }

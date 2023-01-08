@@ -82,7 +82,7 @@ const createMembershipCheckoutSession = async ({
       trial_period_days: DAYS_OF_FREE_TRIAL,
     },
 
-    success_url: `${BASE_APP_URL}`,
+    success_url: `${BASE_APP_URL}/membership/success`,
     cancel_url: `${BASE_APP_URL}`,
   })
 
