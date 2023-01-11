@@ -1,5 +1,3 @@
-import prisma from './prisma'
-
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 const BASE_APP_URL = 'http://localhost:3000'
