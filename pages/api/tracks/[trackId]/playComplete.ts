@@ -22,12 +22,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
         })
         if (!userPlayInitEvent) {
-          res.status(401).json({ message: 'no play initiated event found' })
+          res.status(500).json({ message: 'no play initiated event found' })
           return
         }
         if (userPlayInitEvent.trackId !== trackId) {
           res
-            .status(401)
+            .status(500)
             .json({ message: 'track does not match play initiated event' })
           return
         }

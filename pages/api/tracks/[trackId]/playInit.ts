@@ -32,7 +32,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           where: {
             type: EventType.PLAY_INITIATED,
             user: { id: user.id },
-            season: { id: seasonId },
+          },
+          orderBy: {
+            id: 'desc',
           },
         })
         if (

@@ -18,10 +18,6 @@ export default function ArtistPage() {
 
   const { tracks, isFetching } = useUserMusic(artist as string)
 
-  const handleVote = async () => {
-    console.log('done voting')
-  }
-
   if (isFetching) return <Loader color='#000' />
 
   return (
