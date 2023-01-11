@@ -22,8 +22,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
         })
         res.status(200).json({ success: true })
-      } catch {
-        res.status(500).json({ message: 'unable to archive track' })
+      } catch (err) {
+        res
+          .status(500)
+          .json({ message: err.message || 'unable to archive track' })
       }
       break
     }

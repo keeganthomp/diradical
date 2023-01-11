@@ -4,7 +4,7 @@ import { TrackWithArtistAndPlays } from 'types'
 import useApi from './useApi'
 
 const useNowPlaying = () => {
-  const { savePlay } = useApi()
+  const { initPlay, getTrack } = useApi()
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingState)
 
   const pause = () => {
@@ -15,17 +15,28 @@ const useNowPlaying = () => {
   }
 
   const play = async (track: TrackWithArtistAndPlays) => {
-    await savePlay(track.id)
-    setNowPlaying((prev) => ({
-      ...prev,
-      isPlaying: true,
-      track,
-    }))
+    if (nowPlaying.track?.id !== track.id) {
+      const { audio } = await getTrack(track.id)
+      setNowPlaying(() => ({
+        timeElapsed: 0,
+        isPlaying: true,
+        isListenedTo: false,
+        track: {
+          ...track,
+          audio,
+        },
+      }))
+      await initPlay(track.id)
+    } else {
+      setNowPlaying((prev) => ({
+        ...prev,
+        isPlaying: true,
+      }))
+    }
   }
-
   const stop = () => setNowPlaying(defaultNowPlayingState)
 
-  return { ...nowPlaying, play, pause, stop }
+  return { ...nowPlaying, play, pause, stop, setNowPlaying }
 }
 
 export default useNowPlaying

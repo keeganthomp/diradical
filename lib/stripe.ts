@@ -1,3 +1,5 @@
+import prisma from './prisma'
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 const BASE_APP_URL = 'http://localhost:3000'
@@ -129,13 +131,26 @@ const payoutUser = async ({
     if (amountToSend > userBalance.amount) {
       throw new Error('Not enough funds for payout')
     }
-    await stripe.payouts.create(
+    // pyout user in Stripe
+    const payout = await stripe.payouts.create(
       {
         amount: amountToSend,
         currency: 'usd',
       },
       { stripeAccount: stripeAccountId },
     )
+    // store payout info database
+    await prisma.payout.create({
+      data: {
+        amount: amountToSend,
+        stripePayoutId: payout.id,
+        user: {
+          connect: {
+            stripeAccountId,
+          },
+        },
+      },
+    })
   } catch (stripeError) {
     throw new Error(stripeError)
   }

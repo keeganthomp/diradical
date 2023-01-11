@@ -33,7 +33,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
     return res.status(200).json(accountLink)
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ message: 'unable to register as an artist' })
+    res
+      .status(500)
+      .json({ message: err.message || 'unable to register as an artist' })
   }
 }

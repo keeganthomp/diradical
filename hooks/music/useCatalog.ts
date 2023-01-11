@@ -6,7 +6,7 @@ export default function useCatalog() {
     error,
     mutate,
   } = useSWR('/api/tracks', {
-    refreshInterval: 7000,
+    refreshInterval: 12000,
   })
   return {
     tracks,

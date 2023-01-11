@@ -1,8 +1,8 @@
-import { Track, User, PlayEvent } from '@prisma/client'
+import { Track, User } from '@prisma/client'
 
 export type TrackWithArtistAndPlays = Track & {
   artist: Partial<User>
-  plays: PlayEvent[]
+  plays: number
 }
 
 export enum ErrorMessage {
@@ -13,10 +13,8 @@ export enum ErrorMessage {
 
 export type Season = {
   id: number
-  payout: number | string
+  plays: number
   members: number
-  endPeriodTime: number
-  hasEnded: boolean
 }
 
 export type Payout = {

@@ -1,11 +1,8 @@
 import styled from 'styled-components'
 import React from 'react'
-import useModal from 'hooks/useModal'
-import { Button } from 'components/ui/Buttons'
 import Loader from 'components/ui/Loader'
 import useSeason from 'hooks/useSeason'
 import { devices } from 'styles/theme'
-import moment from 'moment'
 
 const Container = styled.div`
   width: 100%;
@@ -22,20 +19,10 @@ const Container = styled.div`
   }
 `
 
-const EndVotingPeriodButton = styled(Button)`
-  width: 10rem;
-  margin-bottom: 10px;
-`
-
 const Season = styled.p`
   font-weight: bold;
   font-size: 1.5rem;
 `
-const SeasonEnd = styled.p`
-  font-size: 14px;
-  font-style: italic;
-`
-
 const StatsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -62,11 +49,7 @@ const StatNumber = styled.p`
 `
 
 export default function Sidebar() {
-  const [isEnding, setIsEnding] = React.useState(false)
   const { season } = useSeason()
-  const { openModal, ModalType } = useModal()
-
-  const handleEndVotingPeriod = async () => {}
 
   if (!season)
     return (
@@ -75,25 +58,23 @@ export default function Sidebar() {
       </Container>
     )
 
-  const timeFromNow = moment(season.endPeriodTime * 1000).fromNow()
-
   return (
     <Container>
       <Season>Season {season.id}</Season>
-      {/* <SeasonEnd>{`Season ${season.currentSeason} ${
-        season.hasEnded ? 'ended' : 'ends'
-      } ${timeFromNow}`}</SeasonEnd> */}
       <StatsContainer>
         <Stat>
-          <StatLabel>Payouts</StatLabel>
+          <StatLabel>Plays</StatLabel>
+          <StatNumber>{season.plays}</StatNumber>
         </Stat>
         <Stat>
           <StatLabel>Members</StatLabel>
+          <StatNumber>{season.memberships}</StatNumber>
+        </Stat>
+        <Stat>
+          <StatLabel>Payouts</StatLabel>
+          <StatNumber>{season.memberships}</StatNumber>
         </Stat>
       </StatsContainer>
-      <EndVotingPeriodButton onClick={handleEndVotingPeriod}>
-        {/* Start Season {season.currentSeason + 1} */}
-      </EndVotingPeriodButton>
     </Container>
   )
 }

@@ -165,6 +165,7 @@ export default function AudioCard({ track }: Props) {
             )}
           </TitleInfo>
           <RightCol>
+            <p>{track.plays} plays</p>
             {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
           </RightCol>
         </Meta>

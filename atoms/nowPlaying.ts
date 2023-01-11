@@ -4,6 +4,8 @@ import { TrackWithArtistAndPlays } from 'types'
 export const defaultNowPlayingState = {
   isPlaying: false,
   track: null as TrackWithArtistAndPlays | null,
+  timeElapsed: 0,
+  isListenedTo: false,
 }
 
 const nowPlayingState = atom({

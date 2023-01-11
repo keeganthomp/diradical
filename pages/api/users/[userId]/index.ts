@@ -17,7 +17,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
     res.status(200).json(user)
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ message: 'unable to fetch user' })
+    res.status(500).json({ message: err.message || 'unable to fetch user' })
   }
 }

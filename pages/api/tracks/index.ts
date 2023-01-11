@@ -4,6 +4,7 @@ import doSpaces from 'lib/digitalOcean/spaces'
 import formidable from 'formidable'
 import { readFile, unlink } from 'node:fs/promises'
 import { checkIfAuthenticated } from 'lib/auth'
+import { EventType } from '@prisma/client'
 
 export const config = {
   api: {
@@ -17,30 +18,46 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const tracks = await prisma.track.findMany({
           where: { archived: false },
-          include: {
-            artist: true,
-            plays: true,
+          select: {
+            id: true,
+            title: true,
+            art: true,
+            artist: {
+              select: {
+                username: true,
+                id: true,
+              },
+            },
+            _count: {
+              select: {
+                events: { where: { type: EventType.PLAY_SAVED } },
+              },
+            },
           },
         })
-        res.status(200).json(tracks)
+        const formattedTracks = tracks.map((track) => {
+          const { _count, ...rest } = track
+          return { ...rest, plays: track._count.events }
+        })
+        res.status(200).json(formattedTracks)
       } catch (err) {
         res.status(500).json({ message: 'unable to fetch tracks' })
       }
       break
     }
     case 'POST': {
-      const user = await checkIfAuthenticated(req, res)
       const form = formidable()
       form.parse(req, async function (err, fields, files) {
-        if (err) {
-          res.status(500).json({ message: 'Unable to parse song files' })
-        }
-        const { audioFile, coverArtFile } = files
-        const { title } = fields
-        if (!audioFile[0] || !coverArtFile[0] || !title[0]) {
-          res.status(400).send({ message: 'Missing required fields' })
-        }
         try {
+          const user = await checkIfAuthenticated(req, res)
+          if (err) {
+            res.status(500).json({ message: 'Unable to parse song files' })
+          }
+          const { audioFile, coverArtFile } = files
+          const { title } = fields
+          if (!audioFile[0] || !coverArtFile[0] || !title[0]) {
+            res.status(400).send({ message: 'Missing required fields' })
+          }
           const audioFileObj = audioFile[0].toJSON()
           const coverArtFileObj = coverArtFile[0].toJSON()
           // get file buffer for do spaces

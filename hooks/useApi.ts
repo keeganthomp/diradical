@@ -20,15 +20,20 @@ const useApi = () => {
     callApi('/api/register/artist', { method: 'POST' })
   const uploadSong = (formData: FormData) =>
     callApi('/api/tracks', { method: 'POST', body: formData })
-  const savePlay = (trackId: string) =>
-    callApi(`/api/tracks/${trackId}/play`, { method: 'POST' })
+  const initPlay = (trackId: string) =>
+    callApi(`/api/tracks/${trackId}/playInit`, { method: 'POST' })
+  const countPlay = (trackId: string) =>
+    callApi(`/api/tracks/${trackId}/playComplete`, { method: 'POST' })
+  const getTrack = (trackId: string) => callApi(`/api/tracks/${trackId}`)
 
   return {
+    countPlay,
     registerArtist,
     addPayout,
     uploadSong,
     purchaseMembership,
-    savePlay,
+    initPlay,
+    getTrack,
   }
 }
 

@@ -27,11 +27,12 @@ const PageDescription = styled.p`
 `
 const BoxWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 3rem;
   padding: 3rem 0;
   @media ${devices.mobile} {
     grid-template-columns: 1fr;
+    gap: 1rem;
     padding: 2rem 0;
   }
 `
