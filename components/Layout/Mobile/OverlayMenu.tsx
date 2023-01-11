@@ -7,8 +7,6 @@ import { SidebarButton } from 'components/ui/Buttons'
 import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
 import useModal from 'hooks/useModal'
-import { ErrorMessage } from 'types'
-import Loader from 'components/ui/Loader'
 import { signOut } from 'next-auth/react'
 
 const Overlay = styled.div`
@@ -67,14 +65,6 @@ const LogoutButton = styled.p`
   transform: translate(-50%, 0);
   bottom: 2.5rem;
   position: absolute;
-`
-
-const LoaderContainer = styled.div`
-  z-index: 10;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 
 export default function MobileMenu({

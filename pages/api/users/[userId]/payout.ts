@@ -28,11 +28,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(401).json({ message: 'user is not registered as an artist' })
       return
     }
+    // TODO: check if there is enough money to payout to user
     const platformBalance = await stripe.getPlatformBalance()
     const userBalance = await stripe.getUserBalance({
       stripeAccountId: authedUser.stripeAccountId,
     })
-    await stripe.payoutUser({ stripeAccountId: authedUser.stripeAccountId })
+    const payout = await stripe.payoutUser({
+      stripeAccountId: authedUser.stripeAccountId,
+    })
+    // store payout info database
+    await prisma.payout.create({
+      data: {
+        amount: payout.amount,
+        stripePayoutId: payout.id,
+        user: {
+          connect: {
+            stripeAccountId: authedUser.stripeAccountId,
+          },
+        },
+      },
+    })
     res.status(200).json({ sucess: true })
   } catch (err) {
     console.log('errrr', err)

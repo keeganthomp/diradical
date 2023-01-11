@@ -139,18 +139,7 @@ const payoutUser = async ({
       },
       { stripeAccount: stripeAccountId },
     )
-    // store payout info database
-    await prisma.payout.create({
-      data: {
-        amount: amountToSend,
-        stripePayoutId: payout.id,
-        user: {
-          connect: {
-            stripeAccountId,
-          },
-        },
-      },
-    })
+    return payout
   } catch (stripeError) {
     throw new Error(stripeError)
   }

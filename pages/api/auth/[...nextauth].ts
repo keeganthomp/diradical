@@ -3,7 +3,6 @@ import AppleProvider from 'next-auth/providers/apple'
 import GoogleProvider from 'next-auth/providers/google'
 import stripe from 'lib/stripe'
 import prisma from 'lib/prisma'
-import { User } from '@prisma/client'
 import { generateFromEmail } from 'unique-username-generator'
 
 export default NextAuth({
@@ -53,7 +52,7 @@ export default NextAuth({
       }
     },
     async session({ session, user: u }) {
-      const user: User = await prisma.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: { email: session.user.email },
       })
       return {
