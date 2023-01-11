@@ -72,7 +72,7 @@ export default function Sidebar() {
         </Stat>
         <Stat>
           <StatLabel>Payouts</StatLabel>
-          <StatNumber>{season.memberships}</StatNumber>
+          <StatNumber>{season.payouts}</StatNumber>
         </Stat>
       </StatsContainer>
     </Container>

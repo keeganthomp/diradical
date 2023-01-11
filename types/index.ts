@@ -1,23 +1,16 @@
-import { Track, User } from '@prisma/client'
+import {
+  Track as PrismaTrack,
+  User as PrismaUser,
+  Season as PrismaSeason,
+} from '@prisma/client'
 
-export type TrackWithArtistAndPlays = Track & {
-  artist: Partial<User>
+export type Track = PrismaTrack & {
+  artist: PrismaUser
   plays: number
 }
 
-export enum ErrorMessage {
-  NO_WALLET = 'Please connect your wallet',
-  SEASON_NOT_OVER = 'Season is not over',
-  SEASON_OVER = 'Season is over',
-}
-
-export type Season = {
-  id: number
+export type Season = PrismaSeason & {
   plays: number
-  members: number
-}
-
-export type Payout = {
-  period: number
-  amount: number
+  memberships: number
+  payouts: number
 }

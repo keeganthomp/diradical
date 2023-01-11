@@ -13,10 +13,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           select: {
             id: true,
             createdAt: true,
+            payouts: true,
             _count: {
               select: {
                 events: { where: { type: EventType.PLAY_SAVED } },
-                mermberships: true,
+                memberships: true,
               },
             },
           },
@@ -25,7 +26,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: currentSeason?.id,
           createdAt: currentSeason?.createdAt,
           plays: currentSeason._count.events,
-          memberships: currentSeason._count.mermberships,
+          memberships: currentSeason._count.memberships,
+          payouts: currentSeason.payouts.reduce((acc, cur) => {
+            return acc + cur.amount
+          }, 0),
         })
       } catch (err) {
         res.status(500).json({ message: 'unable to fetch season' })

@@ -1,4 +1,4 @@
-import { TrackWithArtistAndPlays } from 'types'
+import { Track } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
@@ -10,7 +10,7 @@ import { Button } from 'components/ui/Buttons'
 import { FaPlay, FaPause } from 'react-icons/fa'
 
 type Props = {
-  track: TrackWithArtistAndPlays
+  track: Track
 }
 
 const Wrapper = styled.div`

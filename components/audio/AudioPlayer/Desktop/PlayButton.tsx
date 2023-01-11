@@ -1,12 +1,12 @@
 import { Button } from '../../../ui/Buttons'
 import useNowPlaying from 'hooks/useNowPlaying'
-import { TrackWithArtistAndPlays } from 'types'
+import { Track } from 'types'
 import { FaPlay } from 'react-icons/fa'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
 
 type Props = {
-  track: TrackWithArtistAndPlays
+  track: Track
   audioPlayer?: boolean
 }
 

@@ -45,13 +45,13 @@ model Track {
 }
 
 model Season {
-  id           Int          @id @default(autoincrement())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  endedAt      DateTime?
-  events       Event[]
-  mermberships Membership[]
-  payouts      Payout[]
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  endedAt     DateTime?
+  events      Event[]
+  memberships Membership[]
+  payouts     Payout[]
 }
 
 model Event {
