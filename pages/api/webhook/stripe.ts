@@ -29,12 +29,12 @@ export function runMiddleware(
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, bodyParser.raw({ type: 'application/json' }))
   const sig = req.headers['stripe-signature']
+  const event = stripe.webhooks.constructEvent(
+    req.body,
+    sig,
+    process.env.STRIPE_WEBHOOK_SECRET,
+  )
   try {
-    const event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET,
-    )
     console.log('event type:', event.type)
     switch (event.type) {
       case 'account.external_account.created':
@@ -46,6 +46,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           },
           data: { isArtist: true },
         })
+        res.status(200).send(`Handled event : ${event.type}.`)
         break
       case 'customer.subscription.created':
         const subscriptionSchedule = event.data.object
@@ -59,13 +60,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             stripeSubscriptionId,
           },
         })
+        res.status(200).send(`Handled event: ${event.type}.`)
         break
       default:
+        res.status(200).send(`Unhandled event type: ${event.type}!`)
         return
     }
-    res.send(200)
   } catch (err) {
-    res.status(400).send(`Stripe webhook Error: ${err.message}`)
+    res
+      .status(400)
+      .send(`Stripe webhook error during event ${event.type}: ${err.message}`)
     return
   }
 }
