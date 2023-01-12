@@ -1,4 +1,4 @@
-import BaseModal from 'components/modal/Base'
+import BaseModal from 'components/ui/Modal/Base'
 import styled from 'styled-components'
 import useModal from 'hooks/useModal'
 import { Button } from 'components/ui/Buttons'

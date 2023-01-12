@@ -1,5 +1,5 @@
 import useModal from 'hooks/useModal'
-import ErrorModal from 'components/modal/ErrorModal'
+import ErrorModal from 'components/ui/Modal/ErrorModal'
 
 function Modals() {
   const { currentModal, ModalType } = useModal()
