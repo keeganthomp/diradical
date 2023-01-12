@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import UserIfno from './UserInfo'
 import useUser from 'hooks/useUser'
 import useApi from 'hooks/useApi'
+import Loader from 'components/ui/Loader'
 
 const Container = styled.div`
   position: relative;
@@ -50,7 +51,7 @@ export default function Sidebar() {
   const [isBuyingMembership, setIsBuyingMembership] = React.useState(false)
   const { purchaseMembership, registerArtist } = useApi()
   const router = useRouter()
-  const { isAuthenticated } = useUser()
+  const { isAuthenticated, isAuthenticating } = useUser()
 
   const handleArtistRegistration = async () => {
     setIsRegistering(true)
@@ -73,6 +74,13 @@ export default function Sidebar() {
       console.log('Error buying membership', e)
     }
   }
+
+  if (isAuthenticating)
+    return (
+      <Container>
+        <Loader size={20} color='#000' />
+      </Container>
+    )
 
   return (
     <Container>
