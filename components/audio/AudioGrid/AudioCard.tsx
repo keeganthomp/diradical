@@ -1,17 +1,16 @@
-import { TrackWithArtist } from 'types'
+import { Track } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
 import React, { useState } from 'react'
 import mobile from 'is-mobile'
-import { truncateWalletAddress } from 'utils'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Button } from 'components/ui/Buttons'
 import { FaPlay, FaPause } from 'react-icons/fa'
 
 type Props = {
-  track: TrackWithArtist
+  track: Track
 }
 
 const Wrapper = styled.div`
@@ -114,16 +113,6 @@ const PauseButton = styled(FaPause)`
     font-size: 1rem;
   }
 `
-
-const VoteButton = styled(Button)`
-  opacity: 0.6;
-  &:hover {
-    opacity: 1;
-  }
-  @media ${devices.mobile} {
-    opacity: 1;
-  }
-`
 const ArchiveButton = styled(Button)`
   background: #ff5959;
   opacity: 0.6;
@@ -147,20 +136,17 @@ export default function AudioCard({ track }: Props) {
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
   const isArtistPage = router.pathname.includes('/artist/')
-  const isMyMusicPage = router.pathname.includes('/me')
-  const isListenPage = router.pathname.includes('/listen')
+  const isMyMusicPage = router.pathname.includes('/profile')
 
   return (
     <Wrapper>
       <ImageContainer
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        bgImage={track.coverArt}
+        bgImage={track.art}
       >
         <ArtOverlay show={isHovering} />
-        <CoverArt
-          src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${track.coverArt}`}
-        />
+        <CoverArt src={track.art} />
         {isHovering &&
           (isTrackPlaying ? (
             <PauseButton onClick={pause} />
@@ -173,14 +159,14 @@ export default function AudioCard({ track }: Props) {
           <TitleInfo>
             <p>{track.title}</p>
             {!isArtistPage && !isMyMusicPage && (
-              <Link href={`/artist/${track.artist.wallet}`}>
-                <Artist>{truncateWalletAddress(track.artist.wallet)}</Artist>
+              <Link href={`/artist/${track.artist.username}`}>
+                <Artist>{track.artist.username}</Artist>
               </Link>
             )}
           </TitleInfo>
           <RightCol>
+            <p>{track.plays} plays</p>
             {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
-            {isListenPage && <VoteButton>Vote</VoteButton>}
           </RightCol>
         </Meta>
       </MetaData>

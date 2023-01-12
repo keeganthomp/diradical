@@ -1,9 +1,11 @@
 import { atom } from 'recoil'
-import { TrackWithArtist } from 'types'
+import { Track } from 'types'
 
 export const defaultNowPlayingState = {
   isPlaying: false,
-  track: null as TrackWithArtist | null,
+  track: null as Track | null,
+  timeElapsed: 0,
+  isListenedTo: false,
 }
 
 const nowPlayingState = atom({

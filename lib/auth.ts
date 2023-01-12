@@ -1,24 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { magicAdmin } from 'lib/magic'
+import { unstable_getServerSession } from 'next-auth/next'
+import authOptions from 'pages/api/auth/[...nextauth]'
+import prisma from './prisma'
 
-export const checkIfAuthed = async (
-  request: NextApiRequest,
+export const checkIfAuthenticated = async (
+  req: NextApiRequest,
   res: NextApiResponse,
 ) => {
-  const { headers } = request
-  const authorizationHeader = headers.authorization as string
-  if (!authorizationHeader) {
-    res.status(401).json({ message: 'unauthorized' })
-    return
-  }
-  const DIDToken = authorizationHeader.substring(7)
   try {
-    magicAdmin.token.validate(DIDToken) // will throw error if token is invalid
-    const user = await magicAdmin.users.getMetadataByToken(DIDToken)
+    const session: any = await unstable_getServerSession(req, res, authOptions)
+    if (!session || !session?.user?.email) {
+      throw new Error('unauthorized')
+    }
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    })
+    if (!user) {
+      throw new Error('unauthorized')
+    }
     return user
-  } catch (err) {
-    console.log('error validating token', err)
-    res.status(401).json({ message: 'unauthorized' })
-    return
+  } catch {
+    throw new Error('unauthorized')
   }
 }

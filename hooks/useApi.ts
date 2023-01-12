@@ -1,11 +1,5 @@
 const callApi = async (url: string, options: RequestInit = {}) => {
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('didToken')}`,
-      'Content-Type': 'application/json',
-    },
-    ...options,
-  })
+  const res = await fetch(url, options)
   const json = await res.json()
   if (res.ok) {
     return json
@@ -15,51 +9,31 @@ const callApi = async (url: string, options: RequestInit = {}) => {
 }
 
 const useApi = () => {
-  const register = (wallet: string, membershipExp: number) =>
-    callApi('/api/user', {
-      method: 'POST',
-      body: JSON.stringify({ wallet, membershipExp }),
-    })
-  const addVote = (voterWallet: string, artist: string, period: number) =>
-    callApi('/api/vote', {
-      method: 'POST',
-      body: JSON.stringify({ voterWallet, artist, period }),
-    })
   const addPayout = (wallet: string, amount: number, period: number) =>
     callApi('/api/payout', {
       method: 'POST',
       body: JSON.stringify({ wallet, amount, period }),
     })
-  const addSong = ({
-    songId,
-    title,
-    audioIPFSCid,
-    coverArtIPFSCid,
-    wallet,
-  }: {
-    songId: number
-    title: string
-    audioIPFSCid: string
-    coverArtIPFSCid: string
-    wallet: string
-  }) => {
-    callApi('/api/tracks/upload', {
-      method: 'POST',
-      body: JSON.stringify({
-        songId,
-        title,
-        audioIPFSCid,
-        coverArtIPFSCid,
-        wallet,
-      }),
-    })
-  }
+  const purchaseMembership = () =>
+    callApi('/api/checkout/membership', { method: 'POST' })
+  const registerArtist = () =>
+    callApi('/api/register/artist', { method: 'POST' })
+  const uploadSong = (formData: FormData) =>
+    callApi('/api/tracks', { method: 'POST', body: formData })
+  const initPlay = (trackId: string) =>
+    callApi(`/api/tracks/${trackId}/playInit`, { method: 'POST' })
+  const countPlay = (trackId: string) =>
+    callApi(`/api/tracks/${trackId}/playComplete`, { method: 'POST' })
+  const getTrack = (trackId: string) => callApi(`/api/tracks/${trackId}`)
 
   return {
-    register,
-    addVote,
+    countPlay,
+    registerArtist,
     addPayout,
-    addSong,
+    uploadSong,
+    purchaseMembership,
+    initPlay,
+    getTrack,
   }
 }
 

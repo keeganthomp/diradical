@@ -1,38 +1,27 @@
 import '../styles/global.css'
 import { AppProps } from 'next/app'
 import { RecoilRoot } from 'recoil'
-import Layout from 'components/ui/Layout'
+import Layout from 'components/Layout'
 import { ThemeProvider } from 'styled-components'
 import theme from 'styles/theme'
-import Head from 'next/head'
-import Modals from 'components/modal'
+import Modals from 'components/Modal'
 import React from 'react'
 import { SWRConfig } from 'swr'
-import ConnectFromCache from 'components/ConnectFromCache'
-
-class UnauthorizedError extends Error {
-  isUnauthorized: boolean
-  constructor(message = 'Unauthorized') {
-    super(message)
-    this.isUnauthorized = true
-  }
-}
+import { SessionProvider } from 'next-auth/react'
+import { Session } from 'next-auth'
+import Head from 'next/head'
 
 const fetcher = async (url) => {
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('didToken')}`,
-    },
-  })
-  const isUnauthorized = res.status === 401
-  if (isUnauthorized) {
-    localStorage.removeItem('didToken')
-    throw new UnauthorizedError()
-  }
+  const res = await fetch(url)
   return res.json()
 }
 
-function App({ Component, pageProps }: AppProps) {
+function App({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session
+}>) {
   return (
     <>
       <Head>
@@ -43,15 +32,16 @@ function App({ Component, pageProps }: AppProps) {
           fetcher,
         }}
       >
-        <RecoilRoot>
-          <ConnectFromCache />
-          <ThemeProvider theme={theme}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-            <Modals />
-          </ThemeProvider>
-        </RecoilRoot>
+        <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
+          <RecoilRoot>
+            <ThemeProvider theme={theme}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+              <Modals />
+            </ThemeProvider>
+          </RecoilRoot>
+        </SessionProvider>
       </SWRConfig>
     </>
   )

@@ -3,7 +3,6 @@ import ProgressBar from '../ProgressBar'
 import useNowPlaying from 'hooks/useNowPlaying'
 import styled from 'styled-components'
 import { FaPause, FaPlay } from 'react-icons/fa'
-import { truncateWalletAddress } from 'utils'
 
 const Container = styled.div`
   display: none;
@@ -96,14 +95,9 @@ export default function MobileAudioPlayer() {
       <Container>
         <TopBar>
           <ArtAndTitle>
-            <CoverArt
-              src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${nowPlayingTrack.coverArt}`}
-            />
+            <CoverArt src={nowPlayingTrack.art} />
             <TitleAndArtist>
               <SongTitle>{nowPlayingTrack.title}</SongTitle>
-              <Artist>
-                {truncateWalletAddress(nowPlayingTrack.artist.wallet)}
-              </Artist>
             </TitleAndArtist>
           </ArtAndTitle>
           {isPlaying ? (
@@ -118,7 +112,7 @@ export default function MobileAudioPlayer() {
       <audio
         hidden
         ref={audioRef}
-        src={`${process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY}/${nowPlayingTrack.audio}`}
+        src={nowPlayingTrack.audio}
         onTimeUpdate={handleProgressChange}
         onLoadedMetadata={() => setDuration(audioRef.current.duration)}
       />

@@ -1,16 +1,16 @@
-import useSWR from 'swr'
-import { User, Vote } from '@prisma/client'
-import useMagicWallet from './useWallet'
+import { useSession } from 'next-auth/react'
+import { getSession } from 'next-auth/react'
+import { User } from '@prisma/client'
 
 export default function useUser() {
-  const { walletAddress } = useMagicWallet()
-  const {
-    data: user,
-    error,
-    mutate,
-  } = useSWR<User & { castedVotes: Vote[] }>(
-    walletAddress ? `/api/user/${walletAddress}` : null,
-  )
-
-  return { user, isFetching: !user && !error, mutate }
+  const { data: session, status } = useSession()
+  const isAuthenticating = status === 'loading'
+  const isAuthenticated = status === 'authenticated'
+  return {
+    user: session?.user as User,
+    sessionStatus: status,
+    isAuthenticating,
+    isAuthenticated,
+    refreshSession: getSession, // refetches user from db. will include the latest user data from db
+  }
 }

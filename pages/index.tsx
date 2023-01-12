@@ -1,4 +1,3 @@
-import { Button } from 'components/ui/Buttons'
 import React from 'react'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
@@ -7,7 +6,6 @@ import { useRouter } from 'next/router'
 const BOXES = [
   { title: 'Upload', description: 'Upload tracks', to: '/upload' },
   { title: 'Listen', description: 'Listen to music', to: '/listen' },
-  { title: 'Vote', description: 'Vote for you favorite artist', to: '/listen' },
 ]
 
 const Container = styled.div`
@@ -29,11 +27,12 @@ const PageDescription = styled.p`
 `
 const BoxWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 3rem;
   padding: 3rem 0;
   @media ${devices.mobile} {
     grid-template-columns: 1fr;
+    gap: 1rem;
     padding: 2rem 0;
   }
 `
@@ -57,7 +56,7 @@ const BoxContainer = styled.div`
   @media ${devices.mobile} {
     background: ${(p) => p.theme.colors.main};
     color: #fff;
-    height: 4rem;
+    height: 2rem;
   }
 `
 
