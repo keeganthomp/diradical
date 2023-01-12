@@ -1,6 +1,9 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
-const BASE_APP_URL = 'http://localhost:3000'
+const BASE_APP_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://dierad.xyz'
+    : 'http://localhost:3000'
 
 const MEMBERSHIP_PRICE_ID = 'price_1MMMJGCErQVeq5sByBb1m1jC'
 const DAYS_OF_FREE_TRIAL = 10
