@@ -11,6 +11,7 @@ const SPACE_NAME = 'dierad-dev'
 
 const s3Client = new S3Client({
   endpoint: DO_SPACES_ENDPOINT,
+  region: 'sfo3',
   credentials: {
     accessKeyId: DO_SPACES_ACCESS_KEY_ID,
     secretAccessKey: DO_SPACES_SECRET_ACCESS_KEY,
