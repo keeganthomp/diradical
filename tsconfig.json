@@ -28,9 +28,14 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/api/users/[userId]", "components/ui/Buttons/SidebarButton.tsx", "components/ui/Buttons/SidebarButton.tsx", "pages/api/tracks/artist"  ],
+    "**/*.tsx",
+    "pages/api/users/[userId]",
+    "components/ui/Buttons/SidebarButton.tsx",
+    "components/ui/Buttons/SidebarButton.tsx",
+    "pages/api/tracks/artist"
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "scripts/**/*"
   ]
 }

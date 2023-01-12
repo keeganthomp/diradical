@@ -39,14 +39,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     switch (event.type) {
       case 'account.external_account.created':
         const stripeAccount = event.data.object
-        const { metaData } = stripeAccount
+        const { metadata } = stripeAccount
         await prisma.user.update({
           where: {
-            id: metaData.userId,
+            id: metadata.userId,
           },
           data: { isArtist: true },
         })
-        res.status(200).send(`Handled event : ${event.type}.`)
+        res.status(200).send(`Handled event: ${event.type}.`)
         break
       case 'customer.subscription.created':
         const subscriptionSchedule = event.data.object
