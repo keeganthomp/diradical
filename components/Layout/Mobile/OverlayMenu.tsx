@@ -6,8 +6,9 @@ import { NAV_LINKS } from 'const'
 import { SidebarButton } from 'components/ui/Buttons'
 import { BsPeople } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
-import useModal from 'hooks/useModal'
 import { signOut } from 'next-auth/react'
+import useUser from 'hooks/useUser'
+import useApi from 'hooks/useApi'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
@@ -74,15 +75,16 @@ export default function MobileMenu({
   isOpen: boolean
   close: () => void
 }) {
+  const [isRegistering, setIsRegistering] = React.useState(false)
+  const [isBuyingMembership, setIsBuyingMembership] = React.useState(false)
   const router = useRouter()
-  const { openModal, ModalType } = useModal()
+  const { user, isAuthenticated } = useUser()
+  const { purchaseMembership, registerArtist } = useApi()
 
   const handleRoute = (path: string) => {
     router.push(path)
     close()
   }
-
-  const handleBuyMembership = async () => {}
 
   const handleLogout = async () => {
     try {
@@ -92,8 +94,30 @@ export default function MobileMenu({
     }
   }
 
+  const handleArtistRegistration = async () => {
+    setIsRegistering(true)
+    try {
+      const accountLink = await registerArtist()
+      window.location.href = accountLink.url
+    } catch (e) {
+      setIsRegistering(false)
+      console.log('Error registering artist', e)
+    }
+  }
+
+  const handlePurchaseMembership = async () => {
+    setIsBuyingMembership(true)
+    try {
+      const res = await purchaseMembership()
+      window.location.href = res.url
+    } catch (e) {
+      setIsBuyingMembership(false)
+      console.log('Error buying membership', e)
+    }
+  }
+
   const handleLogin = () => {
-    router.push('/authenticate')
+    router.push('/signin')
     close()
   }
 
@@ -105,12 +129,33 @@ export default function MobileMenu({
       <CloseIcon onClick={close} />
       <Menu>
         <List>
-          <LoginButton icon={<BiLogIn />} onClick={handleLogin}>
-            Login
-          </LoginButton>
-          <SidebarButton icon={<BsPeople />} onClick={handleBuyMembership}>
-            Buy Membership
-          </SidebarButton>
+          {!isAuthenticated && (
+            <LoginButton icon={<BiLogIn />} onClick={handleLogin}>
+              Login
+            </LoginButton>
+          )}
+          {isAuthenticated && (
+            <>
+              {!user.isArtist && (
+                <SidebarButton
+                  disabled={isRegistering}
+                  icon={<BiLogIn />}
+                  onClick={handleArtistRegistration}
+                >
+                  Register as Artist
+                </SidebarButton>
+              )}
+              {!user.hasActiveMembership && (
+                <SidebarButton
+                  disabled={isBuyingMembership}
+                  icon={<BsPeople />}
+                  onClick={handlePurchaseMembership}
+                >
+                  Buy Membership
+                </SidebarButton>
+              )}
+            </>
+          )}
           {NAV_LINKS.map((link) => (
             <SidebarButton
               onClick={() => handleRoute(link.path)}
@@ -121,7 +166,9 @@ export default function MobileMenu({
             </SidebarButton>
           ))}
         </List>
-        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+        {isAuthenticated && (
+          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+        )}
       </Menu>
     </>
   )

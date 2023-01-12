@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const existingUser = await checkIfAuthenticated(req, res)
     if (existingUser.isArtist) {
       res
-        .status(400)
+        .status(500)
         .json({ message: 'user is already registered as an artist' })
       return
     }

@@ -34,10 +34,6 @@ const Content = styled.div`
   flex-direction: column;
 `
 
-const LoginButton = styled(SidebarButton)`
-  margin: 0;
-`
-
 const Logo = styled.p`
   text-align: center;
   align-self: center;
@@ -51,7 +47,7 @@ export default function Sidebar() {
   const [isBuyingMembership, setIsBuyingMembership] = React.useState(false)
   const { purchaseMembership, registerArtist } = useApi()
   const router = useRouter()
-  const { isAuthenticated, isAuthenticating } = useUser()
+  const { isAuthenticated, isAuthenticating, user } = useUser()
 
   const handleArtistRegistration = async () => {
     setIsRegistering(true)
@@ -87,29 +83,33 @@ export default function Sidebar() {
       <Logo onClick={() => router.push('/')}>DIERAD</Logo>
       <Content>
         {!isAuthenticated && (
-          <LoginButton
+          <SidebarButton
             icon={<BiLogIn />}
             onClick={() => router.push('/signin')}
           >
             Login
-          </LoginButton>
+          </SidebarButton>
         )}
         {isAuthenticated && (
           <>
-            <LoginButton
-              disabled={isRegistering}
-              icon={<BiLogIn />}
-              onClick={handleArtistRegistration}
-            >
-              Register as Artist
-            </LoginButton>
-            <SidebarButton
-              icon={<BsPeople />}
-              disabled={isBuyingMembership}
-              onClick={handlePurchaseMembership}
-            >
-              Buy Membership
-            </SidebarButton>
+            {!user.isArtist && (
+              <SidebarButton
+                disabled={isRegistering}
+                icon={<BiLogIn />}
+                onClick={handleArtistRegistration}
+              >
+                Register as Artist
+              </SidebarButton>
+            )}
+            {!user.hasActiveMembership && (
+              <SidebarButton
+                icon={<BsPeople />}
+                disabled={isBuyingMembership}
+                onClick={handlePurchaseMembership}
+              >
+                Buy Membership
+              </SidebarButton>
+            )}
           </>
         )}
         {NAV_LINKS.map((link) => (
