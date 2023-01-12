@@ -35,7 +35,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     process.env.STRIPE_ACCOUNT_WEBHOOK_SECRET,
   )
   try {
-    console.log('event type:', event.type)
     switch (event.type) {
       case 'customer.subscription.created':
         const subscriptionSchedule = event.data.object
@@ -43,9 +42,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const user = await prisma.user.findUnique({
           where: { stripeCustomerId: customer },
         })
+        const season = await prisma.season.findFirst({
+          orderBy: {
+            id: 'desc',
+          },
+        })
         await prisma.membership.create({
           data: {
             user: { connect: { id: user.id } },
+            season: { connect: { id: season.id } },
             stripeSubscriptionId,
           },
         })

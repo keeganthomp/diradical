@@ -52,12 +52,30 @@ export default NextAuth({
       }
     },
     async session({ session, user: u }) {
-      const user = await prisma.user.findUnique({
+      const { membership, ...user } = await prisma.user.findUnique({
         where: { email: session.user.email },
+        include: {
+          membership: true,
+        },
       })
+      let hasActiveMembership = false
+      if (membership) {
+        const { stripeSubscriptionId } = membership
+        try {
+          const isMembershipActive = await stripe.checkIfMembershipActive(
+            stripeSubscriptionId,
+          )
+          hasActiveMembership = isMembershipActive
+        } catch (e) {
+          console.log(e)
+        }
+      }
       return {
         ...session,
-        user,
+        user: {
+          ...user,
+          hasActiveMembership,
+        },
       }
     },
     async redirect({ url, baseUrl }) {
