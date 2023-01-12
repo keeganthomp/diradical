@@ -35,6 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET,
     )
+    console.log('event type:', event.type)
     switch (event.type) {
       case 'account.external_account.created':
         const stripeAccount = event.data.object
@@ -62,7 +63,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       default:
         return
     }
-    res.status(200)
+    res.send(200)
   } catch (err) {
     res.status(400).send(`Stripe webhook Error: ${err.message}`)
     return
