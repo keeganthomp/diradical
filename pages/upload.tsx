@@ -7,6 +7,7 @@ import Loader from 'components/ui/Loader'
 import TextInput from 'components/ui/Inputs/TextInput'
 import useApi from 'hooks/useApi'
 import Error from 'components/ui/Error'
+import { useRouter } from 'next/router'
 
 const UploadButton = styled(Button)`
   width: 100%;
@@ -65,6 +66,7 @@ const Title = styled.h1``
 
 export default function ProfilePage() {
   const [uploadError, setUploadError] = React.useState('')
+  const router = useRouter()
   const { uploadSong } = useApi()
   const { register, handleSubmit, formState, watch, setValue } = useForm({
     mode: 'all',
@@ -89,6 +91,7 @@ export default function ProfilePage() {
       formData.set('coverArtFile', coverArtFile)
       formData.set('audioFile', audioFile)
       await uploadSong(formData)
+      router.push('/profile')
     } catch (error) {
       setUploadError(error.message)
     }

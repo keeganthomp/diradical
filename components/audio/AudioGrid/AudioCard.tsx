@@ -73,7 +73,6 @@ const Artist = styled.p`
   cursor: pointer;
   font-size: 14px;
   width: 100%;
-  text-decoration: underline;
 `
 const CoverArt = styled.img`
   position: absolute;

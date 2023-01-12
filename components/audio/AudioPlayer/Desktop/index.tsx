@@ -42,7 +42,7 @@ const SongTitle = styled.p`
 const Artist = styled.p`
   margin: 0;
   grid-area: artist;
-  font-size: 14px;
+  font-size: 12px;
   align-self: start;
   padding-left: 3px;
 `
@@ -110,6 +110,7 @@ export default function DesktopAudioPlayer() {
       <Container>
         <CloseIcon onClick={stop} />
         <SongTitle>{nowPlayingTrack.title}</SongTitle>
+        <Artist>{nowPlayingTrack.artist.username}</Artist>
         <CoverArt src={nowPlayingTrack.art} />
         <ButtonWrapper>
           {isPlaying ? (
@@ -120,7 +121,7 @@ export default function DesktopAudioPlayer() {
         </ButtonWrapper>
         <ProgressBar progress={progress} duration={duration} />
       </Container>
-      {/* Used as a ref */}
+      {/* used as a ref */}
       <audio
         hidden
         ref={audioRef}

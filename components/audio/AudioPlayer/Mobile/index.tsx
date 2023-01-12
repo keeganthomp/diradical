@@ -29,7 +29,7 @@ const SongTitle = styled.p`
 `
 const Artist = styled.p`
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   align-self: end;
 `
 
@@ -98,6 +98,7 @@ export default function MobileAudioPlayer() {
             <CoverArt src={nowPlayingTrack.art} />
             <TitleAndArtist>
               <SongTitle>{nowPlayingTrack.title}</SongTitle>
+              <Artist>{nowPlayingTrack.artist.username}</Artist>
             </TitleAndArtist>
           </ArtAndTitle>
           {isPlaying ? (

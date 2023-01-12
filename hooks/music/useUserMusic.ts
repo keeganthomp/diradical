@@ -6,7 +6,7 @@ export default function useUserMusic(username: string) {
     error,
     mutate,
   } = useSWR(username ? `/api/users/${username}/tracks` : null, {
-    refreshInterval: 7000,
+    refreshInterval: 3000,
   })
   return {
     tracks,
