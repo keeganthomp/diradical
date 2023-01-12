@@ -51,7 +51,7 @@ export default NextAuth({
           return true
       }
     },
-    async session({ session, user: u }) {
+    async session({ session }) {
       const { membership, ...user } = await prisma.user.findUnique({
         where: { email: session.user.email },
         include: {

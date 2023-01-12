@@ -178,10 +178,8 @@ const checkIfMembershipActive = async (subscriptionId: string) => {
     if (!subscriptionId) return false
     const subscription = await stripe.subscriptions.retrieve(subscriptionId)
     if (!subscription?.plan) return false
-    return (
-      subscription.plan.id === MEMBERSHIP_PRICE_ID &&
-      subscription.plan === 'active'
-    )
+    const { plan } = subscription
+    return plan.id === MEMBERSHIP_PRICE_ID && plan.active
   } catch (stripeError) {
     throw new Error(stripeError)
   }
