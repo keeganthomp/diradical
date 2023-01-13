@@ -1,1 +1,8 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+A new take on music streaming.
+
+- NextJS
+- Recoil
+- Styled Components
+- GraphQL
+- Stripe
+- Digital Ocean
