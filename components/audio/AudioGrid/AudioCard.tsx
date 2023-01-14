@@ -8,7 +8,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import useApi from 'hooks/useApi'
-import useUserMusic from 'hooks/music/useUserMusic'
+import { useSWRConfig } from 'swr'
+import useUser from 'hooks/useUser'
 
 type Props = {
   track: Track
@@ -125,7 +126,8 @@ const MetricText = styled.p`
 `
 
 export default function AudioCard({ track }: Props) {
-  const { mutate, tracks } = useUserMusic(track.artist.username)
+  const { mutate } = useSWRConfig()
+  const { user } = useUser()
   const { archiveTrack } = useApi()
   const router = useRouter()
   const isMobile = mobile()
@@ -140,24 +142,22 @@ export default function AudioCard({ track }: Props) {
   const isArtistPage = router.pathname.includes('/artist/')
   const isMyMusicPage = router.pathname.includes('/profile')
 
-  const updateTrack = (updatedTrack: Partial<Track>) => {
-    const updatedTracks = tracks.map((t) => {
-      if (t.id === track.id) {
-        return {
-          ...t,
-          artist: {
-            ...t.artist,
-          },
-          ...updatedTrack,
+  const updateUserMusicCache = () => {
+    const handleUpdate = (tracks: any) => {
+      const updatedTracks = tracks.map((t: any) => {
+        if (t.id === track.id) {
+          return { ...t, archived: !t.archived, user: { ...t.user } }
         }
-      }
-      return t
-    })
-    mutate(updatedTracks, false)
+        return t
+      })
+      return updatedTracks
+    }
+    mutate(`/api/users/${track.artist.username}/tracks`, handleUpdate, false)
   }
 
   const handleArchive = async () => {
-    updateTrack({ archived: !track.archived })
+    if (user.id !== track.artist.id) return
+    updateUserMusicCache()
     await archiveTrack(track.id)
   }
 

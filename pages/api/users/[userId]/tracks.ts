@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
-import { checkIfAuthenticated } from 'lib/auth'
 import { EventType } from '@prisma/client'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,7 +9,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
   const { userId } = req.query
   try {
-    await checkIfAuthenticated(req, res)
     const userTracks = await prisma.track.findMany({
       where: { artist: { username: userId as string } },
       orderBy: { createdAt: 'asc' },
