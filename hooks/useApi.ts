@@ -25,6 +25,8 @@ const useApi = () => {
   const countPlay = (trackId: string) =>
     callApi(`/api/tracks/${trackId}/playComplete`, { method: 'POST' })
   const getTrack = (trackId: string) => callApi(`/api/tracks/${trackId}`)
+  const archiveTrack = (trackId: string) =>
+    callApi(`/api/tracks/${trackId}/archive`, { method: 'PUT' })
 
   return {
     countPlay,
@@ -34,6 +36,7 @@ const useApi = () => {
     purchaseMembership,
     initPlay,
     getTrack,
+    archiveTrack,
   }
 }
 

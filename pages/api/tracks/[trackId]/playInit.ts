@@ -11,9 +11,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const trackId = req.query.trackId as string
         const trackToListen = await prisma.track.findUnique({
           where: { id: trackId },
+          include: {
+            artist: {
+              select: {
+                id: true,
+              },
+            },
+          },
         })
         if (!trackToListen) {
           res.status(401).json({ message: 'track does not exist' })
+          return
+        }
+        if (trackToListen.artist.id === user.id) {
+          res.status(401).json({ message: 'cannot track listen for own track' })
           return
         }
         const currentSeason = await prisma.season.findFirst({

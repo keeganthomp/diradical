@@ -7,6 +7,8 @@ import mobile from 'is-mobile'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FaPlay, FaPause } from 'react-icons/fa'
+import useApi from 'hooks/useApi'
+import useUserMusic from 'hooks/music/useUserMusic'
 
 type Props = {
   track: Track
@@ -123,6 +125,8 @@ const MetricText = styled.p`
 `
 
 export default function AudioCard({ track }: Props) {
+  const { mutate, tracks } = useUserMusic(track.artist.username)
+  const { archiveTrack } = useApi()
   const router = useRouter()
   const isMobile = mobile()
   const [isHovering, setHovering] = useState(isMobile)
@@ -135,6 +139,27 @@ export default function AudioCard({ track }: Props) {
 
   const isArtistPage = router.pathname.includes('/artist/')
   const isMyMusicPage = router.pathname.includes('/profile')
+
+  const updateTrack = (updatedTrack: Partial<Track>) => {
+    const updatedTracks = tracks.map((t) => {
+      if (t.id === track.id) {
+        return {
+          ...t,
+          artist: {
+            ...t.artist,
+          },
+          ...updatedTrack,
+        }
+      }
+      return t
+    })
+    mutate(updatedTracks, false)
+  }
+
+  const handleArchive = async () => {
+    updateTrack({ archived: !track.archived })
+    await archiveTrack(track.id)
+  }
 
   return (
     <Wrapper>
@@ -163,7 +188,11 @@ export default function AudioCard({ track }: Props) {
         </TitleAndArtist>
         <Metrics>
           <MetricText>{track.plays} Plays</MetricText>
-          {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
+          {isMyMusicPage && (
+            <ArchiveButton onClick={handleArchive}>
+              {track.archived ? 'Unarchive' : 'Archive'}
+            </ArchiveButton>
+          )}
         </Metrics>
       </MetaData>
     </Wrapper>

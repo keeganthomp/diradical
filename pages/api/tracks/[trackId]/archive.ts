@@ -4,7 +4,7 @@ import { checkIfAuthenticated } from 'lib/auth'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    case 'POST': {
+    case 'PUT': {
       try {
         const user = await checkIfAuthenticated(req, res)
         const trackId = req.query.trackId as string
@@ -30,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break
     }
     default: {
-      res.status(405).send({ message: 'Only POST requests allowed' })
+      res.status(405).send({ message: 'Only PUT requests allowed' })
     }
   }
 }

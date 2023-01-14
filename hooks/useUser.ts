@@ -7,7 +7,9 @@ export default function useUser() {
   const isAuthenticating = status === 'loading'
   const isAuthenticated = status === 'authenticated'
   return {
-    user: session?.user as User & { hasActiveMembership: boolean },
+    user: session?.user?.id
+      ? session.user
+      : (null as (User & { hasActiveMembership: boolean }) | null),
     sessionStatus: status,
     isAuthenticating,
     isAuthenticated,

@@ -66,8 +66,8 @@ const Container = styled.div`
 
 const Title = styled.h1``
 
-export default function ProfilePage() {
-  const { isAuthenticated } = useUser()
+export default function UploadPage() {
+  const { isAuthenticated, isAuthenticating, user } = useUser()
   const [uploadError, setUploadError] = React.useState('')
   const router = useRouter()
   const { uploadSong } = useApi()
@@ -84,10 +84,12 @@ export default function ProfilePage() {
   const artFile = selectedArtFiles[0]
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticating && !isAuthenticated) {
       router.push('/signin')
     }
-  }, [])
+  }, [isAuthenticating])
+
+  if (!user) return null
 
   const uploadTrack = async (data) => {
     setUploadError('')

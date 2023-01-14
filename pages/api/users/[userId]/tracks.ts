@@ -13,10 +13,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     await checkIfAuthenticated(req, res)
     const userTracks = await prisma.track.findMany({
       where: { artist: { username: userId as string } },
+      orderBy: { createdAt: 'asc' },
       select: {
         id: true,
         title: true,
         art: true,
+        archived: true,
         artist: {
           select: {
             username: true,

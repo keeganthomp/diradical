@@ -50,10 +50,11 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
 `
-const ListenButton = styled(Button)`
+const ActionButton = styled(Button)`
   width: 12rem;
   border-radius: 20px;
   height: 2rem;
+  margin: 15px 0;
 `
 
 export default function HomePage() {
@@ -68,6 +69,11 @@ export default function HomePage() {
             A place for independent artists to share their music with the world
             and get paid failry for their work.
           </Description>
+          <ButtonContainer>
+            <ActionButton onClick={() => router.push('/upload')}>
+              Go Upload
+            </ActionButton>
+          </ButtonContainer>
         </Section>
         <Section>
           <Heading>For Listeners</Heading>
@@ -75,12 +81,12 @@ export default function HomePage() {
             A place for music lovers to discover new music and support their
             favorite artists. You choose what artists get your monthly support.
           </Description>
+          <ButtonContainer>
+            <ActionButton onClick={() => router.push('/listen')}>
+              Go Listen
+            </ActionButton>
+          </ButtonContainer>
         </Section>
-        <ButtonContainer>
-          <ListenButton onClick={() => router.push('/listen')}>
-            Go Listen
-          </ListenButton>
-        </ButtonContainer>
       </Content>
     </Container>
   )

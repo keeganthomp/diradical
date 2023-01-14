@@ -18,6 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const tracks = await prisma.track.findMany({
           where: { archived: false },
+          orderBy: { createdAt: 'asc' },
           select: {
             id: true,
             title: true,

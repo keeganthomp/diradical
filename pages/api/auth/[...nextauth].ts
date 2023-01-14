@@ -58,6 +58,7 @@ export default NextAuth({
           user: {
             ...session.user,
             // custom fields to expose to client
+            id: token.id as string,
             username: token.username as string,
             isArtist: token.isArtist as boolean,
             hasActiveMembership,

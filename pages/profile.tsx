@@ -1,6 +1,6 @@
 import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
-import React from 'react'
+import React, { useEffect } from 'react'
 import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
 import { devices } from 'styles/theme'
@@ -29,14 +29,16 @@ const Title = styled.p`
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, isAuthenticated } = useUser()
-  const { tracks, isFetching } = useUserMusic(user?.username)
+  const { user, isAuthenticated, isAuthenticating } = useUser()
+  const { tracks, isFetching, mutate } = useUserMusic(user?.username)
 
-  React.useEffect(() => {
-    if (!isAuthenticated) {
+  useEffect(() => {
+    if (!isAuthenticating && !isAuthenticated) {
       router.push('/signin')
     }
-  }, [])
+  }, [isAuthenticating])
+
+  if (!user) return null
 
   if (isFetching)
     return (
