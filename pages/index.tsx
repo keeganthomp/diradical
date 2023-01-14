@@ -67,7 +67,7 @@ export default function HomePage() {
           <Heading>For Artist</Heading>
           <Description>
             A place for independent artists to share their music with the world
-            and get paid failry for their work.
+            and get paid fairly for their work.
           </Description>
           <ButtonContainer>
             <ActionButton onClick={() => router.push('/upload')}>
