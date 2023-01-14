@@ -39,18 +39,32 @@ export default NextAuth({
       return token
     },
     session: async ({ session, token }) => {
-      return session.user
-        ? {
-            ...session,
-            user: {
-              ...session.user,
-              // custom fields to expose to client
-              username: token.username as string,
-              isArtist: token.isArtist as boolean,
-              hasActiveMembership: token.hasActiveMembership as boolean,
-            },
+      let hasActiveMembership = (token.hasActiveMembership as boolean) || false
+      const userId = token.id as string
+      if (userId) {
+        // need to check for active user membership each re-validation
+        if (!hasActiveMembership) {
+          const userMembership = await prisma.membership.findUnique({
+            where: { userId },
+          })
+          if (userMembership) {
+            hasActiveMembership = await stripe.checkIfMembershipActive(
+              userMembership.stripeSubscriptionId,
+            )
           }
-        : session
+        }
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            // custom fields to expose to client
+            username: token.username as string,
+            isArtist: token.isArtist as boolean,
+            hasActiveMembership,
+          },
+        }
+      }
+      return session
     },
   },
   session: {
