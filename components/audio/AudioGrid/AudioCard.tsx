@@ -6,7 +6,6 @@ import React, { useState } from 'react'
 import mobile from 'is-mobile'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Button } from 'components/ui/Buttons'
 import { FaPlay, FaPause } from 'react-icons/fa'
 
 type Props = {
@@ -43,36 +42,40 @@ const ImageContainer = styled.div`
   }
 `
 
-const MetaData = styled.div`
+const MetaData = styled.div<{ isMyMusicPage: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 13px;
+  align-items: flex-start;
+  padding-top: 0.75rem;
+  @media ${devices.mobile} {
+    padding-top: 0;
+  }
+`
+const Metrics = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  flex-direction: column;
+  text-align: right;
+`
+const TitleAndArtist = styled.div`
   display: flex;
   flex-direction: column;
-`
-
-const Meta = styled.div`
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  align-items: flex-start;
   width: 100%;
-  font-size: 14px;
-  align-items: center;
 `
-const TitleInfo = styled.div`
+const Title = styled.p`
+  padding: 0;
   margin: 0;
+  font-size: 13px;
+  font-weight: bold;
   text-align: left;
-  font-size: 14px;
-  margin: 0;
-  line-height: 20px;
 `
 const Artist = styled.p`
   font-weight: 200;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
   font-size: 14px;
-  width: 100%;
 `
 const CoverArt = styled.img`
   position: absolute;
@@ -86,11 +89,6 @@ const ArtOverlay = styled.div<{ show?: boolean }>`
   z-index: 9;
   position: absolute;
   background: ${(p) => (p.show ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0)')};
-`
-
-const RightCol = styled.div`
-  display: flex;
-  flex-direction: column;
 `
 const PlayButton = styled(FaPlay)`
   z-index: 9;
@@ -112,15 +110,16 @@ const PauseButton = styled(FaPause)`
     font-size: 1rem;
   }
 `
-const ArchiveButton = styled(Button)`
-  background: #ff5959;
-  opacity: 0.6;
+const ArchiveButton = styled.p`
+  color: #ff5959;
   &:hover {
-    opacity: 1;
+    cursor: pointer;
+    text-decoration: underline;
   }
-  @media ${devices.mobile} {
-    opacity: 1;
-  }
+`
+const MetricText = styled.p`
+  font-weight: 200;
+  padding-bottom: 3px;
 `
 
 export default function AudioCard({ track }: Props) {
@@ -153,21 +152,19 @@ export default function AudioCard({ track }: Props) {
             <PlayButton onClick={() => play(track)} />
           ))}
       </ImageContainer>
-      <MetaData>
-        <Meta>
-          <TitleInfo>
-            <p>{track.title}</p>
-            {!isArtistPage && !isMyMusicPage && (
-              <Link href={`/artist/${track.artist.username}`}>
-                <Artist>{track.artist.username}</Artist>
-              </Link>
-            )}
-          </TitleInfo>
-          <RightCol>
-            <p>{track.plays} plays</p>
-            {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
-          </RightCol>
-        </Meta>
+      <MetaData isMyMusicPage={isMyMusicPage}>
+        <TitleAndArtist>
+          <Title>{track.title}</Title>
+          {!isArtistPage && !isMyMusicPage && (
+            <Link href={`/artist/${track.artist.username}`}>
+              <Artist>{track.artist.username}</Artist>
+            </Link>
+          )}
+        </TitleAndArtist>
+        <Metrics>
+          <MetricText>{track.plays} Plays</MetricText>
+          {isMyMusicPage && <ArchiveButton>Archive</ArchiveButton>}
+        </Metrics>
       </MetaData>
     </Wrapper>
   )

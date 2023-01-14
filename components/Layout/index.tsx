@@ -26,7 +26,7 @@ const Container = styled.div`
 const Content = styled.div`
   position: relative;
   grid-area: content;
-  padding: 0.5rem;
+  padding: 1.75rem;
   background: ${(p) => p.theme.colors.background};
   overflow-y: scroll;
   border-radius: ${(p) => p.theme.borderRadius};

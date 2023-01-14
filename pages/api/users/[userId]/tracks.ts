@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import { checkIfAuthenticated } from 'lib/auth'
+import { EventType } from '@prisma/client'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
@@ -10,15 +11,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { userId } = req.query
   try {
     await checkIfAuthenticated(req, res)
-    const tracks = await prisma.track.findMany({
-      where: {
-        artist: { username: userId as string },
-      },
-      include: {
-        artist: true,
+    const userTracks = await prisma.track.findMany({
+      where: { artist: { username: userId as string } },
+      select: {
+        id: true,
+        title: true,
+        art: true,
+        artist: {
+          select: {
+            username: true,
+            id: true,
+          },
+        },
+        _count: {
+          select: {
+            events: { where: { type: EventType.PLAY_SAVED } },
+          },
+        },
       },
     })
-    res.status(200).json(tracks)
+    const formattedTracks = userTracks.map((track) => {
+      const { _count, ...rest } = track
+      return { ...rest, plays: track._count.events }
+    })
+
+    res.status(200).json(formattedTracks)
   } catch (err) {
     res
       .status(500)

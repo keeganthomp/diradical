@@ -16,9 +16,8 @@ const Grid = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(${DEF_NUM_OF_COLUMNS}, 1fr);
-  grid-gap: 1.25rem;
+  grid-gap: 1.75rem;
   justify-items: center;
-  row-gap: 1.5rem;
   @media ${devices.medium} {
     grid-template-columns: repeat(4, 1fr);
   }
