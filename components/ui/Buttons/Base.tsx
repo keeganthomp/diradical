@@ -4,12 +4,12 @@ const BaseButton = styled.button`
   background: ${(p) => p.theme.colors.main};
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 18px;
   padding: 0.5rem 1rem;
   width: 4rem;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
-  height: 2rem;
+  height: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;

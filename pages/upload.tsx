@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from 'components/ui/Buttons'
 import { IoIosCloseCircle } from 'react-icons/io'
@@ -8,9 +8,11 @@ import TextInput from 'components/ui/Inputs/TextInput'
 import useApi from 'hooks/useApi'
 import Error from 'components/ui/Error'
 import { useRouter } from 'next/router'
+import useUser from 'hooks/useUser'
 
 const UploadButton = styled(Button)`
   width: 100%;
+  height: 2rem;
 `
 
 const UploadForma = styled.form`
@@ -45,8 +47,8 @@ const RemoveFileButton = styled(IoIosCloseCircle)<{ disabled?: boolean }>`
 
 const SelectFileButton = styled.p`
   background: #e3e3e3b0;
-  padding: 2px 0;
-  border-radius: 10px;
+  padding: 3px 0;
+  border-radius: 12px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -65,6 +67,7 @@ const Container = styled.div`
 const Title = styled.h1``
 
 export default function ProfilePage() {
+  const { isAuthenticated } = useUser()
   const [uploadError, setUploadError] = React.useState('')
   const router = useRouter()
   const { uploadSong } = useApi()
@@ -79,6 +82,12 @@ export default function ProfilePage() {
   const [selectAudioFiles, selectedArtFiles] = watch(['audioFiles', 'artFiles'])
   const audioFile = selectAudioFiles[0]
   const artFile = selectedArtFiles[0]
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/signin')
+    }
+  }, [])
 
   const uploadTrack = async (data) => {
     setUploadError('')

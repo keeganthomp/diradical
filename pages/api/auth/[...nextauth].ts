@@ -1,16 +1,11 @@
 import NextAuth from 'next-auth'
-import AppleProvider from 'next-auth/providers/apple'
 import GoogleProvider from 'next-auth/providers/google'
-import stripe from 'lib/stripe'
 import prisma from 'lib/prisma'
-import { generateFromEmail } from 'unique-username-generator'
+import { PrismaAdapter } from 'lib/auth'
+import stripe from 'lib/stripe'
 
 export default NextAuth({
   providers: [
-    AppleProvider({
-      clientId: process.env.APPLE_ID,
-      clientSecret: process.env.APPLE_SECRET,
-    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -22,68 +17,44 @@ export default NextAuth({
     error: '/signin/error', // Error code passed in query string as ?error=
   },
   callbacks: {
-    async signIn({ account, profile }) {
-      switch (account.provider) {
-        case 'google': {
-          const { email } = profile
-          const existingUser = await prisma.user.findUnique({
-            where: { email },
-          })
-          if (!existingUser) {
-            const customer = await stripe.createStripeCustomer({ email })
-            await prisma.user.create({
-              data: {
-                username: generateFromEmail(email, 3), // random username
-                email,
-                stripeCustomerId: customer.id,
-              },
-            })
-          }
-          return true
-        }
-        case 'github': {
-          return true
-        }
-        case 'apple': {
-          return true
-        }
-        default:
-          return true
-      }
-    },
-    async session({ session }) {
-      const { membership, ...user } = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: {
-          membership: true,
-        },
-      })
-      let hasActiveMembership = false
-      if (membership) {
-        const { stripeSubscriptionId } = membership
-        try {
-          const isMembershipActive = await stripe.checkIfMembershipActive(
-            stripeSubscriptionId,
+    jwt: async ({ token, user }) => {
+      if (user) {
+        let hasActiveMembership = false
+        const userMembership = await prisma.membership.findUnique({
+          where: { userId: user.id },
+        })
+        if (userMembership) {
+          hasActiveMembership = await stripe.checkIfMembershipActive(
+            userMembership.stripeSubscriptionId,
           )
-          hasActiveMembership = isMembershipActive
-        } catch (e) {
-          console.log(e)
         }
+        token.id = user.id
+        token.email = user.email
+        token.image = user.image
+        //  custom fields on jwt to expose to session
+        token.username = user.username
+        token.isArtist = user.isArtist
+        token.hasActiveMembership = hasActiveMembership
       }
-      return {
-        ...session,
-        user: {
-          ...user,
-          hasActiveMembership,
-        },
-      }
+      return token
     },
-    async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
-      if (url.startsWith('/')) return `${baseUrl}${url}`
-      // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+    session: async ({ session, token }) => {
+      return session.user
+        ? {
+            ...session,
+            user: {
+              ...session.user,
+              // custom fields to expose to client
+              username: token.username as string,
+              isArtist: token.isArtist as boolean,
+              hasActiveMembership: token.hasActiveMembership as boolean,
+            },
+          }
+        : session
     },
   },
+  session: {
+    strategy: 'jwt',
+  },
+  adapter: PrismaAdapter(prisma),
 })

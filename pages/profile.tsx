@@ -5,6 +5,7 @@ import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
 import { devices } from 'styles/theme'
 import useUser from 'hooks/useUser'
+import { useRouter } from 'next/router'
 
 const Container = styled.div`
   display: flex;
@@ -27,8 +28,15 @@ const Title = styled.p`
 `
 
 export default function ProfilePage() {
-  const { user } = useUser()
+  const router = useRouter()
+  const { user, isAuthenticated } = useUser()
   const { tracks, isFetching } = useUserMusic(user?.username)
+
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/signin')
+    }
+  }, [])
 
   if (isFetching)
     return (

@@ -27,6 +27,7 @@ const LoginButton = styled.button`
   background: #f0f0f0;
   border-radius: 15px;
   height: 2rem;
+  color: #000;
   transition: all 0.2s ease-in-out;
   &:hover {
     background: #dbdbdba9;

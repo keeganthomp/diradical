@@ -33,10 +33,13 @@ const Content = styled.div`
   overflow: hidden;
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
   @media ${devices.mobile} {
+    background: none;
+    box-shadow: none;
     overflow-y: scroll;
     height: 100%;
     padding: 10px;
     margin-bottom: 3.25rem;
+    padding-top: 3rem;
   }
 `
 

@@ -9,15 +9,17 @@ const Container = styled.div`
   grid-area: mobile-navbar;
   background: #fff;
   box-shadow: 6px 5px 28px -16px rgba(0, 0, 0, 0.75);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
   display: none;
   justify-content: center;
   align-items: center;
   padding: 0.5rem 0.5rem;
-  margin-bottom: 10px;
   @media ${devices.mobile} {
     display: flex;
+    box-shadow: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    z-index: 10;
   }
 `
 
