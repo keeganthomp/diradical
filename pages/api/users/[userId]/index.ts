@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import { checkIfAuthenticated } from 'lib/auth'
+import stripe from 'lib/stripe'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
@@ -15,7 +16,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         id: userId as string,
       },
     })
-    res.status(200).json(user)
+    const stripeBalance = await stripe.getUserBalance({
+      stripeAccountId: user.stripeAccountId,
+    })
+    const payload = {
+      ...user,
+      balance: stripeBalance.amount,
+    }
+    res.status(200).json(payload)
   } catch (err) {
     res.status(500).json({ message: err.message || 'unable to fetch user' })
   }

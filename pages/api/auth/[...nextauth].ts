@@ -53,6 +53,12 @@ export default NextAuth({
             )
           }
         }
+        if (!token.isArtist) {
+          const user = await prisma.user.findUnique({
+            where: { id: userId },
+          })
+          token.isArtist = user.isArtist
+        }
         return {
           ...session,
           user: {
@@ -60,7 +66,6 @@ export default NextAuth({
             // custom fields to expose to client
             id: token.id as string,
             username: token.username as string,
-            isArtist: token.isArtist as boolean,
             hasActiveMembership,
           },
         }

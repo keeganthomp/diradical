@@ -1,11 +1,12 @@
-import AudioGrid from 'components/audio/AudioGrid'
 import styled from 'styled-components'
 import React, { useEffect } from 'react'
-import useUserMusic from 'hooks/music/useUserMusic'
-import Loader from 'components/ui/Loader'
 import { devices } from 'styles/theme'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
+import useProfile from 'hooks/useProfile'
+import ProfileTabs from 'components/profile/Tabs'
+import MyMusic from 'components/profile/MyMusic'
+import Payouts from 'components/profile/Payouts'
 
 const Container = styled.div`
   display: flex;
@@ -20,17 +21,10 @@ const Container = styled.div`
   }
 `
 
-const Title = styled.p`
-  font-weight: bold;
-  text-align: center;
-  font-size: 1.5rem;
-  padding-bottom: 1rem;
-`
-
 export default function ProfilePage() {
+  const { activeTab } = useProfile()
   const router = useRouter()
   const { user, isAuthenticated, isAuthenticating } = useUser()
-  const { tracks, isFetching, mutate } = useUserMusic(user?.username)
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
@@ -40,17 +34,11 @@ export default function ProfilePage() {
 
   if (!user) return null
 
-  if (isFetching)
-    return (
-      <Container>
-        <Loader color='#000' />
-      </Container>
-    )
-
   return (
     <Container>
-      <Title>My Music</Title>
-      <AudioGrid tracks={tracks} />
+      <ProfileTabs />
+      {activeTab === 'tracks' && <MyMusic />}
+      {activeTab === 'payouts' && <Payouts />}
     </Container>
   )
 }

@@ -6,7 +6,7 @@ const BaseButton = styled.button`
   border: none;
   border-radius: 18px;
   padding: 0.5rem 1rem;
-  width: 4rem;
+  width: 10rem;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
   height: 1.5rem;
