@@ -32,17 +32,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       stripeAccountId: authedUser.stripeAccountId,
     })
     // store payout info database
-    await prisma.payout.create({
-      data: {
-        amount: payout.amount,
-        stripePayoutId: payout.id,
-        user: {
-          connect: {
-            stripeAccountId: authedUser.stripeAccountId,
-          },
-        },
-      },
-    })
+    // await prisma.payout.create({
+    //   data: {
+    //     amount: payout.amount,
+    //     stripePayoutId: payout.id,
+    //     user: {
+    //       connect: {
+    //         stripeAccountId: authedUser.stripeAccountId,
+    //       },
+    //     },
+    //   },
+    // })
     res.status(200).json({ sucess: true })
   } catch (err) {
     console.log('errrr', err)
