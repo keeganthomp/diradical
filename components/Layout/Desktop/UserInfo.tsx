@@ -14,9 +14,9 @@ const Wrapper = styled.div`
 `
 
 const Container = styled.div`
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: 2rem 1fr;
+  justify-content: space-between;
   padding: 10px;
   border-top: 1px solid #f0f0f0;
   transition: all 0.2s ease-in-out;
@@ -42,13 +42,7 @@ const ProfilePicture = styled.div`
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  flex-basis: 2rem;
   border: 1px solid #b9b9b997;
-`
-
-const MetaData = styled.div`
-  width: 100%;
-  display: flex;
 `
 
 const MenuContainer = styled.div<{ open?: boolean }>`
@@ -70,7 +64,6 @@ const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
   ${({ open }) => open && 'transform: rotate(180deg);'}
   transition: all 0.15s ease-in-out;
   color: #a5a5a5b0;
-  flex-grow: 1;
 `
 
 function UserInfo() {
@@ -95,10 +88,8 @@ function UserInfo() {
       </MenuContainer>
       <Container onClick={toggleOpen}>
         <ProfilePicture />
-        <MetaData>
-          <Username>{user?.username}</Username>
-          <Chevron open={isOpen} />
-        </MetaData>
+        <Username>{user?.username}</Username>
+        <Chevron open={isOpen} />
       </Container>
     </Wrapper>
   )

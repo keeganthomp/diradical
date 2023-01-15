@@ -105,7 +105,7 @@ const transferFundsToUser = async ({
       throw new Error('Not enough funds for transfer')
     }
     await stripe.transfers.create({
-      amount: 400,
+      amount,
       currency: 'usd',
       destination: stripeAccountId,
       transfer_group: transferGroup || 'dierad_transfer',

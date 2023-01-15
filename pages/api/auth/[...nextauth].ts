@@ -40,6 +40,7 @@ export default NextAuth({
     },
     session: async ({ session, token }) => {
       let hasActiveMembership = (token.hasActiveMembership as boolean) || false
+      let isArtist = (token.isArtist as boolean) || false
       const userId = token.id as string
       if (userId) {
         // need to check for active user membership each re-validation
@@ -53,11 +54,11 @@ export default NextAuth({
             )
           }
         }
-        if (!token.isArtist) {
+        if (!isArtist) {
           const user = await prisma.user.findUnique({
             where: { id: userId },
           })
-          token.isArtist = user.isArtist
+          isArtist = user.isArtist
         }
         return {
           ...session,
@@ -66,6 +67,7 @@ export default NextAuth({
             // custom fields to expose to client
             id: token.id as string,
             username: token.username as string,
+            isArtist,
             hasActiveMembership,
           },
         }

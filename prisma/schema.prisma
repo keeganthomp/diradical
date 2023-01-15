@@ -16,22 +16,27 @@ enum EventType {
   PLAY_SAVED
 }
 
+enum PayoutStatus {
+  ASSIGNED
+  PAID
+}
+
 ////////////////////////////
 // Next Auth
 ////////////////////////////
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -56,6 +61,8 @@ model User {
   accounts         Account[]
   sessions         Session[]
   // end next auth things
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
   username         String      @unique @db.VarChar(45)
   stripeCustomerId String      @unique @db.VarChar(255)
   stripeAccountId  String?     @unique @db.VarChar(255) // only set if user is an artist to receive payouts
@@ -63,7 +70,8 @@ model User {
   membership       Membership?
   tracks           Track[]
   events           Event[]
-  payouts          Payout[]
+  initiatedPayouts Payout[]    @relation("initiatedPayouts")
+  receivedPayouts  Payout[]    @relation("receivedPayouts")
 }
 
 model VerificationToken {
@@ -127,13 +135,16 @@ model Membership {
 }
 
 model Payout {
-  id             String   @id @default(uuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   amount         Int
-  stripePayoutId String   @unique @db.VarChar(255)
-  user           User?    @relation(fields: [userId], references: [id])
-  userId         String
-  season         Season?  @relation(fields: [seasonId], references: [id])
+  stripePayoutId String?      @unique @db.VarChar(255)
+  status         PayoutStatus @default(ASSIGNED)
+  initiator      User?        @relation("initiatedPayouts", fields: [initiatorId], references: [id])
+  initiatorId    String
+  receiver       User?        @relation("receivedPayouts", fields: [receiverId], references: [id])
+  receiverId     String
+  season         Season?      @relation(fields: [seasonId], references: [id])
   seasonId       Int
 }

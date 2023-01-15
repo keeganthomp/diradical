@@ -6,7 +6,8 @@
     "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
     "migrate:dev": "npx prisma migrate dev",
     "generate": "npx prisma generate",
-    "stripe:clean-up": "node ./scripts/stripe/deleteTestAccounts.mjs"
+    "stripe:clean-up": "node ./scripts/stripe/deleteTestAccounts.mjs",
+    "seed": "ts-node ./seed"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.245.0",
