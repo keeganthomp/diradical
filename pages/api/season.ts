@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import { EventType } from '@prisma/client'
+import stripe from 'lib/stripe'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -39,11 +40,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'POST': {
       const { SEASON_CRON_JOB_SECRET } = process.env
       const ACTION_KEY = req.headers.authorization.split(' ')[1]
-      console.log('Ending Season...')
-      console.log({
-        SEASON_CRON_JOB_SECRET,
-        ACTION_KEY,
-      })
+      const isAuthed = ACTION_KEY === SEASON_CRON_JOB_SECRET
+      if (!isAuthed) {
+        res.status(401).json({ message: 'unauthorized' })
+        return
+      }
       try {
         const currentSeason = await prisma.season.findFirst({
           orderBy: {
@@ -134,6 +135,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           acc[userId] = userPercent
           return acc
         }, {})
+
+        const platformBalance = await stripe.getPlatformBalance()
+        const platformBalanceAmount = platformBalance.amount
+
+        // 70% of the platform balance each month will be distributed to artists
 
         // initiate payouts based on the information above
         // To be determined on how much of the monthly membership will be kept for profit

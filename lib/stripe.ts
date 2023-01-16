@@ -6,7 +6,7 @@ const BASE_APP_URL =
     : 'http://localhost:3000'
 
 const MEMBERSHIP_PRICE_ID = 'price_1MMMJGCErQVeq5sByBb1m1jC'
-const DAYS_OF_FREE_TRIAL = 10
+const DAYS_OF_FREE_TRIAL = 0
 
 // create stripe customer for purchasing subscriptions and items on the platform
 const createStripeCustomer = async ({ email }: { email: string }) =>
