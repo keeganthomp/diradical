@@ -7,6 +7,11 @@ const BASE_APP_URL =
 
 const MEMBERSHIP_PRICE_ID = 'price_1MMMJGCErQVeq5sByBb1m1jC'
 
+const getMembershipPrice = async () => {
+  const price = await stripe.prices.retrieve(MEMBERSHIP_PRICE_ID)
+  return price.unit_amount
+}
+
 // create stripe customer for purchasing subscriptions and items on the platform
 const createStripeCustomer = async ({ email }: { email: string }) =>
   stripe.customers.create({
@@ -181,6 +186,27 @@ const checkIfMembershipActive = async (subscriptionId: string) => {
   }
 }
 
+//get past months charges
+const getPastMonthCharges = async () => {
+  const date = new Date()
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+  const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  // TODO: only get paid charges and charges for membership
+  try {
+    const { data: charges } = await stripe.charges.list({
+      limit: 100,
+      created: {
+        gte: firstDayOfMonth.getTime() / 1000,
+        lte: lastDayOfMonth.getTime() / 1000,
+      },
+    })
+    const total = charges.reduce((acc, charge) => acc + charge.amount, 0)
+    return total
+  } catch (stripeError) {
+    throw new Error(stripeError)
+  }
+}
+
 export default {
   getStripeAccount,
   creteStripeAccount,
@@ -192,4 +218,6 @@ export default {
   getPlatformBalance,
   getUserBalance,
   checkIfMembershipActive,
+  getPastMonthCharges,
+  getMembershipPrice,
 }

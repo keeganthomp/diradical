@@ -136,14 +136,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           return acc
         }, {})
 
-        const platformBalance = await stripe.getPlatformBalance()
-        const platformBalanceAmount = platformBalance.amount
+        //TODO: Check if platform balance hase enough funds to pay out
 
-        // 70% of the platform balance each month will be distributed to artists
+        const membershipPrice = await stripe.getMembershipPrice()
+        // Each member is is charged the membership cost per month (i.e. $10)
+        // the member is chosing which artist to support with 70% of their membership cost (i.e. $7 will be distributed to artists based on plays by default)
+        const amtForArtist = membershipPrice * 0.7
 
         // initiate payouts based on the information above
         // To be determined on how much of the monthly membership will be kept for profit
-        const AMT_TO_DISTRIBUTE = 10000
         const userIds = Object.keys(percentPerUser)
         for (const userId of userIds) {
           const userPercents = percentPerUser[userId]
@@ -152,7 +153,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             const percent = userPercents[trackId]
             await prisma.payout.create({
               data: {
-                amount: percent * AMT_TO_DISTRIBUTE,
+                amount: percent * amtForArtist,
                 season: { connect: { id: currentSeason.id } },
                 initiator: { connect: { id: userId } },
                 receiver: {
