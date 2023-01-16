@@ -4,6 +4,9 @@ import React from 'react'
 import Loader from 'components/ui/Loader'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
+import { useForm } from 'react-hook-form'
+import TextInput from 'components/ui/Inputs/TextInput'
+import { Button } from 'components/ui/Buttons'
 
 const Wrapper = styled.div`
   display: flex;
@@ -12,15 +15,19 @@ const Wrapper = styled.div`
   justify-content: center;
 `
 
+const Content = styled.div`
+  width: 14rem;
+`
+
 const ButtonsContainer = styled.div`
-  width: 12rem;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.5rem;
-  padding: 1rem 0;
+  padding: 2rem 0;
 `
 
-const LoginButton = styled.button`
+const SocialLoginButton = styled.button`
   width: 100%;
   border: none;
   outline: none;
@@ -38,17 +45,62 @@ const LoginButton = styled.button`
 const Title = styled.p`
   font-size: 1.5rem;
   font-weight: bold;
+  padding-bottom: 2rem;
 `
 
-export default function SignIn({
+const CredentialForm = styled.form`
+  display: grid;
+  justify-items: center;
+  row-gap: 1.25rem;
+`
+const CredentialsSubmitBtn = styled(Button)`
+  height: 2rem;
+  width: 100%;
+`
+const SignupText = styled.p`
+  font-size: 14px;
+  padding-top: 5px;
+  text-align: center;
+`
+const SignupLink = styled.a`
+  color: ${({ theme }) => theme.colors.main};
+  &:visited {
+    color: ${({ theme }) => theme.colors.main};
+  }
+`
+
+export default function SigninPage({
   socialProviders,
 }: {
   socialProviders: any[]
 }) {
   const router = useRouter()
   const { isAuthenticated } = useUser()
-  const [selectedProvider, setSelectedProvider] = React.useState('')
-  const [isSigningIn, setIsSigningIn] = React.useState(false)
+  const [socialSignin, setSocialSignin] = React.useState({
+    provider: '',
+    isSigningIn: false,
+  })
+  const { register, handleSubmit, formState, setError } = useForm({
+    mode: 'all',
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  })
+  const onCredentialsSubmit = async ({ username, password }) => {
+    const res = await signIn('credentials', {
+      redirect: false,
+      username,
+      password,
+      callbackUrl: '/',
+    })
+    if (res.error) {
+      setError('password', {
+        type: 'custom',
+        message: 'Username or password is incorrect',
+      })
+    }
+  }
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -57,15 +109,20 @@ export default function SignIn({
   }, [isAuthenticated])
 
   const handleSigninWithSocial = async (provider) => {
-    setSelectedProvider(provider)
-    setIsSigningIn(true)
+    setSocialSignin({
+      provider,
+      isSigningIn: true,
+    })
     try {
       signIn(provider, {
         redirect: false,
         callbackUrl: '/',
       })
     } catch (error) {
-      setIsSigningIn(false)
+      setSocialSignin({
+        provider: '',
+        isSigningIn: false,
+      })
       console.log(error)
     }
   }
@@ -73,21 +130,52 @@ export default function SignIn({
   return (
     <Wrapper>
       <Title>Log in</Title>
-      <ButtonsContainer>
-        {Object.values(socialProviders).map((provider) => (
-          <LoginButton
-            disabled={isSigningIn}
-            key={provider.id}
-            onClick={() => handleSigninWithSocial(provider.id)}
+      <Content>
+        <CredentialForm onSubmit={handleSubmit(onCredentialsSubmit)}>
+          <TextInput
+            placeholder='Username or Email'
+            {...register('username', {
+              required: true,
+            })}
+          />
+          <TextInput
+            placeholder='Password'
+            type='password'
+            {...register('password', {
+              required: true,
+            })}
+          />
+          {formState.errors.password && (
+            <p>{formState.errors.password.message}</p>
+          )}
+          <CredentialsSubmitBtn
+            disabled={!formState.isValid || formState.isSubmitting}
+            type='submit'
           >
-            {selectedProvider === provider.id && isSigningIn ? (
-              <Loader color='#000' size={12} />
-            ) : (
-              `Sign in with ${provider.name}`
-            )}
-          </LoginButton>
-        ))}
-      </ButtonsContainer>
+            Login
+          </CredentialsSubmitBtn>
+        </CredentialForm>
+        <SignupText>
+          Don&apos;t have an account?{' '}
+          <SignupLink href='/signup'>Sign up</SignupLink>
+        </SignupText>
+        <ButtonsContainer>
+          {Object.values(socialProviders).map((provider) => (
+            <SocialLoginButton
+              disabled={socialSignin.isSigningIn}
+              key={provider.id}
+              onClick={() => handleSigninWithSocial(provider.id)}
+            >
+              {socialSignin.provider === provider.id &&
+              socialSignin.isSigningIn ? (
+                <Loader color='#000' size={12} />
+              ) : (
+                `Log in with ${provider.name}`
+              )}
+            </SocialLoginButton>
+          ))}
+        </ButtonsContainer>
+      </Content>
     </Wrapper>
   )
 }

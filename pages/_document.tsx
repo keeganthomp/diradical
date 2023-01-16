@@ -46,12 +46,6 @@ class MyDocument extends Document {
           {/* prefetch top level data */}
           <link
             rel='preload'
-            href='/api/season'
-            as='fetch'
-            crossOrigin='anonymous'
-          />
-          <link
-            rel='preload'
             href='/api/tracks'
             as='fetch'
             crossOrigin='anonymous'

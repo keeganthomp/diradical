@@ -64,6 +64,7 @@ model User {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
   username         String      @unique @db.VarChar(45)
+  password         String?     @db.VarChar(255) // will only exist for credentials auth
   stripeCustomerId String      @unique @db.VarChar(255)
   stripeAccountId  String?     @unique @db.VarChar(255) // only set if user is an artist to receive payouts
   isArtist         Boolean     @default(false)

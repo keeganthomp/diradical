@@ -16,12 +16,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         id: userId as string,
       },
     })
-    const stripeBalance = await stripe.getUserBalance({
-      stripeAccountId: user.stripeAccountId,
-    })
-    const payload = {
-      ...user,
-      balance: stripeBalance.amount,
+    let payload = {}
+    if (!user?.stripeAccountId) {
+      payload = {
+        ...user,
+        balance: 0,
+      }
+    } else {
+      const stripeBalance = await stripe.getUserBalance({
+        stripeAccountId: user.stripeAccountId,
+      })
+      payload = {
+        ...user,
+        balance: stripeBalance.amount,
+      }
     }
     res.status(200).json(payload)
   } catch (err) {

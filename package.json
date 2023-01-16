@@ -15,6 +15,7 @@
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.7.1",
     "@types/uuid": "^8.3.4",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "critters": "^0.0.16",
     "date-fns": "^2.11.1",
