@@ -6,7 +6,6 @@ const BASE_APP_URL =
     : 'http://localhost:3000'
 
 const MEMBERSHIP_PRICE_ID = 'price_1MMMJGCErQVeq5sByBb1m1jC'
-const DAYS_OF_FREE_TRIAL = 0
 
 // create stripe customer for purchasing subscriptions and items on the platform
 const createStripeCustomer = async ({ email }: { email: string }) =>
@@ -81,10 +80,7 @@ const createMembershipCheckoutSession = async ({
         quantity: 1,
       },
     ],
-    subscription_data: {
-      trial_period_days: DAYS_OF_FREE_TRIAL,
-    },
-
+    subscription_data: {},
     success_url: `${BASE_APP_URL}/membership/success`,
     cancel_url: `${BASE_APP_URL}`,
   })
