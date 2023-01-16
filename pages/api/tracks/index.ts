@@ -93,6 +93,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           await unlink(coverArtFileObj.filepath)
           res.status(200).json(track)
         } catch (err) {
+          console.log('eeeee', err)
           res.status(500).json({ message: err.message })
         }
       })

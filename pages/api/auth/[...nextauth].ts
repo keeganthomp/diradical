@@ -1,14 +1,41 @@
 import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
 import prisma from 'lib/prisma'
 import { PrismaAdapter } from 'lib/auth'
 import stripe from 'lib/stripe'
+import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import bcrypt from 'bcrypt'
 
 export default NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { type: 'text' },
+        username: { type: 'text' },
+        password: { type: 'password' },
+      },
+      async authorize(credentials) {
+        const { username: usernameOrEmail, password: plainTextPassword } =
+          credentials
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+          },
+        })
+        if (!user) {
+          throw new Error('No user found')
+        }
+        const isValidPassword = await bcrypt.compare(
+          plainTextPassword,
+          user.password,
+        )
+        return isValidPassword ? user : null
+      },
     }),
   ],
   pages: {

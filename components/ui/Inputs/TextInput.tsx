@@ -7,10 +7,11 @@ const TextInput = styled.input`
   background: transparent;
   outline: none;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
   border-radius: 0px;
   font-weight: 300;
   font-family: Jost;
+  width: 100%;
 `
 
 export default TextInput
