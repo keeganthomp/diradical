@@ -37,6 +37,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break
     }
     case 'POST': {
+      const { SEASON_CRON_JOB_SECRET } = process.env
+      const ACTION_KEY = req.headers.authorization.split(' ')[1]
+      console.log('Ending Season...')
+      console.log({
+        SEASON_CRON_JOB_SECRET,
+        ACTION_KEY,
+      })
       try {
         const currentSeason = await prisma.season.findFirst({
           orderBy: {

@@ -1,0 +1,13 @@
+name: End season
+on:
+  schedule:
+    - cron: '* * * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Monthly cron job
+        run: |
+          curl --request POST \
+          --url 'https://dierad.xyz/api/season' \
+          --header 'Authorization: Bearer ${{ secrets.ACTION_KEY }}'
