@@ -1,7 +1,7 @@
 name: End season
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '* * * * *'
 jobs:
   cron:
     runs-on: ubuntu-latest
