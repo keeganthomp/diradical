@@ -3,8 +3,9 @@ import React, { useEffect } from 'react'
 import { devices } from 'styles/theme'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
-import useProfile from 'hooks/useProfile'
 import ProfileTabs from 'components/profile/Tabs'
+import profileState from 'atoms/profile'
+import { useRecoilValue } from 'recoil'
 import MyMusic from 'components/profile/MyMusic'
 import PayoutsToReceive from 'components/profile/PayoutsToReceive'
 import PayoutsToSend from 'components/profile/PayoutsToSend'
@@ -23,7 +24,7 @@ const Container = styled.div`
 `
 
 export default function ProfilePage() {
-  const { activeTab } = useProfile()
+  const { activeTab } = useRecoilValue(profileState)
   const router = useRouter()
   const { user, isAuthenticated, isAuthenticating } = useUser()
 

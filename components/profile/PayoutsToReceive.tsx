@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
-import useProfile from 'hooks/useProfile'
 import { Button } from 'components/ui/Buttons'
 import styled from 'styled-components'
 import useApi from 'hooks/useApi'
@@ -17,8 +16,7 @@ const ReceivePayoutsButton = styled(Button)``
 export default function PayoutsToReceive() {
   const { receivePayout } = useApi()
   const router = useRouter()
-  const { user, isAuthenticated, isAuthenticating } = useUser()
-  const { account } = useProfile()
+  const { user, isAuthenticated, isAuthenticating, payout } = useUser()
 
   // amount is in cents
   const formatCurrency = (amount: number) => {
@@ -42,11 +40,8 @@ export default function PayoutsToReceive() {
 
   return (
     <Wrapper>
-      <Balance>Balance: {formatCurrency(account.balance)}</Balance>
-      <ReceivePayoutsButton
-        onClick={handleReceivePayouts}
-        disabled={!account.balance}
-      >
+      <Balance>Balance: {formatCurrency(payout)}</Balance>
+      <ReceivePayoutsButton onClick={handleReceivePayouts} disabled={!payout}>
         Receive Payouts
       </ReceivePayoutsButton>
     </Wrapper>

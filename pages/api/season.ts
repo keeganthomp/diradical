@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import { EventType } from '@prisma/client'
 import stripe from 'lib/stripe'
+import { getDistributionForUser } from 'lib/payouts'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -36,39 +37,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
         })
-        const membershipCost = await stripe.getMembershipPrice()
-        const amtForArtist = membershipCost * 0.5
-        for (const user of usersWithPlays) {
-          const totalPlays = user.events.length
-          const playsPerTrack = user.events.reduce((acc, cur) => {
-            if (acc[cur.trackId]) {
-              acc[cur.trackId] = {
-                ...acc[cur.trackId],
-                total: acc[cur.trackId].total + 1,
-              }
-            } else {
-              acc[cur.trackId] = {
-                total: 1,
-                artistId: cur.track.artist.id,
-              }
-            }
-            return acc
-          }, {})
-          const trackIds = Object.keys(playsPerTrack)
-          for (const trackId of trackIds) {
-            const { total, artistId } = playsPerTrack[trackId]
-            const percent = total / totalPlays
-            await prisma.payout.create({
-              data: {
-                amount: percent * amtForArtist,
-                season: { connect: { id: currentSeason.id } },
-                initiator: { connect: { id: user.id } },
-                receiver: {
-                  connect: { id: artistId },
-                },
-              },
-            })
-          }
+        const usersWithoutPass = usersWithPlays.map((user) => {
+          return { ...user, password: undefined }
+        })
+        const usersDistribution = []
+        for (const user of usersWithoutPass) {
+          const payoutDistribution = await getDistributionForUser(user)
+          usersDistribution.push({
+            user,
+            distibution: payoutDistribution,
+          })
         }
         // end current season
         await prisma.season.update({

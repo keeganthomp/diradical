@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import useProfile from 'hooks/useProfile'
+import profileState, { Tab as TabType } from 'atoms/profile'
+import { useRecoilState } from 'recoil'
 import { devices } from 'styles/theme'
 import Tab from './Tab'
 
@@ -16,7 +17,12 @@ const TabWrapper = styled.div`
 `
 
 export default function ProfileTabs() {
-  const { changeTab, activeTab } = useProfile()
+  const [{ activeTab }, setProfile] = useRecoilState(profileState)
+
+  const changeTab = (tab: TabType) => {
+    setProfile((prev) => ({ ...prev, activeTab: tab }))
+  }
+
   return (
     <TabWrapper>
       <Tab
