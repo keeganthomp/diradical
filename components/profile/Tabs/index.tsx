@@ -11,7 +11,7 @@ const TabWrapper = styled.div`
   padding-bottom: 2rem;
   @media ${devices.mobile} {
     width: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
   }
 `
 
@@ -26,10 +26,16 @@ export default function ProfileTabs() {
         Tracks
       </Tab>
       <Tab
-        isActive={activeTab === 'payouts'}
-        handleClick={() => changeTab('payouts')}
+        isActive={activeTab === 'payoutsToReceive'}
+        handleClick={() => changeTab('payoutsToReceive')}
       >
-        Payouts
+        Payouts (Receive)
+      </Tab>
+      <Tab
+        isActive={activeTab === 'payoutsSent'}
+        handleClick={() => changeTab('payoutsSent')}
+      >
+        Payouts (Send)
       </Tab>
     </TabWrapper>
   )
