@@ -7,15 +7,8 @@ import styled from 'styled-components'
 import useApi from 'hooks/useApi'
 
 const Wrapper = styled.div``
-const Balance = styled.p`
-  padding-bottom: 2rem;
-  text-align: center;
-`
 
-const ReceivePayoutsButton = styled(Button)``
-
-export default function Account() {
-  const { receivePayout } = useApi()
+export default function PayoutsToSend() {
   const router = useRouter()
   const { user, isAuthenticated, isAuthenticating } = useUser()
   const { account } = useProfile()
@@ -28,9 +21,7 @@ export default function Account() {
     }).format(amount / 100)
   }
 
-  const handleReceivePayouts = async () => {
-    await receivePayout(user.id)
-  }
+  const { payoutsToMake } = account
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
@@ -42,13 +33,14 @@ export default function Account() {
 
   return (
     <Wrapper>
-      <Balance>Balance: {formatCurrency(account.balance)}</Balance>
-      <ReceivePayoutsButton
-        onClick={handleReceivePayouts}
-        disabled={!account.balance}
-      >
-        Receive Payouts
-      </ReceivePayoutsButton>
+      {payoutsToMake.map((payout, i) => {
+        return (
+          <div key={i}>
+            <p>{payout.username}</p>
+            <p>{formatCurrency(payout.amtToGive)}</p>
+          </div>
+        )
+      })}
     </Wrapper>
   )
 }

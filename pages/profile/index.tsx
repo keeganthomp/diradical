@@ -6,7 +6,8 @@ import { useRouter } from 'next/router'
 import useProfile from 'hooks/useProfile'
 import ProfileTabs from 'components/profile/Tabs'
 import MyMusic from 'components/profile/MyMusic'
-import Payouts from 'components/profile/Payouts'
+import PayoutsToReceive from 'components/profile/PayoutsToReceive'
+import PayoutsToSend from 'components/profile/PayoutsToSend'
 
 const Container = styled.div`
   display: flex;
@@ -38,7 +39,8 @@ export default function ProfilePage() {
     <Container>
       <ProfileTabs />
       {activeTab === 'tracks' && <MyMusic />}
-      {activeTab === 'payouts' && <Payouts />}
+      {activeTab === 'payoutsToReceive' && <PayoutsToReceive />}
+      {activeTab === 'payoutsSent' && <PayoutsToSend />}
     </Container>
   )
 }

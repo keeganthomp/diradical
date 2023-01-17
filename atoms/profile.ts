@@ -1,6 +1,6 @@
 import { atom } from 'recoil'
 
-export type Tab = 'tracks' | 'payouts'
+export type Tab = 'tracks' | 'payoutsToReceive' | 'payoutsSent'
 
 const profileState = atom({
   key: 'profile',
