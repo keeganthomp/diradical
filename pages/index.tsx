@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Button } from 'components/ui/Buttons'
 
 const Container = styled.div`
-  padding: 3rem 4rem;
+  padding: 3rem 4rem 0 4rem;
   height: 100%;
   text-align: center;
   display: flex;

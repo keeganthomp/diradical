@@ -32,13 +32,18 @@ const SignupSubmitBtn = styled(Button)`
 `
 const SigninText = styled.p`
   font-size: 14px;
-  padding-top: 5px;
+  padding-top: 8px;
 `
 const SigninLink = styled.a`
   color: ${({ theme }) => theme.colors.main};
   &:visited {
     color: ${({ theme }) => theme.colors.main};
   }
+`
+
+const Error = styled.p`
+  color: red;
+  font-size: 14px;
 `
 
 export default function SignupPage() {
@@ -78,22 +83,31 @@ export default function SignupPage() {
         <TextInput
           placeholder='Email'
           {...register('email', {
-            required: true,
+            required: 'Email is required',
           })}
         />
+        {formState.errors.email && (
+          <Error>{formState.errors.email.message}</Error>
+        )}
         <TextInput
           placeholder='Username'
           {...register('username', {
-            required: true,
+            required: 'Username is required',
           })}
         />
+        {formState.errors.username && (
+          <Error>{formState.errors.username.message}</Error>
+        )}
         <TextInput
           placeholder='Password'
           type='password'
           {...register('password', {
-            required: true,
+            required: 'Password is required',
           })}
         />
+        {formState.errors.password && (
+          <Error>{formState.errors.password.message}</Error>
+        )}
         <SignupSubmitBtn
           disabled={!formState.isValid || formState.isSubmitting}
           type='submit'

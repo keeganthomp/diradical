@@ -24,7 +24,7 @@ const ButtonsContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.5rem;
-  padding: 2rem 0;
+  padding: 2.5rem 0;
 `
 
 const SocialLoginButton = styled.button`
@@ -59,7 +59,7 @@ const CredentialsSubmitBtn = styled(Button)`
 `
 const SignupText = styled.p`
   font-size: 14px;
-  padding-top: 5px;
+  padding-top: 8px;
   text-align: center;
 `
 const SignupLink = styled.a`
@@ -67,6 +67,11 @@ const SignupLink = styled.a`
   &:visited {
     color: ${({ theme }) => theme.colors.main};
   }
+`
+
+const Error = styled.p`
+  color: red;
+  font-size: 14px;
 `
 
 export default function SigninPage({
@@ -127,6 +132,8 @@ export default function SigninPage({
     }
   }
 
+  console.log('formState.errors', formState.errors)
+
   return (
     <Wrapper>
       <Title>Log in</Title>
@@ -135,18 +142,21 @@ export default function SigninPage({
           <TextInput
             placeholder='Username or Email'
             {...register('username', {
-              required: true,
+              required: 'Username is required',
             })}
           />
+          {formState.errors.username && (
+            <Error>{formState.errors.username.message}</Error>
+          )}
           <TextInput
             placeholder='Password'
             type='password'
             {...register('password', {
-              required: true,
+              required: 'Password is required',
             })}
           />
           {formState.errors.password && (
-            <p>{formState.errors.password.message}</p>
+            <Error>{formState.errors.password.message}</Error>
           )}
           <CredentialsSubmitBtn
             disabled={!formState.isValid || formState.isSubmitting}
