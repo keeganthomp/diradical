@@ -105,7 +105,7 @@ export default function UploadPage() {
       formData.set('coverArtFile', coverArtFile)
       formData.set('audioFile', audioFile)
       await uploadSong(formData)
-      router.push('/profile')
+      router.push('/my-music')
     } catch (error) {
       setUploadError(error.message)
     }

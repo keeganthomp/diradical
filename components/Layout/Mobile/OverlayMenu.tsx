@@ -4,12 +4,13 @@ import { useRouter } from 'next/router'
 import { IoCloseOutline } from 'react-icons/io5'
 import { NAV_LINKS } from 'const'
 import { SidebarButton } from 'components/ui/Buttons'
-import { BsPeople } from 'react-icons/bs'
+import { BsPeople, BsFillMusicPlayerFill, BsFlower2 } from 'react-icons/bs'
 import { BiLogIn } from 'react-icons/bi'
 import { signOut } from 'next-auth/react'
 import useUser from 'hooks/useUser'
 import useApi from 'hooks/useApi'
 import { IoIosArrowDropright } from 'react-icons/io'
+import { MdAttachMoney } from 'react-icons/md'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
@@ -197,25 +198,26 @@ export default function MobileMenu({
             </SidebarButton>
           ))}
           {user && (
-            <ProfileContainer>
-              <ProfileText onClick={() => setIsProfileOpen(!isProfileOpen)}>
-                <Carrot isOpen={isProfileOpen} />
-                Profile
-              </ProfileText>
-              {isProfileOpen && (
-                <ProfileSubMenu>
-                  <ProfileItem onClick={() => handleRoute('/my-music')}>
-                    My Music
-                  </ProfileItem>
-                  <ProfileItem onClick={() => handleRoute('/payouts')}>
-                    Payouts
-                  </ProfileItem>
-                  <ProfileItem onClick={() => handleRoute('/season')}>
-                    Season
-                  </ProfileItem>
-                </ProfileSubMenu>
-              )}
-            </ProfileContainer>
+            <>
+              <SidebarButton
+                icon={<BsFillMusicPlayerFill />}
+                onClick={() => handleRoute('/my-music')}
+              >
+                My Music
+              </SidebarButton>
+              <SidebarButton
+                icon={<MdAttachMoney />}
+                onClick={() => handleRoute('/payouts')}
+              >
+                Payouts
+              </SidebarButton>
+              <SidebarButton
+                icon={<BsFlower2 />}
+                onClick={() => handleRoute('/season')}
+              >
+                Season
+              </SidebarButton>
+            </>
           )}
         </List>
         {isAuthenticated && (

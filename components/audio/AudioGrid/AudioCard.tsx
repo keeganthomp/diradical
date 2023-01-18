@@ -140,7 +140,7 @@ export default function AudioCard({ track }: Props) {
   const handleMouseLeave = () => !isMobile && setHovering(false)
 
   const isArtistPage = router.pathname.includes('/artist/')
-  const isMyMusicPage = router.pathname.includes('/profile')
+  const isMyMusicPage = router.pathname.includes('/my-music')
 
   const updateUserMusicCache = () => {
     const handleUpdate = (tracks: any) => {

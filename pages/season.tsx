@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
-import { Button } from 'components/ui/Buttons'
 import styled from 'styled-components'
 import { devices } from 'styles/theme'
 
@@ -60,11 +59,16 @@ export default function SeasonPage() {
 
   if (!user) return null
 
-  if (distribution.artists.length === 0) return <p>No suggested payouts</p>
+  if (distribution.artists.length === 0)
+    return (
+      <Wrapper>
+        <p>No listens to calculate</p>
+      </Wrapper>
+    )
 
   return (
     <Wrapper>
-      <Title>Season</Title>
+      <Title>Season Metrics</Title>
       <Total>Total to give: {formatCurrency(distribution.totalAmount)}</Total>
       <ArtistsGrid>
         {distribution.artists.map((dist, i) => {
