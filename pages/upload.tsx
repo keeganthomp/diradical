@@ -61,10 +61,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 2rem;
 `
 
-const Title = styled.h1``
+const Title = styled.p`
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 2rem;
+`
 
 export default function UploadPage() {
   const { isAuthenticated, isAuthenticating, user } = useUser()

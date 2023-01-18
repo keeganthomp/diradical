@@ -9,6 +9,7 @@ import { BiLogIn } from 'react-icons/bi'
 import { signOut } from 'next-auth/react'
 import useUser from 'hooks/useUser'
 import useApi from 'hooks/useApi'
+import { IoIosArrowDropright } from 'react-icons/io'
 
 const Overlay = styled.div`
   background: rgba(255, 255, 255, 0.5);
@@ -31,7 +32,8 @@ const Menu = styled.div`
   left: 0;
   position: absolute;
   display: flex;
-  justify-content: center;
+  padding-top: 14rem;
+  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
 `
@@ -64,9 +66,31 @@ const LogoutButton = styled.p`
   font-size: 14px;
   left: 50%;
   transform: translate(-50%, 0);
-  bottom: 2.5rem;
+  bottom: 4rem;
   position: absolute;
 `
+
+const ProfileContainer = styled.div`
+  width: 100%;
+  position: relative;
+`
+const Carrot = styled(IoIosArrowDropright)<{ isOpen: boolean }>`
+  margin-right: 10px;
+  transform: ${({ isOpen }) => (isOpen ? 'rotate(90deg)' : 'rotate(0deg)')};
+  transition: all 0.1s ease-in-out;
+`
+const ProfileText = styled.p`
+  display: flex;
+  padding: 10px;
+  align-items: center;
+`
+const ProfileSubMenu = styled.div`
+  position: absolute;
+  padding-left: 2rem;
+  display: grid;
+  grid-gap: 0.75rem;
+`
+const ProfileItem = styled.p``
 
 export default function MobileMenu({
   isOpen,
@@ -75,6 +99,7 @@ export default function MobileMenu({
   isOpen: boolean
   close: () => void
 }) {
+  const [isProfileOpen, setIsProfileOpen] = React.useState(false)
   const [isRegistering, setIsRegistering] = React.useState(false)
   const [isBuyingMembership, setIsBuyingMembership] = React.useState(false)
   const router = useRouter()
@@ -82,7 +107,13 @@ export default function MobileMenu({
   const { purchaseMembership, registerArtist } = useApi()
 
   const handleRoute = (path: string) => {
+    setIsProfileOpen(false)
     router.push(path)
+    close()
+  }
+
+  const handleClose = () => {
+    setIsProfileOpen(false)
     close()
   }
 
@@ -126,7 +157,7 @@ export default function MobileMenu({
   return (
     <>
       <Overlay />
-      <CloseIcon onClick={close} />
+      <CloseIcon onClick={handleClose} />
       <Menu>
         <List>
           {!isAuthenticated && (
@@ -136,7 +167,7 @@ export default function MobileMenu({
           )}
           {isAuthenticated && (
             <>
-              {!user.isArtist && (
+              {user.hasActiveMembership && !user.isArtist && (
                 <SidebarButton
                   disabled={isRegistering}
                   icon={<BiLogIn />}
@@ -165,6 +196,25 @@ export default function MobileMenu({
               {link.title}
             </SidebarButton>
           ))}
+          <ProfileContainer>
+            <ProfileText onClick={() => setIsProfileOpen(!isProfileOpen)}>
+              <Carrot isOpen={isProfileOpen} />
+              Profile
+            </ProfileText>
+            {isProfileOpen && (
+              <ProfileSubMenu>
+                <ProfileItem onClick={() => handleRoute('/my-music')}>
+                  My Music
+                </ProfileItem>
+                <ProfileItem onClick={() => handleRoute('/payouts')}>
+                  Payouts
+                </ProfileItem>
+                <ProfileItem onClick={() => handleRoute('/season')}>
+                  Season
+                </ProfileItem>
+              </ProfileSubMenu>
+            )}
+          </ProfileContainer>
         </List>
         {isAuthenticated && (
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>

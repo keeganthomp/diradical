@@ -5,10 +5,21 @@ import { Button } from 'components/ui/Buttons'
 import styled from 'styled-components'
 import useApi from 'hooks/useApi'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
 const Balance = styled.p`
   padding-bottom: 2rem;
   text-align: center;
+`
+
+const Title = styled.p`
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 2rem;
 `
 
 const ReceivePayoutsButton = styled(Button)``
@@ -40,6 +51,7 @@ export default function PayoutsToReceive() {
 
   return (
     <Wrapper>
+      <Title>Payouts</Title>
       <Balance>Balance: {formatCurrency(payout)}</Balance>
       <ReceivePayoutsButton onClick={handleReceivePayouts} disabled={!payout}>
         Receive Payouts

@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 import { useState } from 'react'
-import { BsChevronCompactUp } from 'react-icons/bs'
+import { IoIosArrowDropup } from 'react-icons/io'
 import useOutsideClick from 'hooks/useClickOutside'
 import { signOut } from 'next-auth/react'
 import useUser from 'hooks/useUser'
+import { useRouter } from 'next/router'
 
 const Wrapper = styled.div`
   position: absolute;
@@ -26,6 +27,12 @@ const Container = styled.div`
   z-index: 2;
   &:hover {
     background: #f8f8f8;
+  }
+`
+const Item = styled.p`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
   }
 `
 
@@ -51,22 +58,25 @@ const MenuContainer = styled.div<{ open?: boolean }>`
   padding: 0.5rem 0;
   padding: 10px;
   position: relative;
-  bottom: ${(p) => (p.open ? 0 : '-8rem')};
+  bottom: ${(p) => (p.open ? 0 : '-9rem')};
   transition: all 0.2s ease-in-out;
   z-index: 1;
+  display: grid;
+  grid-gap: 0.5rem;
 `
 
 const Username = styled.p`
   font-size: 12px;
 `
 
-const Chevron = styled(BsChevronCompactUp)<{ open?: boolean }>`
+const Chevron = styled(IoIosArrowDropup)<{ open?: boolean }>`
   ${({ open }) => open && 'transform: rotate(180deg);'}
   transition: all 0.15s ease-in-out;
-  color: #a5a5a5b0;
+  color: #202020ad;
 `
 
 function UserInfo() {
+  const router = useRouter()
   const { isAuthenticated, user } = useUser()
   const [isOpen, setOpen] = useState(false)
 
@@ -84,6 +94,9 @@ function UserInfo() {
   return (
     <Wrapper ref={ref}>
       <MenuContainer open={isOpen}>
+        <Item onClick={() => router.push('/my-music')}>My Music</Item>
+        <Item onClick={() => router.push('/payouts')}>Payouts</Item>
+        <Item onClick={() => router.push('/season')}>Season</Item>
         <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
       </MenuContainer>
       <Container onClick={toggleOpen}>

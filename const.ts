@@ -1,5 +1,5 @@
 import React from 'react'
-import { BsMusicNoteBeamed, BsMusicPlayerFill, BsUpload } from 'react-icons/bs'
+import { BsMusicNoteBeamed, BsUpload } from 'react-icons/bs'
 
 type NavLinkType = {
   path: string
@@ -9,6 +9,5 @@ type NavLinkType = {
 
 export const NAV_LINKS: NavLinkType[] = [
   { title: 'Listen', path: '/listen', icon: BsMusicNoteBeamed },
-  { title: 'Profile', path: '/profile', icon: BsMusicPlayerFill },
   { title: 'Upload Song', path: '/upload', icon: BsUpload },
 ]

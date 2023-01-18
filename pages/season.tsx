@@ -7,9 +7,10 @@ import { devices } from 'styles/theme'
 
 const Wrapper = styled.div`
   width: 100%;
+  text-align: center;
 `
 
-const Total = styled.h3`
+const Total = styled.p`
   text-align: center;
   margin: 0;
 `
@@ -31,10 +32,15 @@ const ArtistContainer = styled.div`
   align-items: center;
   grid-gap: 0.75rem;
   border-radius: 15px;
-  border: 1px solid #e9e9e9;
+  background: #f1f1f17d;
+`
+const Title = styled.p`
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 2rem;
 `
 
-export default function PayoutsToSend() {
+export default function SeasonPage() {
   const router = useRouter()
   const { user, isAuthenticated, isAuthenticating, distribution } = useUser()
 
@@ -58,6 +64,7 @@ export default function PayoutsToSend() {
 
   return (
     <Wrapper>
+      <Title>Season</Title>
       <Total>Total to give: {formatCurrency(distribution.totalAmount)}</Total>
       <ArtistsGrid>
         {distribution.artists.map((dist, i) => {

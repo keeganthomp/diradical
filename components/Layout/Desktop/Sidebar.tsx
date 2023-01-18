@@ -92,7 +92,7 @@ export default function Sidebar() {
         )}
         {isAuthenticated && (
           <>
-            {!user.isArtist && (
+            {user.hasActiveMembership && !user.isArtist && (
               <SidebarButton
                 disabled={isRegistering}
                 icon={<BiLogIn />}

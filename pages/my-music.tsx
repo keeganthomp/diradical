@@ -4,8 +4,18 @@ import useUserMusic from 'hooks/music/useUserMusic'
 import Loader from 'components/ui/Loader'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
+import styled from 'styled-components'
 
-export default function MyMusic() {
+const Wrapper = styled.div`
+  text-align: center;
+`
+const Title = styled.p`
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 2rem;
+`
+
+export default function MyMusicPage() {
   const router = useRouter()
   const { user, isAuthenticated, isAuthenticating } = useUser()
   const { tracks, isFetching } = useUserMusic(user?.username)
@@ -20,5 +30,10 @@ export default function MyMusic() {
 
   if (isFetching) return <Loader color='#000' />
 
-  return <AudioGrid tracks={tracks} />
+  return (
+    <Wrapper>
+      <Title>My Music</Title>
+      <AudioGrid tracks={tracks} />
+    </Wrapper>
+  )
 }
