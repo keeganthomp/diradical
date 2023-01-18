@@ -77,7 +77,6 @@ const ProfileContainer = styled.div`
 const Carrot = styled(IoIosArrowDropright)<{ isOpen: boolean }>`
   margin-right: 10px;
   transform: ${({ isOpen }) => (isOpen ? 'rotate(90deg)' : 'rotate(0deg)')};
-  transition: all 0.1s ease-in-out;
 `
 const ProfileText = styled.p`
   display: flex;
@@ -196,25 +195,27 @@ export default function MobileMenu({
               {link.title}
             </SidebarButton>
           ))}
-          <ProfileContainer>
-            <ProfileText onClick={() => setIsProfileOpen(!isProfileOpen)}>
-              <Carrot isOpen={isProfileOpen} />
-              Profile
-            </ProfileText>
-            {isProfileOpen && (
-              <ProfileSubMenu>
-                <ProfileItem onClick={() => handleRoute('/my-music')}>
-                  My Music
-                </ProfileItem>
-                <ProfileItem onClick={() => handleRoute('/payouts')}>
-                  Payouts
-                </ProfileItem>
-                <ProfileItem onClick={() => handleRoute('/season')}>
-                  Season
-                </ProfileItem>
-              </ProfileSubMenu>
-            )}
-          </ProfileContainer>
+          {user && (
+            <ProfileContainer>
+              <ProfileText onClick={() => setIsProfileOpen(!isProfileOpen)}>
+                <Carrot isOpen={isProfileOpen} />
+                Profile
+              </ProfileText>
+              {isProfileOpen && (
+                <ProfileSubMenu>
+                  <ProfileItem onClick={() => handleRoute('/my-music')}>
+                    My Music
+                  </ProfileItem>
+                  <ProfileItem onClick={() => handleRoute('/payouts')}>
+                    Payouts
+                  </ProfileItem>
+                  <ProfileItem onClick={() => handleRoute('/season')}>
+                    Season
+                  </ProfileItem>
+                </ProfileSubMenu>
+              )}
+            </ProfileContainer>
+          )}
         </List>
         {isAuthenticated && (
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
