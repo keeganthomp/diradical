@@ -119,6 +119,7 @@ export default function MobileMenu({
   const handleLogout = async () => {
     try {
       signOut()
+      router.push('/signin')
     } catch (err) {
       console.log('error logging out on mobile menu: ', err)
     }

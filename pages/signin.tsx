@@ -132,8 +132,6 @@ export default function SigninPage({
     }
   }
 
-  console.log('formState.errors', formState.errors)
-
   return (
     <Wrapper>
       <Title>Log in</Title>

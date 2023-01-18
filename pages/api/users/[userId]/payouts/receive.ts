@@ -58,7 +58,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
   } catch (err) {
-    console.log('errrr', err)
     res.status(500).json({ message: err.message || 'unable to payout user' })
   }
 }
