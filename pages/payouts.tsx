@@ -22,7 +22,11 @@ const Title = styled.p`
   padding-bottom: 2rem;
 `
 
-const ReceivePayoutsButton = styled(Button)``
+const ReceivePayoutsButton = styled(Button)`
+  font-size: 16px;
+  height: 2rem;
+  width: 15rem;
+`
 
 export default function PayoutsToReceive() {
   const { receivePayout } = useApi()

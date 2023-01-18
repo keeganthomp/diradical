@@ -11,6 +11,11 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 `
+const Title = styled.p`
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-bottom: 2rem;
+`
 
 export default function ArtistPage() {
   const router = useRouter()
@@ -22,6 +27,7 @@ export default function ArtistPage() {
 
   return (
     <Container>
+      <Title>{artist}</Title>
       <AudioGrid tracks={tracks} />
     </Container>
   )

@@ -55,6 +55,7 @@ const ActionButton = styled(Button)`
   border-radius: 20px;
   height: 2rem;
   margin: 15px 0;
+  font-size: 16px;
 `
 
 export default function HomePage() {

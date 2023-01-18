@@ -34,6 +34,7 @@
     "react-icons": "^4.7.1",
     "react-loader-spinner": "^5.3.4",
     "react-modal": "^3.16.1",
+    "recharts": "^2.3.2",
     "recoil": "^0.7.5",
     "remark": "^14.0.1",
     "remark-html": "^15.0.0",
