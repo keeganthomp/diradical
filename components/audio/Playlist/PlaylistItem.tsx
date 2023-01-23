@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import { Track } from 'types'
 import useNowPlaying from 'hooks/useNowPlaying'
+import { devices } from 'styles/theme'
 
 type Props = {
   track: Track
@@ -13,13 +14,20 @@ const Wrapper = styled.div`
   grid-template-columns: 2rem 6rem 1fr 3rem;
   grid-template-rows: 3rem;
   align-items: center;
+  font-size: 14px;
+  @media ${devices.mobile} {
+    grid-template-columns: 2rem repeat(3, 1fr);
+  }
 `
 
 const ActionIcon = styled(FaPlay)`
   grid-area: action;
+  justify-self: start;
+  cursor: pointer;
 `
 const Title = styled.p`
   grid-area: title;
+  font-weight: bold;
 `
 const Artist = styled.p`
   grid-area: artist;
@@ -27,6 +35,7 @@ const Artist = styled.p`
 `
 const Plays = styled.p`
   grid-area: plays;
+  justify-self: end;
 `
 
 export default function PlaylistItem({ track }: Props) {

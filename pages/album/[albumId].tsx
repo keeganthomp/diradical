@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import Loader from 'components/ui/Loader'
 import useAlbum from 'hooks/music/useAlbum'
 import Playlist from 'components/audio/Playlist'
+import { devices } from 'styles/theme'
 
 const Container = styled.div`
   display: flex;
@@ -20,7 +21,10 @@ const Title = styled.p`
 `
 const AlbumImage = styled.img`
   width: 20rem;
-  height: 20rem;
+  height: auto;
+  @device ${devices.mobile} {
+    width: 100%;
+  }
 `
 
 export default function ArtistPage() {
