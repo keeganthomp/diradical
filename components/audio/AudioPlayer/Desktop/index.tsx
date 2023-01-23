@@ -21,7 +21,7 @@ const Container = styled.div`
   display: grid;
   align-items: center;
   height: 5rem;
-  grid-template-columns: 4rem 4rem 1fr 4rem 4rem;
+  grid-template-columns: 4rem 10rem 1fr 10rem 4rem;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
     'coverArt title pause . .'

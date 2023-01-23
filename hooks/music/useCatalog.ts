@@ -1,16 +1,12 @@
 import useSWR from 'swr'
 
 export default function useCatalog() {
-  const {
-    data: tracks,
-    error,
-    mutate,
-  } = useSWR('/api/tracks', {
+  const { data, error, mutate } = useSWR('/api/tracks', {
     refreshInterval: 3000,
   })
   return {
-    tracks,
-    isFetching: !error && !tracks,
+    ...data,
+    isFetching: !error && !data,
     mutate,
     error,
   }

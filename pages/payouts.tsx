@@ -31,7 +31,7 @@ const ReceivePayoutsButton = styled(Button)`
 export default function PayoutsToReceive() {
   const { receivePayout } = useApi()
   const router = useRouter()
-  const { user, isAuthenticated, isAuthenticating, payout } = useUser()
+  const { user, isAuthenticated, isAuthenticating } = useUser()
 
   // amount is in cents
   const formatCurrency = (amount: number) => {
@@ -56,8 +56,11 @@ export default function PayoutsToReceive() {
   return (
     <Wrapper>
       <Title>Payouts</Title>
-      <Balance>Balance: {formatCurrency(payout)}</Balance>
-      <ReceivePayoutsButton onClick={handleReceivePayouts} disabled={!payout}>
+      <Balance>Balance: {formatCurrency(user.balance)}</Balance>
+      <ReceivePayoutsButton
+        onClick={handleReceivePayouts}
+        disabled={!user.balance}
+      >
         Receive Payouts
       </ReceivePayoutsButton>
     </Wrapper>

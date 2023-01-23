@@ -22,7 +22,7 @@ const LoadingContainer = styled.div`
 `
 
 export default function ListenPage() {
-  const { tracks, isFetching } = useCatalog()
+  const { singles, albums, isFetching } = useCatalog()
 
   if (isFetching)
     return (
@@ -33,7 +33,16 @@ export default function ListenPage() {
 
   return (
     <Container>
-      <AudioGrid tracks={tracks} />
+      <p>Singles</p>
+      <AudioGrid tracks={singles} />
+      {albums.length > 0
+        ? albums.map((album) => (
+            <div key={album.id}>
+              <p>{album.title}</p>
+              <AudioGrid tracks={album.tracks} />
+            </div>
+          ))
+        : null}
     </Container>
   )
 }

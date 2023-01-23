@@ -143,14 +143,29 @@ export default function AudioCard({ track }: Props) {
   const isMyMusicPage = router.pathname.includes('/my-music')
 
   const updateUserMusicCache = () => {
-    const handleUpdate = (tracks: any) => {
-      const updatedTracks = tracks.map((t: any) => {
+    const handleUpdate = ({
+      singles,
+      albums,
+    }: {
+      singles: any[]
+      albums: any[]
+    }) => {
+      const updatedSingles = singles.map((t: any) => {
         if (t.id === track.id) {
           return { ...t, archived: !t.archived, user: { ...t.user } }
         }
         return t
       })
-      return updatedTracks
+      const updatedAlbums = albums.map((a: any) => {
+        const updatedTracks = a.tracks.map((t: any) => {
+          if (t.id === track.id) {
+            return { ...t, archived: !t.archived, user: { ...t.user } }
+          }
+          return t
+        })
+        return { ...a, tracks: updatedTracks }
+      })
+      return { singles: updatedSingles, albums: updatedAlbums }
     }
     mutate(`/api/users/${track.artist.username}/tracks`, handleUpdate, false)
   }

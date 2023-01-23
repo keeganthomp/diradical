@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 import { useState } from 'react'
-import { IoIosArrowDropup } from 'react-icons/io'
 import useOutsideClick from 'hooks/useClickOutside'
 import { signOut } from 'next-auth/react'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
+import { BiUser } from 'react-icons/bi'
+import { CgChevronUp } from 'react-icons/cg'
 
 const Wrapper = styled.div`
   position: absolute;
@@ -69,7 +70,7 @@ const Username = styled.p`
   font-size: 12px;
 `
 
-const Chevron = styled(IoIosArrowDropup)<{ open?: boolean }>`
+const Chevron = styled(CgChevronUp)<{ open?: boolean }>`
   ${({ open }) => open && 'transform: rotate(180deg);'}
   transition: all 0.15s ease-in-out;
   color: #202020ad;
@@ -100,7 +101,7 @@ function UserInfo() {
         <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
       </MenuContainer>
       <Container onClick={toggleOpen}>
-        <ProfilePicture />
+        <BiUser />
         <Username>{user?.username}</Username>
         <Chevron open={isOpen} />
       </Container>

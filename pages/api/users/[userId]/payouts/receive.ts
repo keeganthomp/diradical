@@ -7,24 +7,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const userId = req.query.userId as string
   try {
     switch (req.method) {
-      case 'GET': {
-        const user = await prisma.user.findUnique({
-          where: {
-            id: userId as string,
-          },
-        })
-        const payload = { balance: 0 }
-        if (!user?.stripeAccountId) {
-          payload.balance = 0
-        } else {
-          const stripeBalance = await stripe.getUserBalance({
-            stripeAccountId: user.stripeAccountId,
-          })
-          payload.balance = stripeBalance.amount
-        }
-        res.status(200).json(payload)
-        break
-      }
       case 'POST': {
         const authedUser = await checkIfAuthenticated(req, res)
         const userToPayout = await prisma.user.findUnique({
@@ -46,14 +28,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             .json({ message: 'user is not registered as an artist' })
           return
         }
-        const payout = await stripe.payoutUser({
+        await stripe.payoutUser({
           stripeAccountId: authedUser.stripeAccountId,
         })
         res.status(200).json({ sucess: true })
         break
       }
       default: {
-        res.status(405).send({ message: 'Only GET and POST requests allowed' })
+        res.status(405).send({ message: 'Only POST requests allowed' })
         break
       }
     }
