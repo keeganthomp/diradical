@@ -2,11 +2,16 @@ import {
   Track as PrismaTrack,
   User as PrismaUser,
   Season as PrismaSeason,
+  Album as PrismaAlbum,
 } from '@prisma/client'
 
 export type Track = PrismaTrack & {
-  artist: PrismaUser
+  artist: Omit<PrismaUser, 'password'>
   plays: number
+}
+
+export type Album = PrismaAlbum & {
+  artist: Omit<PrismaUser, 'password'>
 }
 
 export type Season = PrismaSeason & {
