@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   }
 `
 
-const ActionIcon = styled(FaPlay)`
+const ActionIcon = styled.div`
   grid-area: action;
   justify-self: start;
   cursor: pointer;
@@ -52,7 +52,9 @@ export default function PlaylistItem({ track }: Props) {
   }
   return (
     <Wrapper>
-      <ActionIcon onClick={handleClick} />
+      <ActionIcon onClick={handleClick}>
+        {isTrackPlaying ? <FaPause /> : <FaPlay />}
+      </ActionIcon>
       <Title>{track.title}</Title>
       <Artist>{track.artist.username}</Artist>
       <Plays>{track.plays} Plays</Plays>
