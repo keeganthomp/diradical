@@ -13,6 +13,7 @@ const Container = styled.div`
   grid-template-columns: 1fr;
   grid-gap: 10px;
   width: 40rem;
+  overflow-y: scroll;
   @media ${devices.mobile} {
     width: 100%;
   }

@@ -19,7 +19,7 @@ type Response = {
 export default function useUser(): Response {
   const { data: session, status } = useSession()
   const { data: userFromDb, error } = useSWR(
-    session?.user ? `/api/users/${session.user.id}` : null,
+    session?.user?.id ? `/api/users/${session.user.id}` : null,
   )
   const isFetchingUser = !error && !userFromDb
   const isAuthenticating = isFetchingUser || status === 'loading'

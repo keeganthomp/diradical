@@ -13,15 +13,19 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 100%;
+  padding-bottom: 2.25rem;
 `
 const Title = styled.p`
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
-  padding-bottom: 2rem;
+  padding-bottom: 0.5rem;
 `
 const AlbumImage = styled.img`
-  width: 20rem;
+  width: 8rem;
   height: auto;
+  margin-bottom: 1rem;
+  border-radius: 10px;
   @device ${devices.mobile} {
     width: 100%;
   }

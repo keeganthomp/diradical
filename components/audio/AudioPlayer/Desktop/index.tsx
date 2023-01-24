@@ -78,6 +78,7 @@ export default function DesktopAudioPlayer() {
   const { track: nowPlayingTrack, isPlaying, stop, pause } = useNowPlaying()
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [currentSongId, setCurrentSongId] = useState<null | string>(null)
 
   const audioRef = useRef<HTMLAudioElement>()
 
@@ -96,12 +97,14 @@ export default function DesktopAudioPlayer() {
     if (audioRef.current) {
       audioRef.current.pause()
     }
-    if (!nowPlayingTrack) return
-    const isCurrentTrack = audioRef?.current.src.includes(nowPlayingTrack.audio)
-    if (isCurrentTrack && !isPlaying) return
-    if (isPlaying) {
-      audioRef.current.play()
+    if (!nowPlayingTrack || !isPlaying) return
+    const shouldPlayNewTrack = currentSongId !== nowPlayingTrack.id
+    if (shouldPlayNewTrack) {
+      setProgress(0)
+      audioRef.current.currentTime = 0
+      setCurrentSongId(nowPlayingTrack.id)
     }
+    audioRef.current.play()
   }, [nowPlayingTrack, isPlaying])
 
   if (!nowPlayingTrack) return null
