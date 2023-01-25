@@ -8,7 +8,7 @@ export type Distribution = {
   percentOfListens: number
 }
 
-export const getDistributionForUser = async (
+export const getListenDistribution = async (
   user: User & {
     events: Partial<Event> &
       { track: Partial<Track> & { artist: Partial<User> } }[]

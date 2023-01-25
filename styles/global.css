@@ -39,3 +39,8 @@ input::-webkit-inner-spin-button {
 a, p, div, span, h1, h2, h3, h4, h5, h6, li, ul, ol, input, textarea, button {
   -webkit-tap-highlight-color: transparent;
 }
+
+::-webkit-scrollbar{
+    display: none;
+  }
+

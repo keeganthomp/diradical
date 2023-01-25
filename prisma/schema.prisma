@@ -74,6 +74,7 @@ model User {
   events           Event[]
   initiatedPayouts Payout[]    @relation("initiatedPayouts")
   receivedPayouts  Payout[]    @relation("receivedPayouts")
+  albums           Album[]
 }
 
 model VerificationToken {
@@ -95,11 +96,24 @@ model Track {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(45)
   audio     String   @unique @db.VarChar(255) // IPFS hash
-  art       String   @db.VarChar(255) // IPFS hash
+  art       String?  @db.VarChar(255) // IPFS hash
   artist    User?    @relation(fields: [artistId], references: [id])
   artistId  String
   archived  Boolean  @default(false)
   events    Event[]
+  album     Album?   @relation(fields: [albumId], references: [id])
+  albumId   String?
+}
+
+model Album {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(45)
+  art       String   @db.VarChar(255) // IPFS hash
+  artist    User?    @relation(fields: [artistId], references: [id])
+  artistId  String
+  tracks    Track[]
 }
 
 model Season {

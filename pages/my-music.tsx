@@ -5,9 +5,17 @@ import Loader from 'components/ui/Loader'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import { devices } from 'styles/theme'
 
 const Wrapper = styled.div`
   text-align: center;
+  overflow-y: auto;
+  padding-bottom: 4.5rem;
+  height: 100%;
+  @media ${devices.mobile} {
+    overflow: hidden;
+    padding-bottom: 10px;
+  }
 `
 const Title = styled.p`
   font-size: 1.5rem;
@@ -18,7 +26,7 @@ const Title = styled.p`
 export default function MyMusicPage() {
   const router = useRouter()
   const { user, isAuthenticated, isAuthenticating } = useUser()
-  const { tracks, isFetching } = useUserMusic(user?.username)
+  const { singles, albums, isFetching } = useUserMusic(user?.username)
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
@@ -33,7 +41,16 @@ export default function MyMusicPage() {
   return (
     <Wrapper>
       <Title>My Music</Title>
-      <AudioGrid tracks={tracks} />
+      <p>Singles</p>
+      <AudioGrid tracks={singles} />
+      {albums.length > 0
+        ? albums.map((album) => (
+            <div key={album.id}>
+              <p>{album.title}</p>
+              <AudioGrid tracks={album.tracks} />
+            </div>
+          ))
+        : null}
     </Wrapper>
   )
 }

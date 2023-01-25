@@ -9,8 +9,38 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
   const { userId } = req.query
   try {
-    const userTracks = await prisma.track.findMany({
+    const albums = await prisma.album.findMany({
       where: { artist: { username: userId as string } },
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        title: true,
+        art: true,
+        tracks: {
+          select: {
+            id: true,
+            title: true,
+            archived: true,
+            _count: {
+              select: {
+                events: { where: { type: EventType.PLAY_SAVED } },
+              },
+            },
+          },
+        },
+        artist: {
+          select: {
+            username: true,
+            id: true,
+          },
+        },
+      },
+    })
+    const singles = await prisma.track.findMany({
+      where: {
+        albumId: null,
+        artist: { username: userId as string },
+      },
       orderBy: { createdAt: 'asc' },
       select: {
         id: true,
@@ -30,12 +60,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       },
     })
-    const formattedTracks = userTracks.map((track) => {
+    const formattedSingles = singles.map((track) => {
       const { _count, ...rest } = track
       return { ...rest, plays: track._count.events }
     })
-
-    res.status(200).json(formattedTracks)
+    const formattedAlbums = albums.map((album) => ({
+      ...album,
+      tracks: album.tracks.map((track) => {
+        const { _count, ...rest } = track
+        const plays = track._count.events
+        return {
+          ...rest,
+          art: album.art,
+          artist: album.artist,
+          plays,
+        }
+      }),
+    }))
+    res.status(200).json({
+      singles: formattedSingles,
+      albums: formattedAlbums,
+    })
   } catch (err) {
     res
       .status(500)

@@ -1,14 +1,14 @@
 import useSWR from 'swr'
 
-export default function useUserMusic(username: string) {
+export default function useAlbum(albumId: string) {
   const { data, error, mutate } = useSWR(
-    username ? `/api/users/${username}/tracks` : null,
+    albumId ? `/api/albums/${albumId}` : null,
     {
       refreshInterval: 3000,
     },
   )
   return {
-    ...data,
+    album: data,
     isFetching: !error && !data,
     mutate,
     error,

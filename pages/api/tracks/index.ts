@@ -16,8 +16,34 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET': {
       try {
-        const tracks = await prisma.track.findMany({
-          where: { archived: false },
+        const albums = await prisma.album.findMany({
+          orderBy: { createdAt: 'asc' },
+          select: {
+            id: true,
+            title: true,
+            art: true,
+            tracks: {
+              where: { archived: false },
+              select: {
+                id: true,
+                title: true,
+                _count: {
+                  select: {
+                    events: { where: { type: EventType.PLAY_SAVED } },
+                  },
+                },
+              },
+            },
+            artist: {
+              select: {
+                username: true,
+                id: true,
+              },
+            },
+          },
+        })
+        const singles = await prisma.track.findMany({
+          where: { archived: false, albumId: null },
           orderBy: { createdAt: 'asc' },
           select: {
             id: true,
@@ -36,13 +62,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
         })
-        const formattedTracks = tracks.map((track) => {
+        const formattedSingles = singles.map((track) => {
           const { _count, ...rest } = track
           return { ...rest, plays: track._count.events }
         })
-        res.status(200).json(formattedTracks)
+        const visibleAlbums = albums.filter((album) => album.tracks.length > 0)
+        const formattedAlbums = visibleAlbums.map((album) => ({
+          ...album,
+          tracks: album.tracks.map((track) => {
+            const { _count, ...rest } = track
+            const plays = track._count.events
+            return {
+              ...rest,
+              art: album.art,
+              artist: album.artist,
+              plays,
+            }
+          }),
+        }))
+        res.status(200).json({
+          singles: formattedSingles,
+          albums: formattedAlbums,
+        })
       } catch (err) {
-        res.status(500).json({ message: 'unable to fetch tracks' })
+        res.status(500).json({ message: err.message })
       }
       break
     }
@@ -54,44 +97,71 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           if (err) {
             res.status(500).json({ message: 'Unable to parse song files' })
           }
-          const { audioFile, coverArtFile } = files
-          const { title } = fields
-          if (!audioFile[0] || !coverArtFile[0] || !title[0]) {
-            res.status(400).send({ message: 'Missing required fields' })
+          const { albumCoverArt, trackAudioFiles, trackArtFiles } = files
+          const { albumTitle, trackTitles } = fields
+          const isAlbum = !!albumCoverArt && !!albumTitle
+          let albumId, albumDir
+          if (isAlbum) {
+            const folder = 'albums'
+            const albumTitleFmt = albumTitle[0]
+            const fileName = `${albumTitleFmt}_${new Date().getTime()}`
+            albumDir = `${folder}/${fileName}`
+            const albumArtFileObj = albumCoverArt[0].toJSON()
+            // convert album art to buffer to DO
+            const albumArtBuffer = await readFile(albumArtFileObj.filepath)
+            const albumArtUrl = await doSpaces.uploadFile({
+              folder: albumDir,
+              file: albumArtBuffer,
+              fileName: albumArtFileObj.originalFilename,
+            })
+            const album = await prisma.album.create({
+              data: {
+                title: albumTitleFmt,
+                art: albumArtUrl,
+                artist: { connect: { id: user.id } },
+              },
+            })
+            albumId = album.id
+            await unlink(albumArtFileObj.filepath)
           }
-          const audioFileObj = audioFile[0].toJSON()
-          const coverArtFileObj = coverArtFile[0].toJSON()
-          // get file buffer for do spaces
-          const audioBuffer = await readFile(audioFileObj.filepath)
-          const coverArtBuffer = await readFile(coverArtFileObj.filepath)
-          // upload audio file to do spaces
-          const folder = `tracks/${title[0]}_${new Date().getTime()}`
-          const audioUrl = await doSpaces.uploadFile({
-            folder,
-            file: audioBuffer,
-            fileName: audioFileObj.originalFilename,
-          })
-          // upload cover art to do spaces
-          const coverArtUrl = await doSpaces.uploadFile({
-            folder,
-            file: coverArtBuffer,
-            fileName: coverArtFileObj.originalFilename,
-          })
-          // save to db
-          const track = await prisma.track.create({
-            data: {
-              title: title[0],
+          const songsPayload = []
+          for (const [index, trackTitle] of trackTitles.entries()) {
+            const folder = isAlbum ? albumDir : 'tracks'
+            const fileName = `${trackTitle}_${new Date().getTime()}`
+            const dir = `${folder}/${fileName}`
+            const audioFileObj = trackAudioFiles[index].toJSON()
+            // convert files to buffers
+            const audioBuffer = await readFile(audioFileObj.filepath)
+            // upload audio file to do spaces
+            const audioUrl = await doSpaces.uploadFile({
+              folder: dir,
+              file: audioBuffer,
+              fileName: audioFileObj.originalFilename,
+            })
+            await unlink(audioFileObj.filepath)
+            let coverArtUrl
+            if (!isAlbum) {
+              const coverArtFileObj = trackArtFiles[index].toJSON()
+              const coverArtBuffer = await readFile(coverArtFileObj.filepath)
+              coverArtUrl = await doSpaces.uploadFile({
+                folder: dir,
+                file: coverArtBuffer,
+                fileName: coverArtFileObj.originalFilename,
+              })
+              await unlink(coverArtFileObj.filepath)
+            }
+            songsPayload.push({
+              title: trackTitle,
               audio: audioUrl,
               art: coverArtUrl,
-              artist: {
-                connect: { id: user.id },
-              },
-            },
+              artistId: user.id,
+              albumId,
+            })
+          }
+          const tracks = await prisma.track.createMany({
+            data: songsPayload,
           })
-          // remove from tmp folder
-          await unlink(audioFileObj.filepath)
-          await unlink(coverArtFileObj.filepath)
-          res.status(200).json(track)
+          res.status(200).json(tracks)
         } catch (err) {
           res.status(500).json({ message: err.message })
         }

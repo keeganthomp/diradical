@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import { EventType } from '@prisma/client'
-import stripe from 'lib/stripe'
-import { getDistributionForUser } from 'lib/payouts'
+import { getListenDistribution } from 'lib/payouts'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -42,7 +41,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
         const usersDistribution = []
         for (const user of usersWithoutPass) {
-          const payoutDistribution = await getDistributionForUser(user)
+          const payoutDistribution = await getListenDistribution(user)
           usersDistribution.push({
             user,
             distibution: payoutDistribution,

@@ -17,7 +17,8 @@ const useNowPlaying = () => {
   }
 
   const play = async (track: Track) => {
-    if (nowPlaying.track?.id !== track.id) {
+    const isCurrentlyPlaying = nowPlaying.track?.id === track.id
+    if (!isCurrentlyPlaying) {
       const { audio } = await getTrack(track.id)
       setNowPlaying(() => ({
         timeElapsed: 0,
@@ -28,7 +29,7 @@ const useNowPlaying = () => {
           audio,
         },
       }))
-      if (!user || user.id !== track.artist.id) {
+      if (user && user.id !== track.artist.id) {
         await initPlay(track.id)
       }
     } else {
@@ -38,6 +39,7 @@ const useNowPlaying = () => {
       }))
     }
   }
+
   const stop = () => setNowPlaying(defaultNowPlayingState)
 
   return { ...nowPlaying, play, pause, stop, setNowPlaying }

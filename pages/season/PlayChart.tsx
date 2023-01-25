@@ -1,4 +1,4 @@
-import { PieChart, Pie, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, ResponsiveContainer, Label } from 'recharts'
 import styled from 'styled-components'
 import mobile from 'is-mobile'
 import useUser from 'hooks/useUser'
@@ -19,27 +19,26 @@ const LabelText = styled.text`
   }
 `
 
-const Fill_COLOR = '#00C49F'
+const Fill_COLOR = '#e0e0e0'
 
 const RADIAN = Math.PI / 180
 
 export default function PlayChart() {
   const isMobile = mobile()
-  const { distribution } = useUser()
+  const { user } = useUser()
+  if (!user) return null
 
-  if (!distribution) return null
-
-  if (distribution.artists.length === 0)
+  if (user.listens.length === 0)
     return (
       <Wrapper>
         <p>No listens to calculate</p>
       </Wrapper>
     )
 
-  const chartData = distribution?.artists
-    ? distribution.artists.map((dist) => ({
-        name: dist.artist.username,
-        value: dist.totalPlays,
+  const chartData = user.listens
+    ? user.listens.map((listen) => ({
+        name: listen.artist.username,
+        value: listen.totalPlays,
       }))
     : []
 
@@ -76,6 +75,7 @@ export default function PlayChart() {
       <ResponsiveContainer width='100%' height='100%'>
         <PieChart>
           <Pie
+            isAnimationActive={false}
             data={chartData}
             cx='50%'
             cy='50%'
@@ -83,7 +83,13 @@ export default function PlayChart() {
             outerRadius={isMobile ? 87 : 250}
             fill={Fill_COLOR}
             dataKey='value'
-          />
+          >
+            <Label
+              value='Plays by Artist'
+              position='center'
+              fontSize={isMobile ? 14 : 16}
+            />
+          </Pie>
         </PieChart>
       </ResponsiveContainer>
     </Wrapper>

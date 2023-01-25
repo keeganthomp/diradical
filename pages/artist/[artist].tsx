@@ -21,14 +21,14 @@ export default function ArtistPage() {
   const router = useRouter()
   const artist = router.query.artist
 
-  const { tracks, isFetching } = useUserMusic(artist as string)
+  const { singles, isFetching } = useUserMusic(artist as string)
 
   if (isFetching) return <Loader color='#000' />
 
   return (
     <Container>
       <Title>{artist}</Title>
-      <AudioGrid tracks={tracks} />
+      <AudioGrid tracks={singles} />
     </Container>
   )
 }

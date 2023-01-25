@@ -16,13 +16,15 @@ const Title = styled.p`
 
 export default function SeasonPage() {
   const router = useRouter()
-  const { isAuthenticated, isAuthenticating } = useUser()
+  const { isAuthenticated, isAuthenticating, user } = useUser()
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
       router.push('/signin')
     }
   }, [isAuthenticating])
+
+  if (!user) return null
 
   return (
     <Wrapper>

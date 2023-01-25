@@ -1,66 +1,30 @@
 import styled from 'styled-components'
 import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { Button } from 'components/ui/Buttons'
-import { IoIosCloseCircle } from 'react-icons/io'
-import Loader from 'components/ui/Loader'
-import TextInput from 'components/ui/Inputs/TextInput'
-import useApi from 'hooks/useApi'
-import Error from 'components/ui/Error'
 import { useRouter } from 'next/router'
 import useUser from 'hooks/useUser'
-
-const UploadButton = styled(Button)`
-  width: 100%;
-  height: 2rem;
-`
-
-const UploadForma = styled.form`
-  width: 14rem;
-`
-
-const Field = styled.div`
-  position: relative;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`
-
-const FilePreview = styled.div`
-  position: relative;
-`
-const RemoveFileButton = styled(IoIosCloseCircle)<{ disabled?: boolean }>`
-  width: 16px;
-  position: absolute;
-  top: 7px;
-  right: 0;
-  color: ${(p) => (p.disabled ? '#d0d0d0' : 'red')};
-  opacity: 0.5;
-  transition: all 0.2s ease-in-out;
-  &:hover {
-    cursor: ${(p) => (p.disabled ? 'not-allowed' : 'pointer')};
-    opacity: 1;
-  }
-`
-
-const SelectFileButton = styled.p`
-  background: #e3e3e3b0;
-  padding: 3px 0;
-  border-radius: 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  &:hover {
-    opacity: 0.8;
-  }
-`
+import { useForm, useFieldArray, FormProvider } from 'react-hook-form'
+import useApi from 'hooks/useApi'
+import { Button } from 'components/ui/Buttons'
+import Loader from 'components/ui/Loader'
+import SongUpload from 'components/upload/SongUpload'
+import { AiOutlinePlus } from 'react-icons/ai'
+import TextInput from 'components/ui/Inputs/TextInput'
+import FilePreview from 'components/upload/ui/FilePreview'
+import RemoveFileButton from 'components/upload/ui/RemoveFileButton'
+import SelectFileButton from 'components/upload/ui/SelectFileButton'
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  overflow: auto;
+`
+
+const Content = styled.div`
+  width: 15rem;
+  text-align: center;
 `
 
 const Title = styled.p`
@@ -69,22 +33,58 @@ const Title = styled.p`
   padding-bottom: 2rem;
 `
 
+const UploadButton = styled(Button)`
+  width: 100%;
+  height: 2rem;
+`
+
+const AddSongButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
+`
+const AddSongIcon = styled(AiOutlinePlus)`
+  margin-right: 0.25rem;
+`
+const AddSongButton = styled(Button)`
+  background: #888888af;
+  padding: 0.5rem;
+  width: auto;
+  border-radius: 4px;
+`
+const AlbumInfoContainer = styled.div`
+  padding-bottom: 1rem;
+`
+const AlbumHeading = styled.p``
+const AlbumTitle = styled(TextInput)`
+  margin-bottom: 10px;
+`
+
 export default function UploadPage() {
   const { isAuthenticated, isAuthenticating, user } = useUser()
-  const [uploadError, setUploadError] = React.useState('')
   const router = useRouter()
   const { uploadSong } = useApi()
-  const { register, handleSubmit, formState, watch, setValue } = useForm({
+  const defaultSong = {
+    title: '',
+    audioFiles: [] as File[],
+    artFiles: [] as File[],
+  }
+  const form = useForm({
     mode: 'all',
     defaultValues: {
-      title: '',
-      audioFiles: [] as File[],
-      artFiles: [] as File[],
+      albumTitle: '',
+      albumCoverArtFiles: [] as File[],
+      songs: [defaultSong],
     },
   })
-  const [selectAudioFiles, selectedArtFiles] = watch(['audioFiles', 'artFiles'])
-  const audioFile = selectAudioFiles[0]
-  const artFile = selectedArtFiles[0]
+  const { fields, append, remove } = useFieldArray({
+    name: 'songs',
+    control: form.control,
+  })
+  const { formState, watch, setValue, register } = form
+  const albumCoverArtFiles = watch('albumCoverArtFiles')
+  const albumConverArt = albumCoverArtFiles[0]
+  const isAlbum = fields.length > 1
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
@@ -95,100 +95,107 @@ export default function UploadPage() {
   if (!user) return null
 
   const uploadTrack = async (data) => {
-    setUploadError('')
-    const { title, audioFiles, artFiles } = data
-    const coverArtFile = artFiles[0]
-    const audioFile = audioFiles[0]
+    const formData = new FormData()
+    const { songs, albumTitle, albumCoverArtFiles } = data
+    if (isAlbum) {
+      const albumCoverArtFile = albumCoverArtFiles[0]
+      formData.set('albumTitle', albumTitle)
+      formData.set('albumCoverArt', albumCoverArtFile)
+    }
+    songs.forEach((s) => {
+      const { title, audioFiles, artFiles } = s
+      const coverArtFile = artFiles[0]
+      const audioFile = audioFiles[0]
+      formData.append('trackTitles', title)
+      formData.append('trackAudioFiles', audioFile)
+      if (!isAlbum) {
+        formData.append('trackArtFiles', coverArtFile)
+      }
+    })
     try {
-      const formData = new FormData()
-      formData.set('title', title)
-      formData.set('coverArtFile', coverArtFile)
-      formData.set('audioFile', audioFile)
       await uploadSong(formData)
       router.push('/my-music')
-    } catch (error) {
-      setUploadError(error.message)
-    }
+    } catch (error) {}
   }
+
   return (
     <Container>
-      <Title>Upload Track</Title>
-      <UploadForma onSubmit={handleSubmit(uploadTrack)}>
-        <Field>
-          <TextInput
-            {...register('title', {
-              required: true,
-            })}
-            placeholder='Song Title'
-            disabled={formState.isSubmitting}
-          />
-        </Field>
-        <Field>
-          {audioFile ? (
-            <FilePreview>
-              <p>{audioFile.name}</p>
-              <RemoveFileButton
-                disabled={formState.isSubmitting}
-                onClick={() =>
-                  !formState.isSubmitting && setValue('audioFiles', [])
-                }
+      <Title>Upload</Title>
+      <Content>
+        <FormProvider {...form}>
+          <form onSubmit={form.handleSubmit(uploadTrack)}>
+            {isAlbum && (
+              <AlbumInfoContainer>
+                <AlbumHeading>Album Info</AlbumHeading>
+                <AlbumTitle
+                  {...form.register('albumTitle', {
+                    required: isAlbum ? 'Album Title is required' : false,
+                  })}
+                  placeholder='Album Title'
+                  disabled={formState.isSubmitting}
+                />
+                {albumConverArt ? (
+                  <FilePreview>
+                    <p>{albumConverArt.name}</p>
+                    <RemoveFileButton
+                      disabled={formState.isSubmitting}
+                      onClick={() =>
+                        !formState.isSubmitting &&
+                        setValue('albumCoverArtFiles', [])
+                      }
+                    />
+                  </FilePreview>
+                ) : (
+                  <label>
+                    <input
+                      style={{ display: 'none' }}
+                      accept='image/*'
+                      {...register('albumCoverArtFiles', {
+                        required: 'Album art file is required',
+                        minLength: {
+                          value: 1,
+                          message: 'Album art file is required',
+                        },
+                      })}
+                      type='file'
+                      disabled={formState.isSubmitting}
+                    />
+                    <SelectFileButton>Select Album Art file</SelectFileButton>
+                  </label>
+                )}
+              </AlbumInfoContainer>
+            )}
+            {fields.map((field, index) => (
+              <SongUpload
+                key={field.id}
+                index={index}
+                remove={() => remove(index)}
+                isAlbum={isAlbum}
               />
-            </FilePreview>
-          ) : (
-            <label>
-              <input
-                style={{ display: 'none' }}
-                name='audioFiles'
-                accept='.mp3,.wav'
-                {...register('audioFiles', {
-                  required: true,
-                })}
-                type='file'
+            ))}
+            <AddSongButtonContainer>
+              <AddSongButton
                 disabled={formState.isSubmitting}
-              />
-              <SelectFileButton>Select Audio File</SelectFileButton>
-            </label>
-          )}
-        </Field>
-        <Field>
-          {artFile ? (
-            <FilePreview>
-              <p>{artFile.name}</p>
-              <RemoveFileButton
-                disabled={formState.isSubmitting}
-                onClick={() =>
-                  !formState.isSubmitting && setValue('artFiles', [])
-                }
-              />
-            </FilePreview>
-          ) : (
-            <label>
-              <input
-                name='coverArt'
-                style={{ display: 'none' }}
-                type='file'
-                accept='image/*'
-                {...register('artFiles', {
-                  required: true,
-                })}
-                disabled={formState.isSubmitting}
-              />
-              <SelectFileButton>Select Art File</SelectFileButton>
-            </label>
-          )}
-        </Field>
-        <UploadButton
-          disabled={!formState.isValid || formState.isSubmitting}
-          type='submit'
-        >
-          {formState.isSubmitting ? (
-            <Loader size={20} color='#000' />
-          ) : (
-            'Upload'
-          )}
-        </UploadButton>
-        {uploadError && <Error>{uploadError}</Error>}
-      </UploadForma>
+                onClick={() => append(defaultSong)}
+              >
+                <AddSongIcon /> Add Another Song
+              </AddSongButton>
+            </AddSongButtonContainer>
+            <UploadButton
+              disabled={!formState.isValid || formState.isSubmitting}
+              type='submit'
+            >
+              {formState.isSubmitting ? (
+                <Loader size={20} color='#000' />
+              ) : isAlbum ? (
+                'Upload Album'
+              ) : (
+                'Upload Single'
+              )}
+            </UploadButton>
+          </form>
+        </FormProvider>
+      </Content>
     </Container>
   )
 }
