@@ -92,7 +92,7 @@ export default function UploadPage() {
     }
   }, [isAuthenticating])
 
-  if (!user) return null
+  if (!isAuthenticated) return null
 
   const uploadTrack = async (data) => {
     const formData = new FormData()

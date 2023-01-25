@@ -3,6 +3,8 @@ import AudioCard from './AudioCard'
 import { Track } from 'types'
 import { devices } from 'styles/theme'
 import React from 'react'
+import { Button } from 'components/ui/Buttons'
+import { useRouter } from 'next/router'
 
 const DEF_NUM_OF_COLUMNS = 5
 
@@ -10,6 +12,13 @@ const NoTracksContainer = styled.div`
   text-align: center;
   font-weight: bold;
   padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    font-size: 16px;
+    padding-bottom: 1rem;
+  }
 `
 
 const Grid = styled.div`
@@ -30,10 +39,12 @@ const Grid = styled.div`
 `
 
 export default function AudioGrid({ tracks }: { tracks: Track[] }) {
+  const router = useRouter()
   if (tracks.length === 0) {
     return (
       <NoTracksContainer>
         <p>No Tracks</p>
+        <Button onClick={() => router.push('/upload')}>Go Upload</Button>
       </NoTracksContainer>
     )
   }

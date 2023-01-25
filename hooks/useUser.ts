@@ -21,7 +21,7 @@ export default function useUser(): Response {
   const { data: userFromDb, error } = useSWR(
     session?.user?.id ? `/api/users/${session.user.id}` : null,
   )
-  const isFetchingUser = !error && !userFromDb
+  const isFetchingUser = session?.user?.id && !error && !userFromDb
   const isAuthenticating = isFetchingUser || status === 'loading'
   const isAuthenticated = status === 'authenticated'
   const user = {

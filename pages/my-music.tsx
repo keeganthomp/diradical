@@ -41,7 +41,6 @@ export default function MyMusicPage() {
   return (
     <Wrapper>
       <Title>My Music</Title>
-      <p>Singles</p>
       <AudioGrid tracks={singles} />
       {albums.length > 0
         ? albums.map((album) => (

@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import AudioGrid from 'components/audio/AudioGrid'
 import { devices } from 'styles/theme'
 import useCatalog from 'hooks/music/useCatalog'
 import Loader from 'components/ui/Loader'
 import AudioRow from 'components/audio/AudioRow'
+import useUser from 'hooks/useUser'
+import { useRouter } from 'next/router'
 
 const Container = styled.div`
   overflow-y: scroll;
@@ -24,7 +25,17 @@ const LoadingContainer = styled.div`
 `
 
 export default function ListenPage() {
+  const router = useRouter()
   const { singles, albums, isFetching } = useCatalog()
+  const { isAuthenticating, isAuthenticated } = useUser()
+
+  React.useEffect(() => {
+    if (!isAuthenticating && !isAuthenticated) {
+      router.push('/signin')
+    }
+  }, [isAuthenticating])
+
+  if (!isAuthenticated) return null
 
   if (isFetching)
     return (
