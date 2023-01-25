@@ -25,13 +25,13 @@ const InfoContainer = styled.div`
   justify-content: space-between;
   padding-top: 10px;
   font-size: 12px;
-  object-fit: cover;
 `
 const CardImage = styled.img`
   width: 100%;
   height: ${CARD_SIZE};
   border-radius: 10px;
   cursor: pointer;
+  object-fit: cover;
 `
 const CardTitle = styled.p``
 const CardArtist = styled.p`
