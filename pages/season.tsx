@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import useUser from 'hooks/useUser'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import PlayChart from './PlayChart'
+import PlayChart from 'components/season/PlayChart'
 
 const Wrapper = styled.div`
   width: 100%;

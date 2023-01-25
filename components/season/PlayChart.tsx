@@ -26,7 +26,7 @@ const RADIAN = Math.PI / 180
 export default function PlayChart() {
   const isMobile = mobile()
   const { user } = useUser()
-  if (!user) return null
+  if (!user?.listens) return null
 
   if (user.listens.length === 0)
     return (
