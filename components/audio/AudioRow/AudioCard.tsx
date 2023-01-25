@@ -25,6 +25,7 @@ const InfoContainer = styled.div`
   justify-content: space-between;
   padding-top: 10px;
   font-size: 12px;
+  object-fit: cover;
 `
 const CardImage = styled.img`
   width: 100%;
