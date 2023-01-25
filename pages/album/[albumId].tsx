@@ -10,7 +10,6 @@ import { devices } from 'styles/theme'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
@@ -22,7 +21,7 @@ const Title = styled.p`
   padding-bottom: 0.5rem;
 `
 const AlbumImage = styled.img`
-  width: 8rem;
+  width: 10rem;
   height: auto;
   margin-bottom: 1rem;
   border-radius: 10px;
